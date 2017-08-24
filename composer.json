@@ -1,0 +1,14 @@
+{
+    "name": "makingpie/app-backend",
+    "description": "Backend de Painel de Acompanhamento",
+    "authors": [{
+        "name": "Iran Alves",
+        "email": "iranjosealves@gmail.com",
+        "homepage": "http://makingpie.com.br",
+        "role": "Developer"
+    }],
+    "require": {
+        "laravel/laravel": "v5.4.30"
+    },
+    "license": "proprietary"
+}
