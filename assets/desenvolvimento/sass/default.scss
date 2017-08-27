@@ -1,0 +1,19 @@
+body {
+    background-color: #ccc;
+}
+
+.login-box {
+    background-color: #fff;
+    text-align: center;
+    h1 {
+        position: relative;
+        display: block;
+        max-width: 100px;
+        //text-indent: -9000px;
+        font-size: 0%;
+        margin: 25px auto 10px;
+        img {
+            max-width: 100%;
+        }
+    }
+}

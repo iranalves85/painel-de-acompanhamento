@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,IAAK,CACD,gBAAgB,CAAE,IAAI,CAG1B,UAAW,CACP,gBAAgB,CAAE,IAAI,CACtB,UAAU,CAAE,MAAM,CAClB,aAAG,CACC,QAAQ,CAAE,QAAQ,CAClB,OAAO,CAAE,KAAK,CACd,SAAS,CAAE,KAAK,CAEhB,SAAS,CAAE,EAAE,CACb,MAAM,CAAE,cAAc,CACtB,iBAAI,CACA,SAAS,CAAE,IAAI",
+"sources": ["../desenvolvimento/sass/default.scss"],
+"names": [],
+"file": "main.css"
+}

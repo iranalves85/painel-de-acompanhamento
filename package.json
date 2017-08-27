@@ -1,0 +1,31 @@
+{
+    "name": "painel-acompanhamento",
+    "version": "0.0.1",
+    "description": "Painel de acompanhamento de planos de ações - GPTW",
+    "main": "Gruntfile.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/iranalves85/painel-de-acompanhamento.git"
+    },
+    "keywords": [
+        "gptw",
+        "painel"
+    ],
+    "author": "Iran Alves",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/iranalves85/painel-de-acompanhamento/issues"
+    },
+    "homepage": "https://github.com/iranalves85/painel-de-acompanhamento#readme",
+    "devDependencies": {
+        "angular": "1.6.6",
+        "grunt": "> = 1.0.0",
+        "grunt-contrib-sass": "1.0.0",
+        "grunt-contrib-uglify": "3.0.1",
+        "grunt-contrib-watch": "1.0.0",
+        "grunt-autoprefixer": "3.0.4"
+    }
+}
