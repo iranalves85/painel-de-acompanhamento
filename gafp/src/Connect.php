@@ -15,7 +15,7 @@ class Connect{
         $user   = 'root';
         $pass   = '';
         
-        $this->pdo = new \Slim\PDO\Database($dsn, $user, $pass);
+        return $this->pdo = new \Slim\PDO\Database($dsn, $user, $pass);
     }
 
 }

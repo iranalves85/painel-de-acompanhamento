@@ -17,44 +17,54 @@ $app = new \Slim\App($config);
 // Get container
 $container = $app->getContainer();
 
-// Register component on container
+// Registrando um componente (dependencia) de renderização de templates php
 $container['view'] = function ($container) {
-    return new \Slim\Views\PhpRenderer('');
+    return new \Slim\Views\PhpRenderer('./templates/');
+};
+
+// Registrando um componente de conexão ao banco de dados
+$container['connect'] = function ($container) {    
+    return new \Gafp\Connect; //conexão com banco
+};
+
+// Registrando um componente de conexão ao banco de dados
+$container['authUser'] = function ($container) {
+    return new \Gafp\User; //usuários
 };
 
 //Inicializar a autenticação de usuário
-$mw = function($request, $response, $next){
-    
-    $userConnect = new \Gafp\Connect;
-    $userAuth = new \Gafp\User;
-
-    $qry = $userConnect->pdo->select()->from('pa_users');
-    
-    $result = $qry->execute()->fetch();
-    
+$checkUser = function($request, $response, $next){    
+    $qry = $this->connect->pdo->select()->from('pa_users');    
+    $result = $qry->execute()->fetch();    
     $response->getBody()->write($result);
-    
-    return $response;
+    return ($this->withJson($result));
 };
 
 //Verifica se usuário esta autenticado e retorna página
-$app->get('/', function (Request $request, Response $response, $args ) {
+$app->get('/', function (Request $request, Response $response, $args ) {    
+    return $this->view->render($response, 'index.php', []); //Carrega template
+})->setname('index');
+
+//URL para envio de credenciais para login
+$app->post('login/', function (Request $request) {
+    $request->getParsedBody();
+    $login_data = [];
+    $login_data['email'] = filter_var($data['email'], FILTER_SANITIZE_STRING);
+    $login_data['senha'] = filter_var($data['senha'], FILTER_SANITIZE_STRING);
+
+    $query = $this->connect->pdo->select()->from('pa_users');    
+    $result = $query->execute()->fetch();    
     
-    return $this->view->render($response, 'index.html', [ 
-        'name'=> $args['name']
-    ]);
-
-})->setname('login');
-
-//URL para envio de credenciais
-$app->post('/login', function (Request $request, Response $response, $args) {
-    
-    $response->getBody()->write($args);
-
-    return json_encode($response);
-
+    return $response;
 });
 
+/*//URL para envio de credenciais para login
+$app->map(['GET', 'POST'], '/login', function (Request $request, Response $response) {
+    
+    $response->getBody()->write('teste');
+    return $response;
+
+});*/
 
 $app->run();
 

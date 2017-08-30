@@ -10,14 +10,14 @@
 
                 <h2>Login</h2>
 
-                <form action="/" name="login" method="post">
+                <form name="login" method="post" ng-submit="submit()">
                     <div class="col-12">
                         <label for="email">e-mail:</label>
-                        <input type="email" name="email" class="form-control" placeholder="Enter a name here">
+                        <input type="email" name="email" class="form-control" ng-value="{{email}}" placeholder="Enter a name here">
                     </div>
                     <div class="col-12">
                         <label for="senha">Senha:</label>
-                        <input type="password" name="senha" class="form-control">
+                        <input type="password" name="senha" ng-value="{{senha}}" class="form-control">
                     </div>
                     <div class="col-12">
                         <input type="submit" value="Entrar" class="btn btn-primary right">

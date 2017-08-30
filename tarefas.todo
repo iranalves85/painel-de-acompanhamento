@@ -1,2 +1,6 @@
+#GPTW - Painel de Acompanhamento
+
 ✔ Setar projeto
-☐ Estrutura a lógica do programa
+✔ Estrutura a lógica do programa
+☐ Verificar o roteamento no arquivo "index.php", pois "login/" não esta funcionando
+
