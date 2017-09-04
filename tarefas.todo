@@ -2,5 +2,7 @@
 
 ✔ Setar projeto
 ✔ Estrutura a lógica do programa
-☐ Verificar o roteamento no arquivo "index.php", pois "login/" não esta funcionando
+✔ Verificar o roteamento no arquivo "index.php", pois "login/" não esta funcionando
+☐ Método de validação de usuário deve estar disponível para a aplicação inteira, talvez usando a global $_SESSION
+
 

@@ -2,7 +2,7 @@
     <div class="container">
 
         <div class="row justify-content-center">
-            <div class="col-4 login-box">
+            <div class="col-md-4 login-box">
 
                 <h1>GPTW - Painel de Acompanhamento de plano de ações
                     <img src="assets/images/gptw-logo-app.png" alt="GPTW - Painel de Acompanhamento de plano de ações" srcset=""></h1>
@@ -13,16 +13,23 @@
                 <form name="login" method="post" ng-submit="submit()">
                     <div class="col-12">
                         <label for="email">e-mail:</label>
-                        <input type="email" name="email" class="form-control" ng-value="{{email}}" placeholder="Enter a name here">
+                        <input type="email" name="email" class="form-control" ng-model="email.text" placeholder="Seu e-mail" required>
                     </div>
                     <div class="col-12">
-                        <label for="senha">Senha:</label>
-                        <input type="password" name="senha" ng-value="{{senha}}" class="form-control">
+                        <label for="password">Senha:</label>
+                        <input type="password" name="password" ng-model="password.text" class="form-control" placeholder="Sua senha" required>
                     </div>
                     <div class="col-12">
                         <input type="submit" value="Entrar" class="btn btn-primary right">
                     </div>
                 </form>
+
+                <div role="alert">
+                    <span class="error" ng-show="login.input.$error.required">
+                      Required!</span>
+                    <span class="error" ng-show="login.input.$error.email">
+                      Not valid email!</span>
+                </div>
 
             </div>
         </div>
