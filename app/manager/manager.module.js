@@ -1,1 +1,1 @@
-angular.module('manager', []);
+angular.module('panelApp', []);

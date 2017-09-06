@@ -1,6 +1,6 @@
 @import "../../../node_modules/bootstrap-4/node_modules/bootstrap/scss/bootstrap.scss";
 body {
-    background-color: #ccc;
+    background-color: #f9f9f9;
 }
 
 .login-box {
@@ -15,6 +15,40 @@ body {
         margin: 25px auto 10px;
         img {
             max-width: 100%;
+        }
+    }
+}
+
+.panel {
+    .topo {
+        background-color: #ccc;
+    }
+    .content {
+        .menu {
+            background-color: #eee;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            ul {
+                margin-bottom: 0px;
+            }
+        }
+        .main {
+            .block {
+                border: 1px solid #ddd;
+                padding: 30px;
+                margin-bottom: 30px;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+    }
+    .footer {
+        background-color: #D14B4B;
+        padding: 15px 0px;
+        h6 {
+            text-align: center;
+            color: #fff;
         }
     }
 }

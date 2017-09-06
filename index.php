@@ -22,7 +22,7 @@ $container = $app->getContainer();
 
 // Registrando um componente (dependencia) de renderização de templates php
 $container['view'] = function ($container) {
-    return new \Slim\Views\PhpRenderer('./templates/');
+    return new \Slim\Views\PhpRenderer('./gafp/src/templates/');
 };
 
 // Registrando um componente de conexão ao banco de dados
@@ -33,6 +33,11 @@ $container['connect'] = function ($container) {
 // Registrando um componente de conexão ao banco de dados
 $container['user'] = function ($container) {
     return new \Gafp\User(); //usuários
+};
+
+// Registrando um componente de conexão ao banco de dados
+$container['data'] = function ($container) {
+    return new \Gafp\Data(); //usuários
 };
 
 /* #MIDDLEWARES ----------------------------------------------*/
@@ -80,6 +85,14 @@ $app->get('/painel', function (Request $request, Response $response, $args) {
     return $this->view->render($response, 'painel.php', []); //Carrega template
 
 })->setname('painel')->add($userLogged);
+
+//Retorna lista de planos
+$app->get('/plans', function (Request $request, Response $response){
+    
+    $response = $response->withJson($this->data->getPlans($this->connect)); //Enviando dados para função User->login
+    
+    return $response;
+});
 
 
 /* #APP INIT ----------------------------------------------------*/

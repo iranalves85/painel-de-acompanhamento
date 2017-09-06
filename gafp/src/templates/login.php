@@ -15,26 +15,14 @@
     <!-- Angular -->
     <script src="node_modules/angular/angular.js"></script>
     <script src="app/app.module.js"></script>
-    <script src="app/painel-app/painel-app.module.js"></script>
-    <script src="app/painel-app/painel-app.component.js"></script>
     <script src="app/login-app/login-app.module.js"></script>
     <script src="app/login-app/login-app.component.js"></script>
 
 </head>
 
-<body>
-    
-    <main>
-        <section class="col-sm-4">
-            <aside>
-                <painel-actions></painel-app>
-            </aside>
-        </section>
-        <section class="col-sm-8">
-                <painel-app></painel-app>
-        </section>
-    </main>
-    
+<body class="login">
+
+    <login-app></login-app>
 
 </body>
 

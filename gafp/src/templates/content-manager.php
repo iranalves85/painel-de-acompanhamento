@@ -1,13 +1,13 @@
 <?php
     /*
-    *  Template: Login
+    *  Template: Manager
     *  30/08/2017
     */
 ?>
 <html ng-app="gafp">
 
 <head>
-    <title>GPTW - Painel de Acompanhamento de plano de ações</title>
+    <title>{{usuario.ambiente}} | GPTW - Painel de Acompanhamento</title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <link rel="stylesheet" href="assets/css/main.css" crossorigin="anonymous">
     <script src="assets/js/main.js" type="text/javascript"></script>
@@ -17,13 +17,15 @@
     <script src="app/app.module.js"></script>
     <script src="app/login-app/login-app.module.js"></script>
     <script src="app/login-app/login-app.component.js"></script>
+    <script src="app/manager/manager.module.js"></script>
+    <script src="app/manager/manager.component.js"></script>    
 
 </head>
 
-<body>
-
-    <login-app></login-app>
-
+<body class="panel panel-manager">    
+    <main>
+        <panel-app></panel-app>
+    </main>
 </body>
 
 </html>
