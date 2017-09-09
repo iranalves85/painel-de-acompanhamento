@@ -4,7 +4,7 @@
     *  30/08/2017
     */
 ?>
-<html ng-app="gafp">
+<html ng-app="gafp-panel">
 
 <head>
     <title>{{usuario.ambiente}} | GPTW - Painel de Acompanhamento</title>
@@ -14,11 +14,9 @@
 
     <!-- Angular -->
     <script src="node_modules/angular/angular.js"></script>
-    <script src="app/app.module.js"></script>
-    <script src="app/login-app/login-app.module.js"></script>
-    <script src="app/login-app/login-app.component.js"></script>
-    <script src="app/manager/manager.module.js"></script>
-    <script src="app/manager/manager.component.js"></script>    
+    <script src="app/panel-app/app.module.js"></script>
+    <script src="app/panel-app/manager/manager.module.js"></script>
+    <script src="app/panel-app/manager/manager.component.js"></script>    
 
 </head>
 

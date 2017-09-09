@@ -14,7 +14,7 @@
 
     <!-- Angular -->
     <script src="node_modules/angular/angular.js"></script>
-    <script src="app/app.module.js"></script>
+    <script src="app/login-app/app.module.js"></script>
     <script src="app/login-app/login-app.module.js"></script>
     <script src="app/login-app/login-app.component.js"></script>
 

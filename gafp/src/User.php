@@ -4,59 +4,79 @@ namespace Gafp;
 
 class User{
 
-    var $connect;
+    public $connect;
     var $user;    
     var $session;
 
-    /* 
-        $connectObj = classe de conexão ao BD    
-    */
-    function __contruct(){
-        
+    //Contrução da classe
+    public function __construct( \Gafp\Connect $connect ){
+        $this->initSession();
+        $this->connect = $connect;
     }
 
     /* 
     - Registrar sessão do usuário
     - Retornar dados importantes
     */
-    function login($email, $pass, $connect){
+    function login($data){
 
-        $this->connect = $connect;
+        //Executa Query
+        $result = $this->connect->userLogin($data);
 
-        //Query para verificar existencia de usuário e senha
-        $query = $this->connect->pdo->select()->from('pa_users')->where('email', '=', $email)
-        ->where('password', '=', $pass); 
-
-        //Executa query
-        $result = $query->execute()->fetch();   
-
+        //Retorna resultado
         if(! $result):
-            return false;
+            $this->logout();            
         else:
             //Retorna dados de usuário
+            $this->registerSession($result);
             $this->user = $result;
             return true;
         endif;
     }
     
-    function is_user_logged(){
-        
-        if($this->user):
+    //Retorna o tipo de usuário logado
+    function typeUser(){
+
+    }
+
+    /*
+        ##### Sessões de usuário
+    */
+    //Iniciando sessão
+    function initSession(){
+        ob_start();
+        session_start();
+    }
+
+    //Registrando sessão
+    function registerSession($userData){
+        $_SESSION['user'] = $userData;
+        $this->session = '';
+    }
+
+    /*
+        ##### Funções de verificação de login
+    */
+
+    //Retorna se usuarios esta logado, sim ou não
+    function isLogged(){        
+        if(! is_null($this->user) and session_is_registered() ):
             return true;
         else:
             return false;
         endif;
     }
 
-    function type_user(){
-
+    //Se usuario logado, direciona para painel
+    function logged(\Psr\Http\Message\ResponseInterface $response){
+        return $response->withStatus(200)->withHeader('Location', '/painel'); 
     }
 
-    /*
-        Registrar a sessão de usuário 
-    */
-    function register_session(){
-
+    //Se usuario deslogado, direciona para tela de login
+    function logout(\Psr\Http\Message\ResponseInterface $response){
+        ob_end_clean();
+        session_destroy();
+        return $response->withStatus(200)->withHeader('Location', '/'); 
     }
 
 }

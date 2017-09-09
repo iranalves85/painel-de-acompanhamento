@@ -2,7 +2,7 @@ angular.
 module('panelApp').
 component('panelApp', {
     // Note: The URL is relative to our `index.html` file
-    templateUrl: 'app/manager/manager.template.html',
+    templateUrl: 'app/panel-app/manager/manager.template.html',
     controller: ['$http', '$scope', '$httpParamSerializerJQLike',
         function panelAppController($http, $scope, $httpParamSerializerJQLike) {
 
