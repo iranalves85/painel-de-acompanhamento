@@ -3,15 +3,19 @@
     *  Template: Carrega os arquivos de acordo com o tipo de acesso
     *  30/08/2017
     */
+    $type_user = $_SESSION['user']['type_user'];
 
-    $type_user = '';
-    
-    if($type_user == 'superuser'): 
-
-    elseif($type_user == 'manager'):
-    
-    elseif($type_user == 'human-resources'):
-
-    else:
-        include_once('content-manager.php');
-    endif;  
+    switch ($type_user) {
+        case 'superuser':
+            include_once('content-superuser.php');
+            break;
+        case 'human-resources':
+            include_once('content-human-resources.php');
+            break;
+        case 'manager':
+            include_once('content-manager.php');
+            break;        
+        default:
+            echo "Erro";
+            break;
+    }

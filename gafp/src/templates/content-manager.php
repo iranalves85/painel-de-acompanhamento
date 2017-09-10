@@ -7,7 +7,7 @@
 <html ng-app="gafp-panel">
 
 <head>
-    <title>{{usuario.ambiente}} | GPTW - Painel de Acompanhamento</title>
+    <title>{{ usuario.ambiente }} | GPTW - Painel de Acompanhamento</title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <link rel="stylesheet" href="assets/css/main.css" crossorigin="anonymous">
     <script src="assets/js/main.js" type="text/javascript"></script>

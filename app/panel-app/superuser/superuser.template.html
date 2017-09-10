@@ -1,0 +1,126 @@
+<div class="app-main">
+    <header class="topo">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <img src="assets/images/gptw-logo-app.png" width="75px" alt="GPTW - Painel de Acompanhamento" />
+                </div>
+                <div class="col-6">
+                    <ul class="list-inline">
+                        <li class="list-inline-item">Bem vindo, <b>{{manager.user}}</b></li>
+                        <li class="list-inline-item">|</li>
+                        <li class="list-inline-item"><a href="logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="content">
+        <div class="menu">
+            <div class="container">
+                <ul class="list-inline">
+                    <li class="list-inline-item" ng-repeat="nav in navs">
+                        <a class="btn btn-light" href="{{nav.link}}">{{nav.title}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- menu -->
+        <div class="container">
+            <div class="col-12 main">
+                <h1>Projetos</h1>
+                <div class="new-project">
+                    <h2>
+                        Adicionar
+                    </h2>
+
+                    <form name="add-project" method="post" ng-submit="submit()">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="business">
+                                            Empresa
+                                        </label>
+                                <input class="form-control" type="text" name="business" id="business">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="responsible">
+                                            Responsável
+                                        </label>
+                                <input class="form-control" type="text" name="responsible" id="responsible">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="model">
+                                            Modelo
+                                        </label>
+                                <input class="form-control" type="text" name="model" id="model">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="spreadsheet">
+                                           Planilha
+                                        </label>
+                                <input class="form-control" type="text" name="model" id="spreadsheet">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="approver">
+                                            Aprovador
+                                        </label>
+                                <input class="form-control" type="text" name="model" id="approver">
+                            </div>
+                            <div class="col-md-12">
+                                <input class="btn btn-primary float-right" type="submit" value="Cadastrar">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <hr />
+            <div class="project block">
+                <h2>
+                    Lista de Projetos
+                </h2>
+                <table class="table table-stripped">
+                    <thead>
+                        <th>ID</th>
+                        <th>Empresa</th>
+                        <th>Modelo</th>
+                        <th>Planilha</th>
+                        <th>Responsável</th>
+                        <th>Aprovação</th>
+                        <th>Ação</th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="project in projects">
+                            <td>{{project.id}}</td>
+                            <td>{{project.company}}</td>
+                            <td>{{project.model}}</td>
+                            <td>{{project.spreadsheet}}</td>
+                            <td>{{project.responsible}}</td>
+                            <td>{{project.approver}}</td>
+                            <td>
+                                <ul class="list-inline">
+                                    <li class="list-inline-item"><a href="plan/{{project.id}}">Editar</a></li>
+                                    <li class="list-inline-item"><a href="plan/{{project.id}}">Excluir</a></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <!-- Lista de Projetos -->
+        </div>
+    </section>
+</div>
+<!-- main -->
+
+<footer class="footer">
+    <div class="row">
+        <div class="col-12">
+            <h6>
+                GPTW - Painel de Acompanhamento
+            </h6>
+        </div>
+    </div>
+</footer>
+
+</div>

@@ -3,8 +3,11 @@
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
-require 'vendor/autoload.php';
-require 'gafp/autoload.php';
+require 'vendor/autoload.php'; //carregando classes
+require 'gafp/autoload.php'; //carregando classes
+
+define('_PREFIX_', 'pa'); //Definindo prefixo de tabelas
+define('_PATH_', 'http://localhost/desenvolvimento/painel-acompanhamento/'); //Definindo domínio da aplicação
 
 $config = [
     'settings' => [
@@ -27,27 +30,38 @@ $container['view'] = function ($container) {
 
 // Registrando um componente de conexão ao banco de dados
 $container['connect'] = function ($container) {
-    return new \Gafp\Connect; //usuários
+    return new \Gafp\Connect(_PREFIX_); //usuários
 };
 
 // Registrando um componente de conexão ao banco de dados
 $container['user'] = function ($container) {
-    $connect = new \Gafp\Connect;
+    $connect = new \Gafp\Connect(_PREFIX_);
     return new \Gafp\User($connect); //usuários
 };
 
 /* #MIDDLEWARES ----------------------------------------------*/
 
-
 //Verifica se user esta logado, se não volta para a tela de login
 $userLogged = function (Request $request, Response $response, $next){
 
-    if( $this->user->isLogged() ):
-        //Redireciona ao painel
-        return $this->user->logged($response);
-    else:
+    //Se usuário 'não' estiver logado
+    if( ! $this->user->isLogged() ):
         //Destroi sessão e volta tela de login
         return $this->user->logout($response);
+    endif;
+
+    $next($request, $response);
+
+    return $response;
+};
+
+//Verifica se user esta logado, se não volta para a tela de login
+$userCookie = function (Request $request, Response $response, $next){
+    
+    //Se cookie estiver válido
+    if( $this->user->isCookieValid() ):
+        //Redireciona para painel
+        return $response->withStatus(200)->withHeader('Location', 'painel'); 
     endif;
 
     $next($request, $response);
@@ -60,7 +74,7 @@ $userLogged = function (Request $request, Response $response, $next){
 //Verifica se usuário esta autenticado e retorna página
 $app->get('/', function (Request $request, Response $response ) {    
     return $this->view->render($response, 'login.php', []); //Carrega template
-})->setname('login');
+})->setName('login')->add($userCookie);
 
 //URL para envio de credenciais para login
 $app->post('/login', function (Request $request, Response $response, $args) {
@@ -77,21 +91,32 @@ $app->post('/login', function (Request $request, Response $response, $args) {
 //Desloga e finaliza sessão
 $app->get('/logout', function (Request $request, Response $response) {    
     return $this->user->logout($response); //Executa função deslogar
-});
+})->setName('logout');
 
 //Página inicial do ambiente
 $app->get('/painel', function (Request $request, Response $response, $args) {
     return $this->view->render($response, 'painel.php', []); //Carrega template "painel"
-})->setname('painel');
+})->setName('painel')->add($userLogged);
+
+/* #Dentro do PAinel */
+
+//Retorna lista de projectos
+$app->get('/projects', function (Request $request, Response $response){
+    
+    $response = $response->withJson($this->connect->getProjects( $this->user )); //Enviando dados para função User->login    
+    return $response;
+
+})->setName('list-projects');
 
 //Retorna lista de planos
 $app->get('/plans', function (Request $request, Response $response){
     
-    $id = $this->user->user['id'];
-    $response = $response->withJson($this->connect->getPlans('1')); //Enviando dados para função User->login
-    
+    $response = $response->withJson($this->connect->getPlans( $this->user )); //Recebe dados pelo user
     return $response;
-});
+
+})->setName('list-plans');
+
+
 
 
 /* #APP INIT ----------------------------------------------------*/

@@ -1,1 +1,1 @@
-angular.module('superuser', []);
+angular.module('panelApp', []);
