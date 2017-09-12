@@ -34,6 +34,16 @@ $container['connect'] = function ($container) {
 };
 
 // Registrando um componente de conexão ao banco de dados
+$container['project'] = function ($container) {
+    return new \Gafp\Project(_PREFIX_); //usuários
+};
+
+// Registrando um componente de conexão ao banco de dados
+$container['plan'] = function ($container) {
+    return new \Gafp\Plan(_PREFIX_); //usuários
+};
+
+// Registrando um componente de conexão ao banco de dados
 $container['user'] = function ($container) {
     $connect = new \Gafp\Connect(_PREFIX_);
     return new \Gafp\User($connect); //usuários
@@ -83,7 +93,7 @@ $app->post('/login', function (Request $request, Response $response, $args) {
 
     $result = $this->user->login($data); //Executa query
     
-    $response->getBody()->write($result); //Enviando dados para função User->login
+    $response->getBody()->write($result); //Retorna dados
 
     return $response;
 });
@@ -98,20 +108,47 @@ $app->get('/painel', function (Request $request, Response $response, $args) {
     return $this->view->render($response, 'painel.php', []); //Carrega template "painel"
 })->setName('painel')->add($userLogged);
 
-/* #Dentro do PAinel */
+/* #Dentro do Painel */
 
 //Retorna lista de projectos
-$app->get('/projects', function (Request $request, Response $response){
+$app->get('/projects/{type}', function (Request $request, Response $response){
     
-    $response = $response->withJson($this->connect->getProjects( $this->user )); //Enviando dados para função User->login    
+    $type = $request->getAttribute('type');
+
+    switch ($type) {
+        case 'list':
+            $response = $response->withJson($this->project->getListProjects( $this->user ));
+            break; 
+        case 'fields':
+            $response = $response->withJson($this->project->getProjectFields( $this->user ));  
+            break;   
+        case 'companys':
+            $response = $response->withJson($this->project->getProjectCompanys( $this->user )); 
+            break;
+        default:
+            $response = $response->getBody()->write('Access Not Authorized.');
+            break;
+    }
     return $response;
 
-})->setName('list-projects');
+})->setName('projects');
+
+//URL para envio de credenciais para login
+$app->post('/projects', function (Request $request, Response $response, $args) {
+    
+    $data = $request->getParsedBody(); //Retorna os dados serializado em array
+
+    $result = $this->project->addProject( $data, $this->user ); //Executa query
+    
+    $response->getBody()->write($result); //Retorna os dados
+
+    return $response;
+});
 
 //Retorna lista de planos
 $app->get('/plans', function (Request $request, Response $response){
     
-    $response = $response->withJson($this->connect->getPlans( $this->user )); //Recebe dados pelo user
+    $response = $response->withJson($this->plan->getListPlans( $this->user )); //Recebe dados pelo user
     return $response;
 
 })->setName('list-plans');

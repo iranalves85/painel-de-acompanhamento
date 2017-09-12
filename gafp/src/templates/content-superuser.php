@@ -9,11 +9,15 @@
 <head>
     <title><?php echo $_SESSION['user']['email']; ?> | GPTW - Painel de Acompanhamento</title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    
     <link rel="stylesheet" href="assets/css/main.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css" crossorigin="anonymous">
     <script src="assets/js/main.js" type="text/javascript"></script>
 
     <!-- Angular -->
     <script src="node_modules/angular/angular.js"></script>
+    <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js"></script>
+    <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
     <script src="app/panel-app/app.module.js"></script>
     <script src="app/panel-app/superuser/superuser.module.js"></script>
     <script src="app/panel-app/superuser/superuser.component.js"></script>  

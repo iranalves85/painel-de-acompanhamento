@@ -13,11 +13,11 @@
                 <form name="login" method="post" ng-submit="submit()">
                     <div class="col-12">
                         <label for="email">e-mail:</label>
-                        <input type="email" name="email" class="form-control" ng-model="email.text" placeholder="Seu e-mail" required>
+                        <input id="email" type="email" name="email" class="form-control" ng-model="email.text" placeholder="Seu e-mail" required>
                     </div>
                     <div class="col-12">
                         <label for="password">Senha:</label>
-                        <input type="password" name="password" ng-model="password.text" class="form-control" placeholder="Sua senha" required>
+                        <input id="password" type="password" name="password" ng-model="password.text" class="form-control" placeholder="Sua senha" required>
                     </div>
                     <div class="col-12">
                         <input type="submit" value="Entrar" class="btn btn-primary btn-block">

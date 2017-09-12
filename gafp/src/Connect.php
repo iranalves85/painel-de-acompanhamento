@@ -3,9 +3,7 @@
 namespace Gafp;
 
 interface ConnectInterface{
-    public function userLogin($data);
-    public function getProjects( \Gafp\User $user);
-    public function getPlans(\Gafp\User $user);
+    public function userLogin($data);  
 }
 
 class Connect implements ConnectInterface{
@@ -37,11 +35,13 @@ class Connect implements ConnectInterface{
             'typeUser'  => $prefix . '_type_user',
             'user'      => $prefix . '_users',
         );
+
+        date_default_timezone_set ( 'America/Sao_Paulo' );
         
         return $this->pdo = new \Slim\PDO\Database($dsn, $user, $pass);
     }
 
-    //Retorna dados de usuário
+    /* Retorna dados de usuário */
     function userLogin($data){
 
         $login_data['email'] = filter_var($data['email'], FILTER_SANITIZE_EMAIL); //aplicando filtro de string
@@ -54,7 +54,7 @@ class Connect implements ConnectInterface{
         ->leftJoin($table['company'], $this->joinFormat($table['company'], 'id'), '=', $this->joinFormat($table['user'], 'company'))
         ->leftJoin($table['approver'], $this->joinFormat($table['approver'], 'id'), '=', $this->joinFormat($table['user'], 'approver'))
         ->leftJoin($table['typeUser'], $this->joinFormat($table['typeUser'], 'id'), '=', $this->joinFormat($table['user'], 'type_user'))
-        ->from('pa_users')->where('email', '=', $login_data['email'])
+        ->from($table['user'])->where('email', '=', $login_data['email'])
         ->where('password', '=', $login_data['pass']);
         
         $result = $query->execute()->fetch(); //Executa e armazena resultado
@@ -62,50 +62,8 @@ class Connect implements ConnectInterface{
         return $result;
     }
 
-    function getProjects( \Gafp\User $user){
-        
-        if( ! $user->isLogged() ):
-            return "Access Not Authorized.";
-            die();
-        endif;
-
-        //Query para verificar existencia de usuário e senha
-        $query = $this->pdo->select()->from('pa_project'); 
-
-        //Executa query
-        $result = $query->execute()->fetch();   
-
-        if(! $result):
-            return false;
-        else:
-            //Retorna dados de usuário
-            return $result;            
-        endif;
-    }
-
-    function getPlans(\Gafp\User $user){
-
-        if( ! $user->isLogged() ):
-            return "Access Not Authorized.";
-            die();
-        endif;
-        
-        //Query para verificar existencia de usuário e senha
-        $query = $this->pdo->select()->from('pa_action_plan')->where('owner', '=', $user->user['id']); 
-
-        //Executa query
-        $result = $query->execute()->fetch();   
-
-        if(! $result):
-            return false;
-        else:
-            //Retorna dados de usuário
-            return $result;            
-        endif;
-    }
-
     /*
-        ### Funcções auxiliadoras
+        ### Funções auxiliadoras
     */
     //Função que controi de maneira rapida formatação de JOIN da classe PDOSlim 
     protected function joinFormat( $origin, $originCol){

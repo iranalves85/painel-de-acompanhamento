@@ -16,55 +16,68 @@
         </div>
     </header>
     <section class="content">
+
         <div class="menu">
             <div class="container">
                 <ul class="list-inline">
                     <li class="list-inline-item" ng-repeat="nav in navs">
-                        <a class="btn btn-light" href="{{nav.link}}">{{nav.title}}</a>
+                        <a class="btn" href="{{nav.link}}">{{nav.title}}</a>
                     </li>
                 </ul>
             </div>
         </div>
         <!-- menu -->
+
         <div class="container">
             <div class="col-12 main">
                 <h1>Projetos</h1>
                 <div class="new-project">
+
                     <h2>
-                        Adicionar
+                        Novo Projeto
                     </h2>
 
-                    <form name="add-project" method="post" ng-submit="submit()">
+                    <form name="add-project" method="post" ng-submit="addProject()">
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="business">
-                                            Empresa
-                                        </label>
-                                <input class="form-control" type="text" name="business" id="business">
+                                    Empresa
+                                </label>
+                                <input type="text" name="company" ng-value="company.id" ng-model="company" uib-typeahead="company.company for company in companys | filter:$viewValue | limitTo:8" class="form-control" />
                             </div>
                             <div class="col-md-4">
                                 <label for="responsible">
-                                            Responsável
-                                        </label>
-                                <input class="form-control" type="text" name="responsible" id="responsible">
+                                    Departamento
+                                </label>
+                                <select class="form-control" name="responsible" ng-options="responsible as responsible.name for responsible in fields.responsibles track by responsible.id" ng-model="responsible">
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="responsible">
+                                    Responsável
+                                </label>
+                                <select class="form-control" name="responsible" ng-options="responsible as responsible.name for responsible in fields.responsibles track by responsible.id" ng-model="responsible">
+                                </select>
                             </div>
                             <div class="col-md-4">
                                 <label for="model">
-                                            Modelo
-                                        </label>
-                                <input class="form-control" type="text" name="model" id="model">
+                                    Modelo
+                                </label>
+                                <select class="form-control" name="model" ng-options="model as model.name for model in fields.models track by model.id" ng-model="model">
+                                </select>
                             </div>
                             <div class="col-md-4">
                                 <label for="spreadsheet">
-                                           Planilha
-                                        </label>
-                                <input class="form-control" type="text" name="model" id="spreadsheet">
+                                    Planilha de Usuários
+                                </label>
+                                <input class="form-control btn-file" type="file" name="spreadsheet" id="" ng-model="spreadsheet">
                             </div>
                             <div class="col-md-4">
                                 <label for="approver">
-                                            Aprovador
-                                        </label>
-                                <input class="form-control" type="text" name="model" id="approver">
+                                    Aprovador
+                                </label>
+                                <select class="form-control" name="approver" ng-options="approver as approver.name for approver in fields.approvers track by approver.id" ng-model="approver">
+                                </select>
                             </div>
                             <div class="col-md-12">
                                 <input class="btn btn-primary float-right" type="submit" value="Cadastrar">
@@ -72,12 +85,27 @@
                         </div>
                     </form>
                 </div>
+                <hr />
             </div>
-            <hr />
-            <div class="project block">
-                <h2>
-                    Lista de Projetos
-                </h2>
+
+            <div class="col-12 project block">
+
+                <ul class="list-inline">
+                    <li class="list-inline-item">
+                        <h2 class="titulo-secao">
+                            Lista de Projetos
+                        </h2>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="btn btn-primary" href="#modal">
+                            Adicionar Projeto
+                        </a>
+                    </li>
+                    <li class="list-inline-item float-right">
+                        <input class="form-control" type="text" name="search" id="" placeholder="Pesquisa">
+                    </li>
+                </ul>
+
                 <table class="table table-stripped">
                     <thead>
                         <th>ID</th>
@@ -98,8 +126,8 @@
                             <td>{{project.approver}}</td>
                             <td>
                                 <ul class="list-inline">
-                                    <li class="list-inline-item"><a href="plan/{{project.id}}">Editar</a></li>
-                                    <li class="list-inline-item"><a href="plan/{{project.id}}">Excluir</a></li>
+                                    <li class="list-inline-item"><a href="plan/edit/{{project.id}}">Editar</a></li>
+                                    <li class="list-inline-item"><a href="plan/delete/{{project.id}}">Excluir</a></li>
                                 </ul>
                             </td>
                         </tr>
@@ -122,5 +150,3 @@
         </div>
     </div>
 </footer>
-
-</div>

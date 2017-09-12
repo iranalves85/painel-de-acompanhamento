@@ -1,3 +1,4 @@
 angular.module('gafp-panel', [
-    'panelApp'
+    'panelApp',
+    'ui.bootstrap'
 ]);
