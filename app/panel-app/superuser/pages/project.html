@@ -1,0 +1,112 @@
+<div class="container" ng-controller="project">
+
+    <div class="col-12 main">
+        <h1>Projetos</h1>
+        <div ng-class="modal" class="new-project modal">
+
+            <h2>
+                Novo Projeto
+            </h2>
+
+            <form name="add-project" method="post" ng-submit="addProject()">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="business">
+                                            Empresa
+                                        </label>
+                        <input type="text" name="company" ng-value="company.id" ng-model="company" uib-typeahead="company.company for company in companys | filter:$viewValue | limitTo:8" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="responsible">
+                                            Departamento
+                                        </label>
+                        <select class="form-control" name="responsible" ng-options="responsible as responsible.name for responsible in fields.responsibles track by responsible.id" ng-model="responsible">
+                                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="responsible">
+                                            Responsável
+                                        </label>
+                        <select class="form-control" name="responsible" ng-options="responsible as responsible.name for responsible in fields.responsibles track by responsible.id" ng-model="responsible">
+                                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="model">
+                                            Modelo
+                                        </label>
+                        <select class="form-control" name="model" ng-options="model as model.name for model in fields.models track by model.id" ng-model="model">
+                                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="spreadsheet">
+                                            Planilha de Usuários
+                                        </label>
+                        <input class="form-control btn-file" type="file" name="spreadsheet" id="" ng-model="spreadsheet">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="approver">
+                                            Aprovador
+                                        </label>
+                        <select class="form-control" name="approver" ng-options="approver as approver.name for approver in fields.approvers track by approver.id" ng-model="approver">
+                                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <input class="btn btn-primary float-right" type="submit" value="Cadastrar">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <hr />
+    </div>
+
+    <div class="col-12 project block">
+
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <h2 class="titulo-secao">
+                    Lista de Projetos
+                </h2>
+            </li>
+            <li class="list-inline-item">
+                <a class="btn btn-primary" ng-click="$modal.open()">
+                                    Adicionar Projeto
+                                </a>
+            </li>
+            <li class="list-inline-item float-right">
+                <input class="form-control" type="text" name="search" id="" placeholder="Pesquisa">
+            </li>
+        </ul>
+
+        <table class="table table-stripped">
+            <thead>
+                <th>ID</th>
+                <th>Empresa</th>
+                <th>Modelo</th>
+                <th>Planilha</th>
+                <th>Responsável</th>
+                <th>Aprovação</th>
+                <th>Ação</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="project in projects">
+                    <td>{{project.id}}</td>
+                    <td>{{project.company}}</td>
+                    <td>{{project.model}}</td>
+                    <td>{{project.spreadsheet}}</td>
+                    <td>{{project.responsible}}</td>
+                    <td>{{project.approver}}</td>
+                    <td>
+                        <ul class="list-inline">
+                            <li class="list-inline-item"><a href="plan/edit/{{project.id}}">Editar</a></li>
+                            <li class="list-inline-item"><a href="plan/delete/{{project.id}}">Excluir</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <!-- Lista de Projetos -->
+
+</div>
+<!-- container -->

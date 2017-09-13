@@ -1,15 +1,9 @@
 angular.
-module('panelApp').
-component('panelApp', {
-    // Note: The URL is relative to our `index.html` file
-    templateUrl: 'app/panel-app/superuser/superuser.template.html',
-    controller: ['$http', '$scope', '$httpParamSerializerJQLike',
-        function panelAppController($http, $scope, $httpParamSerializerJQLike) {
+module('panelApp', ['ngRoute']).
+controller('project', ['$http', '$scope', '$httpParamSerializerJQLike',
+        function projectController($http, $scope, $httpParamSerializerJQLike) {
 
-            //Nome do usuário
-            $scope.manager = {
-                user: user.name
-            };
+            console.log($scope.$modal);
 
             //Retorna os dados
             $http.get('projects/list').then(function(response) {
@@ -82,17 +76,6 @@ component('panelApp', {
             });
 
 
-            //Links de navegação
-            $scope.navs = [{
-                    link: "#dashboard",
-                    title: "Dashboard"
-                },
-                {
-                    link: "#dashboard",
-                    title: "Modelo"
-                }
-            ];
-
             $scope.addProject = function() {
                 $http({
                     url: 'projects',
@@ -116,7 +99,45 @@ component('panelApp', {
                     }
                 });
             };
+        }
+    ])
+    .controller('modelo', ['$http', '$scope', '$httpParamSerializerJQLike',
+        function modeloController($http, $scope, $httpParamSerializerJQLike) {
 
+        }
+    ]).
+config(function($routeProvider) {
+
+    $routeProvider.when('/', {
+        templateUrl: 'app/panel-app/superuser/pages/project.html',
+        controller: 'project'
+    });
+
+    $routeProvider.when('/modelo', {
+        templateUrl: 'app/panel-app/superuser/pages/model.html',
+        controller: 'modelo'
+    });
+}).
+component('panelApp', {
+    // Note: The URL is relative to our `index.html` file
+    templateUrl: 'app/panel-app/superuser/superuser.template.html',
+    controller: ['$http', '$scope', '$httpParamSerializerJQLike',
+        function panelAppController($http, $scope, $httpParamSerializerJQLike) {
+            //Nome do usuário
+            $scope.manager = {
+                user: user.name
+            };
+
+            //Links de navegação
+            $scope.navs = [{
+                    link: "#",
+                    title: "Dashboard"
+                },
+                {
+                    link: "painel#!/modelo",
+                    title: "Modelo"
+                }
+            ];
         }
     ]
 });

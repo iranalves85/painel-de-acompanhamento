@@ -18,9 +18,10 @@
     <script src="node_modules/angular/angular.js"></script>
     <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js"></script>
     <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+    <script src="node_modules/angular-route/angular-route.min.js"></script>
     <script src="app/panel-app/app.module.js"></script>
     <script src="app/panel-app/superuser/superuser.module.js"></script>
-    <script src="app/panel-app/superuser/superuser.component.js"></script>  
+    <script src="app/panel-app/superuser/superuser.component.js"></script> 
     
     <script>
         var user = {

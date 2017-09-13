@@ -1,3 +1,10 @@
+function disableDefaultLinkAction() {
+    menu = document.querySelector('div.menu').querySelectorAll('a.btn');
+    this.addEventListener('click', function(e) {
+        e.preventDeafult();
+    });
+}
+
 //Função padrão para requisições de data para campos
 function requestFields($http, $url) {
 

@@ -169,4 +169,18 @@ class Project extends Connect{
         endif;
     }
 
+    /* Adicionar vários usuários via arquivo */
+    function addProjectUser( \Gafp\User $user, $file ){
+
+        //Se usuário não estiver logado e permissão diferente de 'superuser'
+        if( ! $user->isLogged() && $user->type_user != 'superuser' ):
+            return "Access Not Authorized.";
+            die();
+        endif;
+
+        $fileData = get_file_contents($file);
+
+
+    }
+
 }

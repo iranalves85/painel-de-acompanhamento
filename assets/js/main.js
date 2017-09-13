@@ -1,3 +1,3 @@
-/*! painel-acompanhamento 2017-09-12 */
+/*! painel-acompanhamento 2017-09-13 */
 
-function requestFields(t,e){var n;return t.get(e).then(function(t){if(t.data.length<=0)return!1;n=t.data}),n}
+function disableDefaultLinkAction(){menu=document.querySelector("div.menu").querySelectorAll("a.btn"),this.addEventListener("click",function(e){e.preventDeafult()})}function requestFields(e,t){var n;return e.get(t).then(function(e){if(e.data.length<=0)return!1;n=e.data}),n}
