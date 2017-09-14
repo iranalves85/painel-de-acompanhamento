@@ -1,9 +1,7 @@
 angular.
 module('panelApp', ['ngRoute']).
-controller('project', ['$http', '$scope', '$httpParamSerializerJQLike',
-        function projectController($http, $scope, $httpParamSerializerJQLike) {
-
-            console.log($scope.$modal);
+controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibModal',
+        function projectController($http, $scope, $httpParamSerializerJQLike, $uibModal) {
 
             //Retorna os dados
             $http.get('projects/list').then(function(response) {
@@ -76,14 +74,14 @@ controller('project', ['$http', '$scope', '$httpParamSerializerJQLike',
             });
 
 
-            $scope.addProject = function() {
+            /*$scope.addProject = function() {
                 $http({
                     url: 'projects',
                     method: 'POST',
                     //Função formatar as$scopeiaveis de forma a funcionar na requisição
                     transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'multipart/form-data'
                     },
                     data: {
                         company: $scope.company,
@@ -98,12 +96,15 @@ controller('project', ['$http', '$scope', '$httpParamSerializerJQLike',
                         $scope.projects.unshift(response.data);
                     }
                 });
-            };
+            };*/
         }
     ])
     .controller('modelo', ['$http', '$scope', '$httpParamSerializerJQLike',
         function modeloController($http, $scope, $httpParamSerializerJQLike) {
-
+            $scope.models = [{
+                name: "Ética",
+                description: "Descrição do item"
+            }];
         }
     ]).
 config(function($routeProvider) {
@@ -138,6 +139,7 @@ component('panelApp', {
                     title: "Modelo"
                 }
             ];
+
         }
     ]
 });

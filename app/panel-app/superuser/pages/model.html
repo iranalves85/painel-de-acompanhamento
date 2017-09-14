@@ -9,25 +9,45 @@
 
             <form name="add-project" method="post" ng-submit="addProject()">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label for="business">
-                                Empresa
+                                Nome
                             </label>
-                        <input type="text" name="company" ng-value="company.id" ng-model="company" uib-typeahead="company.company for company in companys | filter:$viewValue | limitTo:8" class="form-control" />
+                        <input type="text" name="name" ng-value="model.name" ng-model="name" class="form-control" />
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label for="responsible">
-                                Departamento
+                                Descrição
                             </label>
-                        <select class="form-control" name="responsible" ng-options="responsible as responsible.name for responsible in fields.responsibles track by responsible.id" ng-model="responsible">
-                            </select>
+                        <input type="text" name="description" ng-value="model.description" ng-model="description" class="form-control" />
                     </div>
-                    <div class="col-md-4">
-                        <label for="responsible">
-                                Responsável
-                            </label>
-                        <select class="form-control" name="responsible" ng-options="responsible as responsible.name for responsible in fields.responsibles track by responsible.id" ng-model="responsible">
-                            </select>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <table class="table table-stripped">
+                                <thead>
+                                    <th>Nome</th>
+                                    <th>Descrição</th>
+                                </thead>
+                                <tr ng-repeat="model in models">
+                                    <td>{{model.name}}</td>
+                                    <td>{{model.description}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" name="description" ng-value="model.item.name" ng-model="item.name" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <div class="form-group row ">
+                                            <div class="col-8">
+                                                <input type="text" name="description" ng-value="model.item.description" ng-model="item.description" class="form-control" />
+                                            </div>
+
+                                            <button class="btn btn-primary">Adicionar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                     <div class="col-md-12">
                         <input class="btn btn-primary float-right" type="submit" value="Cadastrar">

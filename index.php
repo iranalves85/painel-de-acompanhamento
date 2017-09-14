@@ -2,6 +2,7 @@
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
+use Slim\Http\UploadedFile as UploadedFile;
 
 require 'vendor/autoload.php'; //carregando classes
 require 'gafp/autoload.php'; //carregando classes
@@ -22,6 +23,7 @@ $app = new \Slim\App($config);
 
 // Get container e dependências
 $container = $app->getContainer();
+$container['upload_directory'] = __DIR__ . '/uploads';
 
 // Registrando um componente (dependencia) de renderização de templates php
 $container['view'] = function ($container) {
@@ -135,7 +137,11 @@ $app->get('/projects/{type}', function (Request $request, Response $response){
 
 //URL para envio de credenciais para login
 $app->post('/projects', function (Request $request, Response $response, $args) {
+
+    $directory = $this->get('upload_directory'); //Diretório para upload
     
+    $upFiles = $request->getUploadedFiles(); //Carrega arquivo
+
     $data = $request->getParsedBody(); //Retorna os dados serializado em array
 
     $result = $this->project->addProject( $data, $this->user ); //Executa query
