@@ -1,4 +1,4 @@
-@import "../../../node_modules/bootstrap-4/node_modules/bootstrap/scss/bootstrap.scss";
+@import "../../../node_modules/bootstrap/scss/bootstrap.scss";
 body {
     background-color: #f9f9f9;
 }
@@ -33,11 +33,6 @@ body {
             }
         }
         .main {
-            .block {
-                border: 1px solid #ddd;
-                padding: 30px;
-                margin-bottom: 30px;
-            }
             h2 {
                 font-size: 1.3rem;
             }
@@ -51,4 +46,10 @@ body {
             color: #fff;
         }
     }
+}
+
+.block {
+    background-color: #fff;
+    padding: 15px;
+    margin: 15px auto;
 }

@@ -41,6 +41,11 @@ $container['project'] = function ($container) {
 };
 
 // Registrando um componente de conexão ao banco de dados
+$container['model'] = function ($container) {
+    return new \Gafp\Model(_PREFIX_); //usuários
+};
+
+// Registrando um componente de conexão ao banco de dados
 $container['plan'] = function ($container) {
     return new \Gafp\Plan(_PREFIX_); //usuários
 };
@@ -150,6 +155,43 @@ $app->post('/projects', function (Request $request, Response $response, $args) {
 
     return $response;
 });
+
+
+//Retorna lista de projectos
+$app->get('/model/{type}', function (Request $request, Response $response){
+    
+    $type = $request->getAttribute('type');
+
+    switch ($type) {
+        case 'list':
+            $response = $response->withJson($this->model->getListModels( $this->user ));
+            break; 
+        case 'fields':
+            $response = $response->withJson($this->project->getProjectFields( $this->user ));  
+            break;   
+        case 'companys':
+            $response = $response->withJson($this->project->getProjectCompanys( $this->user )); 
+            break;
+        default:
+            $response = $response->getBody()->write('Access Not Authorized.');
+            break;
+    }
+    return $response;
+
+})->setName('models');
+
+//URL para envio de credenciais para login
+$app->post('/model', function (Request $request, Response $response, $args) {
+    
+    $data = $request->getParsedBody(); //Retorna os dados serializado em array
+
+    $result = $this->model->addModel( $data, $this->user ); //Executa query
+    
+    $response->getBody()->write($result); //Retorna os dados
+
+    return $response;
+});
+    
 
 //Retorna lista de planos
 $app->get('/plans', function (Request $request, Response $response){

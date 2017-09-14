@@ -1,7 +1,9 @@
 <div class="container" ng-controller="project">
 
-    <div class="col-12 main">
-        <h1>Projetos</h1>
+    <h1>Projetos</h1>
+
+    <div class="col-12 block card main">
+
         <div class="new-project">
 
             <h2>
@@ -52,15 +54,15 @@
                                         </select>
                     </div>
                     <div class="col-md-12">
-                        <input class="btn btn-primary float-right" type="submit" value="Cadastrar">
+                        <input class="btn btn-success float-right" type="submit" value="Cadastrar">
                     </div>
                 </div>
             </form>
         </div>
-        <hr />
+
     </div>
 
-    <div class="col-12 project block">
+    <div class="col-12 project card block">
 
         <ul class="list-inline">
             <li class="list-inline-item">
@@ -74,12 +76,12 @@
                 </a>
             </li>
             <li class="list-inline-item float-right">
-                <input class="form-control" type="text" name="search" id="" placeholder="Pesquisa">
+                <input class="form-control" type="text" name="search" id="" placeholder="Pesquisa" ng-model="pesquisa">
             </li>
         </ul>
 
-        <table class="table table-stripped">
-            <thead>
+        <table class="table table-stripped table-bordered">
+            <thead class="thead-inverse">
                 <th>ID</th>
                 <th>Empresa</th>
                 <th>Modelo</th>
@@ -89,7 +91,7 @@
                 <th>Ação</th>
             </thead>
             <tbody>
-                <tr ng-repeat="project in projects">
+                <tr ng-repeat="project in projects | filter:pesquisa">
                     <td>{{project.id}}</td>
                     <td>{{project.company}}</td>
                     <td>{{project.model}}</td>

@@ -101,10 +101,65 @@ controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibMod
     ])
     .controller('modelo', ['$http', '$scope', '$httpParamSerializerJQLike',
         function modeloController($http, $scope, $httpParamSerializerJQLike) {
-            $scope.models = [{
-                name: "Ética",
-                description: "Descrição do item"
-            }];
+
+            $scope.item = Object();
+
+            //Adicionar item in REALTIME
+            $scope.modelItems = [];
+            $scope.addItem = function() {
+                $scope.modelItems.push({
+                    name: $scope.item.name,
+                    description: $scope.item.description
+                });
+                delete $scope.item['name'];
+                delete $scope.item['description'];
+            };
+
+            //Retorna os dados
+            $http.get('model/list').then(function(response) {
+
+                //Atribuindo valores a$scope de escopo do controller
+                if (response.data.length <= 0)
+                    return;
+
+                $scope.models = Array(); //Inicializa o array
+
+                //Atribuindo valores a$scope de escopo do controller
+                response.data.forEach(function(element, index) {
+
+                    $scope.models[index] = {
+                        id: element.id,
+                        model: element.model,
+                        description: element.description,
+                        topics: element.topics
+                    };
+
+                }, this);
+
+            });
+
+            $scope.addModel = function() {
+                $http({
+                    url: 'model',
+                    method: 'POST',
+                    //Função formatar as$scopeiaveis de forma a funcionar na requisição
+                    transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    data: {
+                        name: $scope.name,
+                        description: $scope.description,
+                        topics: $scope.modelItems
+                    }
+                }).then(function(response) {
+                    //Se resposta for true redireciona ao painel
+                    if (response.data > 0) {
+                        alert("Novo modelo criado");
+                        $scope.models.unshift(response.data);
+                    }
+                });
+            };
         }
     ]).
 config(function($routeProvider) {
