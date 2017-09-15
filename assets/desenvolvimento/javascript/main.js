@@ -24,13 +24,13 @@ function requestFields($http, $url) {
     return $data;
 }
 
-function generateCharts() {
+function generateCharts($id) {
 
     var randomScalingFactor = function() {
         return Math.round(Math.random() * 100);
     };
 
-    var ctx = document.getElementById("myChart").getContext("2d");
+    var ctx = document.getElementById($id).getContext("2d");
     var myChart = new Chart(ctx, {
         type: 'pie',
         data: {
@@ -38,25 +38,19 @@ function generateCharts() {
                 data: [
                     randomScalingFactor(),
                     randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
+                    randomScalingFactor()
                 ],
                 backgroundColor: [
-                    'rgba(255, 0, 0, 0.1)',
-                    'rgba(0, 255, 0, 0.1)',
-                    'rgba(0, 255, 50, 0.1)',
-                    'rgba(0, 0, 255, 0.1)',
-                    'rgba(50, 0, 255, 0.1)'
+                    'blue',
+                    'red',
+                    'green'
                 ],
                 label: 'Dataset 1'
             }],
             labels: [
-                "Red",
-                "Orange",
-                "Yellow",
-                "Green",
-                "Blue"
+                "Em Progresso",
+                "Em Atraso",
+                "Finaliza"
             ]
         },
         options: {

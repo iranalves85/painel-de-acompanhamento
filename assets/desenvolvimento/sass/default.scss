@@ -1,6 +1,9 @@
 @import "../../../node_modules/bootstrap/scss/bootstrap.scss";
 body {
     background-color: #f9f9f9;
+    position: absolute;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 .login-box {
@@ -20,8 +23,49 @@ body {
 }
 
 .panel {
+    $gptwBrand: #aa272f;
+    $roxo: #771174;
+    $yellow: #ECA012;
+    h1,
+    h2,
+    h3,
+    h4 {
+        color: #888;
+    }
+    h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    h2 {
+        font-size: 1.3rem;
+        font-weight: 400;
+    }
+    h3 {
+        font-size: 1.0rem;
+        font-weight: 400;
+    }
     .topo {
-        background-color: #ccc;
+        background-color: $gptwBrand;
+        padding: 10px 0px;
+        color: #fff;
+        .panel-name {
+            font-weight: 700;
+            margin-left: 15px;
+        }
+        ul {
+            margin: 0px;
+        }
+    }
+    &.panel-superuser {
+        .topo {
+            background-color: $roxo;
+        }
+    }
+    &.panel-human-resources {
+        .topo {
+            background-color: $yellow;
+        }
     }
     .content {
         .menu {
@@ -32,14 +76,17 @@ body {
                 margin-bottom: 0px;
             }
         }
-        .main {
-            h2 {
-                font-size: 1.3rem;
-            }
+        .container[ng-controller] {
+            padding: 40px 0px;
+        }
+        label {
+            color: #444;
+            font-weight: 700;
+            margin-bottom: 0px;
         }
     }
     .footer {
-        background-color: #D14B4B;
+        background-color: $gptwBrand;
         padding: 15px 0px;
         h6 {
             text-align: center;

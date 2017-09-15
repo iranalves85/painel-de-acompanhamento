@@ -4,13 +4,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-6">
-                    <img src="assets/images/gptw-logo-app.png" width="75px" alt="GPTW - Painel de Acompanhamento" />
+                    <img src="assets/images/gptw-logo-app.png" width="45px" alt="GPTW - Painel de Acompanhamento" /><strong class="panel-name">Painel de Acompanhamento</strong>
                 </div>
                 <div class="col-6">
-                    <ul class="list-inline">
-                        <li class="list-inline-item">Bem vindo, <b>{{manager.user}}</b></li>
-                        <li class="list-inline-item">|</li>
-                        <li class="list-inline-item"><a href="logout">Logout</a></li>
+                    <ul class="list-inline float-right">
+                        <li class="list-inline-item btn btn-sm">Bem vindo, <b>{{manager.user}}</b></li>
+                        <li class="list-inline-item"><a class="btn btn-sm btn-outline-light" href="logout">Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -21,11 +20,13 @@
 
         <div class="menu">
             <div class="container">
-                <ul class="list-inline">
-                    <li class="list-inline-item" ng-repeat="nav in navs">
-                        <a class="btn" href="{{nav.link}}">{{nav.title}}</a>
-                    </li>
-                </ul>
+                <nav class="navbar navbar-expand-lg navbar-text navbar-light">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item" ng-repeat="nav in navs">
+                            <a class="nav-link" href="{{nav.link}}">{{nav.title}}</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
         <!-- menu -->

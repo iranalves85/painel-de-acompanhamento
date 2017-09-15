@@ -109,8 +109,8 @@ controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibMod
                     name: $scope.item.name,
                     description: $scope.item.description
                 });
-                delete $scope.item.name;
-                delete $scope.item.description;
+                delete $scope.item;
+
             };
 
             //Retorna os dados
@@ -163,12 +163,12 @@ controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibMod
 config(function($routeProvider) {
 
     $routeProvider.when('/', {
-        templateUrl: 'app/panel-app/superuser/pages/project.html',
+        templateUrl: 'app/panel-app/superuser/pages/projeto.html',
         controller: 'project'
     });
 
     $routeProvider.when('/modelo', {
-        templateUrl: 'app/panel-app/superuser/pages/model.html',
+        templateUrl: 'app/panel-app/superuser/pages/modelo.html',
         controller: 'modelo'
     });
 }).

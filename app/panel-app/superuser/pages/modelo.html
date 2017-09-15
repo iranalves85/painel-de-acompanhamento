@@ -44,7 +44,7 @@
                                         <div class="col-10">
                                             <input type="text" ng-model="item.description" class="form-control" />
                                         </div>
-                                        <span class="btn btn-primary" ng-click="addItem()">Adicionar</span>
+                                        <span class="btn btn-secondary" ng-click="addItem()">Adicionar</span>
                                     </div>
                                 </td>
                             </tr>
@@ -68,7 +68,7 @@
                 </h2>
             </li>
             <li class="list-inline-item">
-                <a class="btn btn-primary" href="#modal">
+                <a class="btn btn-sm btn-primary" href="#modal">
                         Adicionar Modelo
                     </a>
             </li>
@@ -77,7 +77,7 @@
             </li>
         </ul>
 
-        <table class="table ttable-stripped table-bordered">
+        <table class="table table-striped table-bordered">
             <thead class="thead-inverse">
                 <th>ID</th>
                 <th>Nome</th>
@@ -91,8 +91,8 @@
                     <td>{{model.description}}</td>
                     <td>
                         <ul class="list-inline">
-                            <li class="list-inline-item"><a href="model/edit/{{model.id}}">Editar</a></li>
-                            <li class="list-inline-item"><a href="model/delete/{{model.id}}">Excluir</a></li>
+                            <li class="list-inline-item"><a class="btn btn-sm" href="model/edit/{{model.id}}">Editar</a></li>
+                            <li class="list-inline-item"><a class="btn btn-sm btn-danger" href="model/delete/{{model.id}}">Excluir</a></li>
                         </ul>
                     </td>
                 </tr>
