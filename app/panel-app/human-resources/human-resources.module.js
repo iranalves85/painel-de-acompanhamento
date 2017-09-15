@@ -1,1 +1,1 @@
-angular.module('humanResources', []);
+angular.module('panelApp', []);

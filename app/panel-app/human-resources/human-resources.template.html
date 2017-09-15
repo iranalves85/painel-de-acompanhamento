@@ -1,0 +1,49 @@
+<div class="app-main">
+
+    <header class="topo">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <img src="assets/images/gptw-logo-app.png" width="75px" alt="GPTW - Painel de Acompanhamento" />
+                </div>
+                <div class="col-6">
+                    <ul class="list-inline">
+                        <li class="list-inline-item">Bem vindo, <b>{{manager.user}}</b></li>
+                        <li class="list-inline-item">|</li>
+                        <li class="list-inline-item"><a href="logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="content">
+
+        <div class="menu">
+            <div class="container">
+                <ul class="list-inline">
+                    <li class="list-inline-item" ng-repeat="nav in navs">
+                        <a class="btn" href="{{nav.link}}">{{nav.title}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- menu -->
+
+        <div ng-view></div>
+        <!-- carrega templates -->
+
+    </section>
+
+</div>
+<!-- main -->
+
+<footer class="footer">
+    <div class="row">
+        <div class="col-12">
+            <h6>
+                GPTW - Painel de Acompanhamento
+            </h6>
+        </div>
+    </div>
+</footer>

@@ -4,6 +4,7 @@
     *  30/08/2017
     */
 ?>
+<!DOCTYPE html>
 <html ng-app="gafp-panel">
 
 <head>

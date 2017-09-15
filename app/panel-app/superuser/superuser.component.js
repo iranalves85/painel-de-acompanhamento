@@ -102,8 +102,6 @@ controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibMod
     .controller('modelo', ['$http', '$scope', '$httpParamSerializerJQLike',
         function modeloController($http, $scope, $httpParamSerializerJQLike) {
 
-            $scope.item = Object();
-
             //Adicionar item in REALTIME
             $scope.modelItems = [];
             $scope.addItem = function() {
@@ -111,8 +109,8 @@ controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibMod
                     name: $scope.item.name,
                     description: $scope.item.description
                 });
-                delete $scope.item['name'];
-                delete $scope.item['description'];
+                delete $scope.item.name;
+                delete $scope.item.description;
             };
 
             //Retorna os dados

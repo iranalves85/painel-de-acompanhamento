@@ -2,11 +2,7 @@
 
 namespace Gafp;
 
-interface ConnectInterface{
-    public function userLogin($data);  
-}
-
-class Connect implements ConnectInterface{
+class Connect{
 
     protected   $dsn;
     protected   $user;

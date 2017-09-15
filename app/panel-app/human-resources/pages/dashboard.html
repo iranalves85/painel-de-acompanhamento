@@ -1,0 +1,117 @@
+<div class="container" ng-controller="dashboard">
+
+    <h1>{{projeto.name}} / Dashboard</h1>
+
+    <div class="col-12 block card main">
+
+        <div class="graficos-de-status">
+            <ul class="list-inline row">
+                <li class="col list-inline-item">
+                    <h2 class="text-center">Status do Projeto</h2>
+                    <canvas id="myChart" width="250" height="250"></canvas>
+                </li>
+                <li class="col list-inline-item">
+                    <h2 class="text-center">Planos</h2>
+
+                </li>
+                <li class="col list-inline-item">
+                    <h2 class="text-center">Prazos de Aprovação</h2>
+
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="col-12 project card block">
+
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <h2 class="titulo-secao">
+                    Configuração de prazos de aprovação
+                </h2>
+            </li>
+            <li class="list-inline-item float-right">
+                <input class="form-control" type="text" name="search" id="" placeholder="Pesquisa" ng-model="prazo">
+            </li>
+        </ul>
+
+        <table class="table table-stripped table-bordered">
+            <thead class="thead-inverse">
+                <th>Plano</th>
+                <th>Descrição</th>
+                <th>Gestor</th>
+                <th>Prazo de Entrega</th>
+                <th>Status</th>
+                <th>Ação</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="plan in plans | filter:prazo">
+                    <td>{{plan.name}}</td>
+                    <td>{{plan.description}}</td>
+                    <td>{{plan.gestor}}</td>
+                    <td>{{plan.deadline}}</td>
+                    <td>
+                        <uib-progressbar class="progress-striped" value="55" type="{{ plan.status == 1 ? danger : warning}}">
+                        </uib-progressbar>
+                    </td>
+                    <td>
+                        <ul class="list-inline">
+                            <li class="list-inline-item"><a href="plan/edit/{{plan.id}}">Editar</a></li>
+                            <li class="list-inline-item"><a href="plan/delete/{{plan.id}}">Excluir</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <!-- Prazos de Aprovação -->
+
+    <div class="col-12 project card block">
+
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <h2 class="titulo-secao">
+                    Planos de Ações com Atraso
+                </h2>
+            </li>
+            <li class="list-inline-item float-right">
+                <input class="form-control" type="text" name="search" id="" placeholder="Pesquisa" ng-model="atraso">
+            </li>
+        </ul>
+
+        <table class="table table-stripped table-bordered">
+            <thead class="thead-inverse">
+                <th>Plano</th>
+                <th>Descrição</th>
+                <th>Gestor</th>
+                <th>Prazo de Entrega</th>
+                <th>Status</th>
+                <th>Ação</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="plan in plans | filter:atraso">
+                    <td>{{plan.name}}</td>
+                    <td>{{plan.description}}</td>
+                    <td>{{plan.gestor}}</td>
+                    <td>{{plan.deadline}}</td>
+                    <td>
+                        <uib-progressbar value="22" class="progress-striped active" type="{{ plan.status}}">
+                        </uib-progressbar>
+                    </td>
+                    <td>
+                        <ul class="list-inline">
+                            <li class="list-inline-item"><a href="plan/edit/{{plan.id}}">Editar</a></li>
+                            <li class="list-inline-item"><a href="plan/delete/{{plan.id}}">Excluir</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <!-- Prazos de Aprovação -->
+
+</div>
+<!-- container -->

@@ -35,19 +35,16 @@ $container['connect'] = function ($container) {
     return new \Gafp\Connect(_PREFIX_); //usuários
 };
 
-// Registrando um componente de conexão ao banco de dados
-$container['project'] = function ($container) {
-    return new \Gafp\Project(_PREFIX_); //usuários
+$container['project'] = function($container){
+    return new \Gafp\Project(_PREFIX_);
 };
 
-// Registrando um componente de conexão ao banco de dados
-$container['model'] = function ($container) {
-    return new \Gafp\Model(_PREFIX_); //usuários
+$container['model'] = function($container){
+    return new \Gafp\Model(_PREFIX_);
 };
 
-// Registrando um componente de conexão ao banco de dados
-$container['plan'] = function ($container) {
-    return new \Gafp\Plan(_PREFIX_); //usuários
+$container['plan'] = function($container){
+    return new \Gafp\Plan(_PREFIX_);
 };
 
 // Registrando um componente de conexão ao banco de dados
@@ -148,7 +145,7 @@ $app->post('/projects', function (Request $request, Response $response, $args) {
     $upFiles = $request->getUploadedFiles(); //Carrega arquivo
 
     $data = $request->getParsedBody(); //Retorna os dados serializado em array
-
+    
     $result = $this->project->addProject( $data, $this->user ); //Executa query
     
     $response->getBody()->write($result); //Retorna os dados
@@ -167,10 +164,10 @@ $app->get('/model/{type}', function (Request $request, Response $response){
             $response = $response->withJson($this->model->getListModels( $this->user ));
             break; 
         case 'fields':
-            $response = $response->withJson($this->project->getProjectFields( $this->user ));  
+            $response = $response->withJson($this->model->getProjectFields( $this->user ));  
             break;   
         case 'companys':
-            $response = $response->withJson($this->project->getProjectCompanys( $this->user )); 
+            $response = $response->withJson($this->model->getProjectCompanys( $this->user )); 
             break;
         default:
             $response = $response->getBody()->write('Access Not Authorized.');
@@ -194,12 +191,27 @@ $app->post('/model', function (Request $request, Response $response, $args) {
     
 
 //Retorna lista de planos
-$app->get('/plans', function (Request $request, Response $response){
+$app->get('/plan/{type}', function (Request $request, Response $response){
     
-    $response = $response->withJson($this->plan->getListPlans( $this->user )); //Recebe dados pelo user
+    $type = $request->getAttribute('type');
+
+    switch ($type) {
+        case 'list':
+            $response = $response->withJson($this->plan->getListPlans( $this->user ));
+            break; 
+        case 'fields':
+            $response = $response->withJson($this->model->getProjectFields( $this->user ));  
+            break;   
+        case 'companys':
+            $response = $response->withJson($this->model->getProjectCompanys( $this->user )); 
+            break;
+        default:
+            $response = $response->getBody()->write('Access Not Authorized.');
+            break;
+    }
     return $response;
 
-})->setName('list-plans');
+})->setName('plans');
 
 
 

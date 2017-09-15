@@ -134,44 +134,4 @@ class Model extends Connect{
 
     }
 
-    /* Retorna lista de projetos */
-    function getProjectCompanys( \Gafp\User $user){
-        
-        //Se usuário não estiver logado e permissão diferente de 'superuser'
-        if( ! $user->isLogged() && $user->type_user != 'superuser' ):
-            return "Access Not Authorized.";
-            die();
-        endif;
-
-        $table = $this->tb; //simplificando chamada
-
-        //Contruindo Query
-        $query = $this->pdo->select(array('id','company'))
-        ->from($table['company']);
-
-        //Executa query
-        $result = $query->execute()->fetchAll();   
-
-        if(! $result):
-            return false;
-        else:
-            //Retorna dados de usuário
-            return $result;            
-        endif;
-    }
-
-    /* Adicionar vários usuários via arquivo */
-    function addProjectUser( \Gafp\User $user, $file ){
-
-        //Se usuário não estiver logado e permissão diferente de 'superuser'
-        if( ! $user->isLogged() && $user->type_user != 'superuser' ):
-            return "Access Not Authorized.";
-            die();
-        endif;
-
-        $fileData = get_file_contents($file);
-
-
-    }
-
 }
