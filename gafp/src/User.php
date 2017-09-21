@@ -6,7 +6,7 @@ class User{
 
     public $connect;
     var $user;
-    var $type_user;
+    var $type;
 
     //Contrução da classe
     public function __construct( \Gafp\Connect $connect ){
@@ -50,7 +50,7 @@ class User{
         $cookieToken = password_hash( $userData[0]['email'], CRYPT_BLOWFISH);
         $_SESSION['user'] = $userData[0];
         $this->user = $userData;
-        $this->type_user = $userData[0]['type_user'];
+        $this->type = $userData[0]['type'];
 
         //Setando cookies
         $cookie = setcookie('gafp', $cookieToken, time()+172800, _PATH_ );

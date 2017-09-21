@@ -28,7 +28,8 @@ class Connect{
             'username'      => $user,
             'password'      => $pass,
             'charset'       => 'utf8',
-            'prefix'        => $prefix
+            'prefix'        => $prefix,
+            'debug_mode'    => true
         ]);
     }
 
@@ -42,7 +43,7 @@ class Connect{
         $result = $this->pdo->select('users', [
             '[>]type_user' => ['type_user' => 'id']
         ],[
-            'users.id', 'users.email', 'users.username', 'type_user.type_user'
+            'users.id', 'users.email', 'users.username', 'type_user.type'
         ],[
             'email'     =>  $login_data['email'],
             'password'  =>  $login_data['pass']

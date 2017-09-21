@@ -5,7 +5,7 @@ namespace Gafp;
 class Project extends Connect{
 
     /* Retorna lista de projetos */
-    function getListProjects( \Gafp\User $user){
+    function getListProjects( \Gafp\User $user, $order = ''){
         
         //Se usuário não estiver logado e permissão diferente de 'superuser'
         if( ! $user->isLogged() && $user->type_user != 'superuser' ):
@@ -14,15 +14,15 @@ class Project extends Connect{
         endif;
 
         $result = $this->pdo->select('project', [
-            '[>]company'    => ['company'   => 'id'],
-            '[>]model'      => ['model'     => 'id'],
-            '[>]user'       => ['users'     => 'id'],
-            '[>]approver'   => ['approver'  => 'id']            
+            '[>]company'    => ['company' => 'id'],
+            '[>]model'      => ['model' => 'id'],
+            '[>]users'      => ['user' => 'id'],
+            '[>]approver'   => ['approver'=> 'id']           
         ],[
-            'project.id', 'company.company', 'model.model', 'users.username', 'approver.approver'
+            'project.id', 'company.name(company)', 'model.name(model)', 'users.username(responsible)', 'approver.name(approver)'
         ],[
-            'status' =>  1,
-            'ORDER'  =>  ['date_created' => 'DESC']
+            'project.status' =>  1,
+            'ORDER'  =>  ['project.date_created' => 'DESC']
         ]);
 
         return $this->data_return($result);
@@ -62,12 +62,12 @@ class Project extends Connect{
         switch ($field) {
             case 'company':
                 $result = $this->pdo->select('company',[
-                    'id', 'company'
+                    'id', 'name'
                 ]);
                 break;
             case 'area':
                 $result = $this->pdo->select('area',[
-                    'id', 'area'
+                    'id', 'name'
                 ]);
                 break;
             case 'user':
@@ -77,12 +77,12 @@ class Project extends Connect{
                 break;
             case 'model':
                 $result = $this->pdo->select('model',[
-                    'id', 'model'
+                    'id', 'name'
                 ]);
                 break;
             case 'approver':
                 $result = $this->pdo->select('approver',[
-                    'id', 'approver'
+                    'id', 'name'
                 ]);
                 break;            
             default:

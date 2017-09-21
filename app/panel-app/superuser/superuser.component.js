@@ -1,7 +1,11 @@
 angular.
-module('panelApp', ['ngRoute']).
-controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibModal',
+module('panelApp', ['ngRoute'])
+    .controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibModal',
         function projectController($http, $scope, $httpParamSerializerJQLike, $uibModal) {
+
+            $http.submit = function() {
+                alert($scope);
+            };
 
             //Retorna os dados
             $http.get('projects/list').then(function(response) {
@@ -139,18 +143,18 @@ controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibMod
 config(function($routeProvider) {
 
     $routeProvider.when('/', {
-        templateUrl: 'app/panel-app/superuser/pages/projeto.html',
+        templateUrl: 'app/panel-app/superuser/pages/list-project.php',
         controller: 'project'
     });
 
     $routeProvider.when('/modelo', {
-        templateUrl: 'app/panel-app/superuser/pages/modelo.html',
+        templateUrl: 'app/panel-app/superuser/pages/list-model.php',
         controller: 'modelo'
     });
-}).
-component('panelApp', {
-    // Note: The URL is relative to our `index.html` file
-    templateUrl: 'app/panel-app/superuser/superuser.template.html',
+
+}).component('panelApp', {
+    // Note: The URL is relative to our `index.php` file
+    templateUrl: 'app/panel-app/superuser/superuser.template.php',
     controller: ['$http', '$scope', '$httpParamSerializerJQLike',
         function panelAppController($http, $scope, $httpParamSerializerJQLike) {
             //Nome do usuário

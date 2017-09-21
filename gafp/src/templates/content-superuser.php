@@ -22,7 +22,9 @@
     <script src="node_modules/angular-route/angular-route.min.js"></script>
     <script src="app/panel-app/app.module.js"></script>
     <script src="app/panel-app/superuser/superuser.module.js"></script>
-    <script src="app/panel-app/superuser/superuser.component.js"></script> 
+    <script src="app/panel-app/superuser/superuser.component.js"></script>
+    <script src="http://momentjs.com/downloads/moment.js" /></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js" ></script>
     
     <script>
         var user = {
