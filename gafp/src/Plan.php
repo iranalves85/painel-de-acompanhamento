@@ -15,7 +15,7 @@ class Plan extends Connect{
         $table = $this->tb; //simplificando chamada
         
         //Query para verificar existencia de usuário e senha
-        $query = $this->pdo->select()->from($table['action'])
+        $query = $this->pdo->select()->from($table['plan'])
         //->where('owner', '=', $user->user['id'])
         ->orderBy('date_created', 'DESC'); 
 

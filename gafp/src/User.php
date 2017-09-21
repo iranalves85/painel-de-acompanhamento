@@ -24,7 +24,7 @@ class User{
         $result = $this->connect->userLogin($data);
 
         //Retorna resultado
-        if(! $result):
+        if(!is_array($result) && count($result) <= 0):
             $this->logout();            
         else:
             //Registra dados da sessão
@@ -47,10 +47,10 @@ class User{
     protected function registerSession($userData){
         
         //Gerando hash
-        $cookieToken = password_hash( $userData['email'], CRYPT_BLOWFISH);
-        $_SESSION['user'] = $userData;
+        $cookieToken = password_hash( $userData[0]['email'], CRYPT_BLOWFISH);
+        $_SESSION['user'] = $userData[0];
         $this->user = $userData;
-        $this->type_user = $userData['type_user'];
+        $this->type_user = $userData[0]['type_user'];
 
         //Setando cookies
         $cookie = setcookie('gafp', $cookieToken, time()+172800, _PATH_ );

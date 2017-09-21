@@ -4,7 +4,8 @@ namespace Gafp;
 
 class Connect{
 
-    protected   $dsn;
+    protected   $server;
+    protected   $bd;
     protected   $user;
     protected   $pass;
     public      $pdo;
@@ -12,29 +13,23 @@ class Connect{
 
     function __construct($prefix = ''){
         
-        $dsn    = 'mysql:host=localhost;dbname=gptw-action-followup-panel;charset=utf8';
-        $user   = 'root';
-        $pass   = '';
+        $server     = 'localhost';
+        $bd         = 'gptw-action-followup-panel';
+        $user       = 'root';
+        $pass       = '';
 
-        $this->tb = array(
-            '5w2h'      => $prefix . '_5w2h',
-            'action'    => $prefix . '_action_plan',
-            'approver'  => $prefix . '_approver',
-            'area'      => $prefix . '_area',
-            'company'   => $prefix . '_company',
-            'deadline'  => $prefix . '_deadline',
-            'model'     => $prefix . '_model',
-            'project'   => $prefix . '_project',
-            'rule'      => $prefix . '_rule',
-            'ruleDefined' => $prefix . '_rule_define',
-            'status'    => $prefix . '_status',
-            'typeUser'  => $prefix . '_type_user',
-            'user'      => $prefix . '_users',
-        );
-
+        //setlocale();
         date_default_timezone_set ( 'America/Sao_Paulo' );
         
-        return $this->pdo = new \Slim\PDO\Database($dsn, $user, $pass);
+        return $this->pdo = new \Medoo\Medoo([
+            'database_type' => 'mysql',
+            'database_name' => $bd,
+            'server'        => $server,
+            'username'      => $user,
+            'password'      => $pass,
+            'charset'       => 'utf8',
+            'prefix'        => $prefix
+        ]);
     }
 
     /* Retorna dados de usuário */
@@ -42,18 +37,16 @@ class Connect{
 
         $login_data['email'] = filter_var($data['email'], FILTER_SANITIZE_EMAIL); //aplicando filtro de string
         $login_data['pass'] = filter_var($data['password'], FILTER_SANITIZE_STRING); //aplicando filtro de string
-        
-        $table = $this->tb; //simplificando chamada
 
-        $query = $this->pdo->select()
-        ->leftJoin($table['area'], $this->joinFormat($table['area'], 'id'), '=', $this->joinFormat($table['user'], 'area'))
-        ->leftJoin($table['company'], $this->joinFormat($table['company'], 'id'), '=', $this->joinFormat($table['user'], 'company'))
-        ->leftJoin($table['approver'], $this->joinFormat($table['approver'], 'id'), '=', $this->joinFormat($table['user'], 'approver'))
-        ->leftJoin($table['typeUser'], $this->joinFormat($table['typeUser'], 'id'), '=', $this->joinFormat($table['user'], 'type_user'))
-        ->from($table['user'])->where('email', '=', $login_data['email'])
-        ->where('password', '=', $login_data['pass']);
-        
-        $result = $query->execute()->fetch(); //Executa e armazena resultado
+        //Executa query e retorna resultado
+        $result = $this->pdo->select('users', [
+            '[>]type_user' => ['type_user' => 'id']
+        ],[
+            'users.id', 'users.email', 'users.username', 'type_user.type_user'
+        ],[
+            'email'     =>  $login_data['email'],
+            'password'  =>  $login_data['pass']
+        ]);       
 
         return $result;
     }
@@ -64,6 +57,17 @@ class Connect{
     //Função que controi de maneira rapida formatação de JOIN da classe PDOSlim 
     protected function joinFormat( $origin, $originCol){
         return (string) $origin . '.' . $originCol;
+    }
+
+    //Função que verifica var retorno de resultado de query no banco
+    function data_return($result){
+        
+        if(count($result) > 0 && !is_array($result)):
+            return false;
+        else:
+            //Retorna dados de usuário
+            return $result;            
+        endif;
     }
 
 }

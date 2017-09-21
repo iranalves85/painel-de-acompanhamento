@@ -26,7 +26,7 @@
     
     <script>
         var user = {
-            name: "<?php echo $_SESSION['user']['name']; ?>",
+            name: "<?php echo $_SESSION['user']['username']; ?>",
             email: "<?php echo $_SESSION['user']['email']; ?>",
         };
     </script>

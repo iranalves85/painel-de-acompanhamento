@@ -7,7 +7,7 @@ use Slim\Http\UploadedFile as UploadedFile;
 require 'vendor/autoload.php'; //carregando classes
 require 'gafp/autoload.php'; //carregando classes
 
-define('_PREFIX_', 'pa'); //Definindo prefixo de tabelas
+define('_PREFIX_', 'pa_'); //Definindo prefixo de tabelas
 define('_PATH_', 'http://localhost/desenvolvimento/painel-acompanhamento/'); //Definindo domínio da aplicação
 
 $config = [
@@ -114,8 +114,10 @@ $app->get('/painel', function (Request $request, Response $response, $args) {
 
 /* #Dentro do Painel */
 
+/*##### PROJETCS */
+
 //Retorna lista de projectos
-$app->get('/projects/{type}', function (Request $request, Response $response){
+$app->get('/projects/{type}[/{wichData}]', function (Request $request, Response $response){
     
     $type = $request->getAttribute('type');
 
@@ -124,11 +126,8 @@ $app->get('/projects/{type}', function (Request $request, Response $response){
             $response = $response->withJson($this->project->getListProjects( $this->user ));
             break; 
         case 'fields':
-            $response = $response->withJson($this->project->getProjectFields( $this->user ));  
-            break;   
-        case 'companys':
-            $response = $response->withJson($this->project->getProjectCompanys( $this->user )); 
-            break;
+            $wichData = $request->getAttribute('wichData');
+            $response = $response->withJson($this->project->getProjectFields( $this->user, $wichData ));break;           
         default:
             $response = $response->getBody()->write('Access Not Authorized.');
             break;
@@ -137,9 +136,10 @@ $app->get('/projects/{type}', function (Request $request, Response $response){
 
 })->setName('projects');
 
-//URL para envio de credenciais para login
+//Adicionar um novo projeto
 $app->post('/projects', function (Request $request, Response $response, $args) {
 
+    /* Configurar função que manipula arquivo de usuários para inserir no banco */
     $directory = $this->get('upload_directory'); //Diretório para upload
     
     $upFiles = $request->getUploadedFiles(); //Carrega arquivo
@@ -153,6 +153,25 @@ $app->post('/projects', function (Request $request, Response $response, $args) {
     return $response;
 });
 
+//Editar um projeto existente
+$app->get('/projects/edit/{id}', function (Request $request, Response $response) {
+    $id = $request->getAttribute('id');
+    $result = $this->project->getProject( $id, $this->user ); //Executa query        
+    $response->getBody()->write($result); //Retorna os dados
+
+    return $response;
+});
+
+//Deletar um projeto
+$app->get('/projects/delete/{id}', function (Request $request, Response $response) {
+    $id = $request->getAttribute('id');
+    $result = $this->project->deleteProject( $id, $this->user ); //Executa query        
+    $response->getBody()->write($result); //Retorna os dados
+
+    return $response;
+});
+
+/* ###### MODELS */
 
 //Retorna lista de projectos
 $app->get('/model/{type}', function (Request $request, Response $response){
@@ -164,10 +183,8 @@ $app->get('/model/{type}', function (Request $request, Response $response){
             $response = $response->withJson($this->model->getListModels( $this->user ));
             break; 
         case 'fields':
-            $response = $response->withJson($this->model->getProjectFields( $this->user ));  
-            break;   
-        case 'companys':
-            $response = $response->withJson($this->model->getProjectCompanys( $this->user )); 
+            $wichData = $request->getAttribute('wichData');
+            $response = $response->withJson($this->model->getProjectFields( $this->user, $wichData ));  
             break;
         default:
             $response = $response->getBody()->write('Access Not Authorized.');
@@ -189,6 +206,8 @@ $app->post('/model', function (Request $request, Response $response, $args) {
     return $response;
 });
     
+
+/*########## PLAN */
 
 //Retorna lista de planos
 $app->get('/plan/{type}', function (Request $request, Response $response){

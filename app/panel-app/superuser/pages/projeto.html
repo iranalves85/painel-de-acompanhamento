@@ -22,8 +22,9 @@
                         <label for="responsible">
                                             Departamento
                                         </label>
-                        <select class="form-control" name="responsible" ng-options="responsible as responsible.name for responsible in fields.responsibles track by responsible.id" ng-model="responsible">
-                                        </select>
+                        <select class="form-control" name="responsible" ng-model="area">
+                            <option ng-repeat="area in areas" value="{{area.id}}">{{area.area}}</option>
+                        </select>
                     </div>
                     <div class="col-md-4">
                         <label for="responsible">
@@ -98,8 +99,8 @@
                     <td>{{project.approver}}</td>
                     <td>
                         <ul class="list-inline">
-                            <li class="list-inline-item"><a class="btn btn-sm" href="project/edit/{{project.id}}">Editar</a></li>
-                            <li class="list-inline-item"><a class="btn btn-sm btn-danger" href="project/delete/{{project.id}}">Excluir</a></li>
+                            <li class="list-inline-item"><a class="btn btn-sm" href="projects/edit/{{project.id}}">Editar</a></li>
+                            <li class="list-inline-item"><a class="btn btn-sm btn-danger" href="projects/delete/{{project.id}}">Excluir</a></li>
                         </ul>
                     </td>
                 </tr>

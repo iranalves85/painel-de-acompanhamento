@@ -19,7 +19,6 @@ controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibMod
                         id: element.id,
                         company: element.company,
                         model: element.model,
-                        spreadsheet: element.spreadsheet,
                         responsible: element.responsible,
                         approver: element.approver
                     };
@@ -28,48 +27,25 @@ controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibMod
 
             });
 
-            //Retorna os dados
-            $http.get('projects/fields').then(function(response) {
-                //Atribuindo valores a$scope de escopo do controller
-                if (response.data.length <= 0)
-                    return;
-
-                $scope.fields = {
-                    models: Array(),
-                    approvers: Array(),
-                    responsibles: Array(),
-                }; //Inicializa o array                
-
-                //Atribuindo valores a$scope de escopo do controller
-                response.data.forEach(function(element, index) {
-
-                    $scope.fields.models[index] = {
-                        id: element.modelID,
-                        name: element.model
-                    };
-
-                    $scope.fields.approvers[index] = {
-                        id: element.approverID,
-                        name: element.approver
-                    };
-
-                    $scope.fields.responsibles[index] = {
-                        id: element.userID,
-                        name: element.name
-                    };
-
-                }, this);
-
-            });
-
             //Retorna os dados de empresas para alimentar 'select' autocomplete
-            $http.get('projects/companys').then(function(response) {
+            $http.get('projects/fields/company').then(function(response) {
                 //Atribuindo valores a$scope de escopo do controller
                 if (response.data.length <= 0) {
                     return false;
                 }
 
                 $scope.companys = response.data;
+
+            });
+
+            //Retorna os dados de empresas para alimentar 'select' autocomplete
+            $http.get('projects/fields/area').then(function(response) {
+                //Atribuindo valores a$scope de escopo do controller
+                if (response.data.length <= 0) {
+                    return false;
+                }
+
+                $scope.areas = response.data;
 
             });
 

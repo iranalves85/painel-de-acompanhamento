@@ -13,35 +13,24 @@ class Project extends Connect{
             die();
         endif;
 
-        $table = $this->tb; //simplificando chamada
+        $result = $this->pdo->select('project', [
+            '[>]company'    => ['company'   => 'id'],
+            '[>]model'      => ['model'     => 'id'],
+            '[>]user'       => ['users'     => 'id'],
+            '[>]approver'   => ['approver'  => 'id']            
+        ],[
+            'project.id', 'company.company', 'model.model', 'users.username', 'approver.approver'
+        ],[
+            'status' =>  1,
+            'ORDER'  =>  ['date_created' => 'DESC']
+        ]);
 
-        //Contruindo Query
-        $query = $this->pdo->select(array(
-            $this->joinFormat($table['project'], 'id'),
-            $this->joinFormat($table['project'], 'spreadsheet'),
-            $this->joinFormat($table['company'], 'company'),
-            $this->joinFormat($table['model'], 'model'),
-            $this->joinFormat($table['approver'], 'approver'),
-            $this->joinFormat($table['project'], 'responsible')))
-        ->leftJoin($table['company'], $this->joinFormat($table['company'], 'id'), '=', $this->joinFormat($table['project'], 'company'))
-        ->leftJoin($table['model'], $this->joinFormat($table['model'], 'id'), '=', $this->joinFormat($table['project'], 'model'))
-        ->leftJoin($table['approver'], $this->joinFormat($table['approver'], 'id'), '=', $this->joinFormat($table['project'], 'approver'))
-        ->leftJoin($table['user'], $this->joinFormat($table['user'], 'id'), '=', $this->joinFormat($table['project'], 'responsible'))
-        ->from($table['project'])->where('status', '=', 1)->orderBy($this->joinFormat($table['project'], 'date_created'), 'DESC');
+        return $this->data_return($result);
 
-        //Executa query
-        $result = $query->execute()->fetchAll();   
-
-        if(! $result):
-            return false;
-        else:
-            //Retorna dados de usuário
-            return $result;            
-        endif;
     }
 
     /* Retorna lista de projetos */
-    function getProject( \Gafp\User $user, $ID){
+    function getProject( $ID, \Gafp\User $user){
         
         //Se usuário não estiver logado e permissão diferente de 'superuser'
         if( ! $user->isLogged() && $user->type_user != 'superuser' ):
@@ -58,16 +47,11 @@ class Project extends Connect{
         //Executa query
         $result = $query->execute()->fetch();   
 
-        if(! $result):
-            return false;
-        else:
-            //Retorna dados de usuário
-            return $result;            
-        endif;
+        return $this->data_return($result);
     }
 
-    /* Retorna campos relativos a projetos */
-    function getProjectFields(\Gafp\User $user){
+    /* Retorna valores para campos relativos a projetos */
+    function getProjectFields(\Gafp\User $user, $field = ""){
 
         //Se usuário não estiver logado e permissão diferente de 'superuser'
         if( ! $user->isLogged() && $user->type_user != 'superuser' ):
@@ -75,35 +59,38 @@ class Project extends Connect{
             die();
         endif;
 
-        $table = $this->tb; //simplificando chamada
-        
-        //Contruindo Query
-        $query = $this->pdo->select(array(
-            $table['project'] . '.company as companyID',
-            $this->joinFormat($table['company'], 'company'),
-            $table['project'] . '.model as modelID',
-            $this->joinFormat($table['model'], 'model'),
-            $table['project'] . '.approver as approverID', 
-            $this->joinFormat($table['approver'], 'approver'),
-            $table['project'] . '.responsible as userID',
-            $this->joinFormat($table['user'], 'name'),
-            $table['project'] . '.approver as approverID',
-            $this->joinFormat($table['approver'], 'approver')))
-        ->leftJoin($table['company'], $this->joinFormat($table['company'], 'id'), '=', $this->joinFormat($table['project'], 'company'))
-        ->leftJoin($table['model'], $this->joinFormat($table['model'], 'id'), '=', $this->joinFormat($table['project'], 'model'))
-        ->leftJoin($table['approver'], $this->joinFormat($table['approver'], 'id'), '=', $this->joinFormat($table['project'], 'approver'))
-        ->leftJoin($table['user'], $this->joinFormat($table['user'], 'id'), '=', $this->joinFormat($table['project'], 'responsible'))
-        ->from($table['project']);
+        switch ($field) {
+            case 'company':
+                $result = $this->pdo->select('company',[
+                    'id', 'company'
+                ]);
+                break;
+            case 'area':
+                $result = $this->pdo->select('area',[
+                    'id', 'area'
+                ]);
+                break;
+            case 'user':
+                $result = $this->pdo->select('users',[
+                    'id', 'username'
+                ]);
+                break;
+            case 'model':
+                $result = $this->pdo->select('model',[
+                    'id', 'model'
+                ]);
+                break;
+            case 'approver':
+                $result = $this->pdo->select('approver',[
+                    'id', 'approver'
+                ]);
+                break;            
+            default:
+                $result = [];
+                break;
+        }
 
-        //Executa e retorna dados
-        $result = $query->execute()->fetchAll();
-
-        if(! $result):
-            return false;
-        else:
-            //Retorna dados de usuário
-            return $result;            
-        endif;
+        return $this->data_return($result);
 
     }
 
@@ -143,32 +130,6 @@ class Project extends Connect{
 
     }
 
-    /* Retorna lista de projetos */
-    function getProjectCompanys( \Gafp\User $user){
-        
-        //Se usuário não estiver logado e permissão diferente de 'superuser'
-        if( ! $user->isLogged() && $user->type_user != 'superuser' ):
-            return "Access Not Authorized.";
-            die();
-        endif;
-
-        $table = $this->tb; //simplificando chamada
-
-        //Contruindo Query
-        $query = $this->pdo->select(array('id','company'))
-        ->from($table['company']);
-
-        //Executa query
-        $result = $query->execute()->fetchAll();   
-
-        if(! $result):
-            return false;
-        else:
-            //Retorna dados de usuário
-            return $result;            
-        endif;
-    }
-
     /* Adicionar vários usuários via arquivo */
     function addProjectUser( \Gafp\User $user, $file ){
 
@@ -179,8 +140,27 @@ class Project extends Connect{
         endif;
 
         $fileData = get_file_contents($file);
+    }
 
+    /* Retorna lista de projetos */
+    function deleteProject( $ID, \Gafp\User $user){
+        
+        //Se usuário não estiver logado e permissão diferente de 'superuser'
+        if( ! $user->isLogged() && $user->type_user != 'superuser' ):
+            return "Access Not Authorized.";
+            die();
+        endif;
 
+        $table = $this->tb; //simplificando chamada
+
+        //Contruindo Query
+        $query = $this->pdo->delete()
+        ->from($table['project'])->where('id', '=', $ID);
+
+        //Executa query
+        $result = $query->execute()->fetch();   
+
+        return $this->data_return($result);
     }
 
 }
