@@ -2,25 +2,21 @@
 
 namespace Gafp;
 
-class Model extends Connect{
+class Model extends Project{
+
+
+    /*###### GET ###### */
 
     /* Retorna lista de projetos */
     function getListModels( \Gafp\User $user){
         
         //Se usuário não estiver logado e permissão diferente de 'superuser'
-        if( ! $user->isLogged() && $user->type_user != 'superuser' ):
-            return "Access Not Authorized.";
-            die();
-        endif;
-
-        $table = $this->tb; //simplificando chamada
+        $this->user_has_access($user);
 
         //Contruindo Query
-        $query = $this->pdo->select()
-        ->from($table['model'])->orderBy('id' , 'DESC');
-
-        //Executa query
-        $result = $query->execute()->fetchAll();   
+        $result = $this->pdo->select('model',
+        ['id', 'name', 'description'], 
+        ['ORDER' => ['id' => 'DESC'] ]);
 
         if(! $result):
             return false;
@@ -34,10 +30,7 @@ class Model extends Connect{
     function getModel( \Gafp\User $user, $ID){
         
         //Se usuário não estiver logado e permissão diferente de 'superuser'
-        if( ! $user->isLogged() && $user->type_user != 'superuser' ):
-            return "Access Not Authorized.";
-            die();
-        endif;
+        $this->user_has_access($user);
 
         $table = $this->tb; //simplificando chamada
 
@@ -60,10 +53,7 @@ class Model extends Connect{
     function getModelFields(\Gafp\User $user){
 
         //Se usuário não estiver logado e permissão diferente de 'superuser'
-        if( ! $user->isLogged() && $user->type_user != 'superuser' ):
-            return "Access Not Authorized.";
-            die();
-        endif;
+        $this->user_has_access($user);
 
         $table = $this->tb; //simplificando chamada
         
@@ -97,40 +87,32 @@ class Model extends Connect{
 
     }
 
-    /* Adiciona um novo projeto */
-    function addModel($data, \Gafp\User $user){
-        
-        //Se usuário não estiver logado e permissão diferente de 'superuser'
-        if( ! $user->isLogged() && $user->type_user != 'superuser' ):
-            return "Access Not Authorized.";
-            die();
-        endif;
+    /*###### ADD ###### */
 
-        $table = $this->tb; //simplificando chamada
+    /* Adiciona um novo modelo */
+    function addModel( \Gafp\User $user,  $data){
+        
+        $this->user_has_access($user); //Verifica permissão
 
         //Filtrando conteúdo das variaveis
-        $add_data[0] = filter_var($data['name'], FILTER_SANITIZE_STRING); //aplicando filtro de string
-        $add_data[1] = filter_var($data['description'], FILTER_SANITIZE_STRING); //aplicando filtro de string
-        $add_data[2] = filter_var($data['topics'], FILTER_SANITIZE_STRING); //aplicando filtro de string
+        $add_data['name'] = filter_var($data['name'], FILTER_SANITIZE_STRING); //aplicando filtro de string
+        $add_data['description'] = filter_var($data['description'], FILTER_SANITIZE_STRING); //aplicando filtro de string
 
-        $add_data[2] = serialize($add_data[2]); //Serializa para inserção no BD
-        
-        //Contruindo Query
-        $query = $this->pdo->insert(array('model','description','topics'))
-        ->into($table['model'])
-        ->values($add_data);
+        //Filtra e adiciona arrays em array
+        foreach ($data['topics'] as $key => $value) {
+            $add_data['topics'][$key] = [
+                'name' => filter_var( $value['name'], FILTER_SANITIZE_STRING ),
+                'description' => filter_var( $value['description'], FILTER_SANITIZE_STRING )
+            ];
+        }
 
-        //Executa e retorna dado
-        $result = $query->execute();
-        
-        //Retorno
-        if(! $result):
-            return false;
-        else:
-            //Retorna dados de usuário
-            $newItem = $this->getModel($user, $result);
-            return $newItem;            
-        endif;
+        $add_data['topics'] = serialize($add_data['topics']); //Serializa para inserção no BD
+
+        //Insere um novo valor
+        $result = $this->pdo->insert('model',[ $add_data ]);
+
+        //Verifica e Retorna dados       
+        return $this->data_return_insert($this->pdo->id());                
 
     }
 

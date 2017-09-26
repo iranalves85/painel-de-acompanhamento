@@ -20,8 +20,10 @@ component('loginApp', {
                     }
                 }).then(function(response) {
                     //Se resposta for true redireciona ao painel
-                    if (response.data == 1) {
+                    if (response.data == true) {
                         window.location.assign('painel');
+                    } else {
+                        $scope.loginError = response.data;
                     }
                 });
             }

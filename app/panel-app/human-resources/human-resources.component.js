@@ -1,6 +1,6 @@
-angular.
-module('panelApp', ['ngRoute'])
-    .controller('dashboard', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibModal',
+$app = angular.
+module('gafpApp', ['ngRoute', 'ui.bootstrap']);
+$app.controller('dashboard', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibModal',
         function dashboardController($http, $scope, $httpParamSerializerJQLike, $uibModal) {
 
             //Retorna os dados
@@ -138,26 +138,17 @@ module('panelApp', ['ngRoute'])
             controller: 'boasVindas'
         });
 
-        $routeProvider.when('/termo-de-funcionarios', {
-            templateUrl: 'app/panel-app/human-resources/pages/termo_de_funcionarios.html',
-            controller: 'termoFuncionarios'
-        });
-
         $routeProvider.when('/regras', {
             templateUrl: 'app/panel-app/human-resources/pages/regras.html',
             controller: 'regras'
         });
 
     }).
-component('panelApp', {
+component('humanResourcesApp', {
     // Note: The URL is relative to our `index.html` file
-    templateUrl: 'app/panel-app/human-resources/human-resources.template.html',
+    templateUrl: 'app/panel-app/human-resources/human-resources.template.php',
     controller: ['$http', '$scope', '$httpParamSerializerJQLike',
-        function panelAppController($http, $scope, $httpParamSerializerJQLike) {
-            //Nome do usuário
-            $scope.manager = {
-                user: user.name
-            };
+        function humanResourcesController($http, $scope, $httpParamSerializerJQLike) {
 
             //Links de navegação
             $scope.navs = [{
@@ -179,10 +170,6 @@ component('panelApp', {
                 {
                     link: "painel#!/boas-vindas",
                     title: "E-mails Boas-Vindas"
-                },
-                {
-                    link: "painel#!/termo-de-funcionarios",
-                    title: "Termo de Funcionários"
                 },
                 {
                     link: "painel#!/regras",

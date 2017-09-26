@@ -24,11 +24,8 @@
                     </div>
                 </form>
 
-                <div role="alert">
-                    <span class="error" ng-show="login.input.$error.required">
-                      Required!</span>
-                    <span class="error" ng-show="login.input.$error.email">
-                      Not valid email!</span>
+                <div role="alert alert-warning">
+                    {{loginError}}
                 </div>
 
             </div>

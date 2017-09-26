@@ -1,4 +1,6 @@
 angular.module('gafp-panel', [
-    'panelApp',
+    'superuserApp',
+    'managerApp',
+    'humanResourcesApp',
     'ui.bootstrap'
 ]);

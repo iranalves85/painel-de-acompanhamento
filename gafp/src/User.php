@@ -5,9 +5,8 @@ namespace Gafp;
 class User{
 
     public $connect;
-    var $user;
-    var $type;
-
+    public $user;
+    
     //Contrução da classe
     public function __construct( \Gafp\Connect $connect ){
         $this->initSession();
@@ -24,8 +23,9 @@ class User{
         $result = $this->connect->userLogin($data);
 
         //Retorna resultado
-        if(!is_array($result) && count($result) <= 0):
-            $this->logout();            
+        if(!$result):
+            $msgError = ['error' => "Usuário ou senha incorretos."];
+            return $msgError;            
         else:
             //Registra dados da sessão
             $session = $this->registerSession($result);            
@@ -33,6 +33,22 @@ class User{
             return $session;
         endif;
     }
+
+    /* Insere diversos usuários por vez em tabela */
+    function getUsers( $filter = array() ){
+        //Invoca função de retornar lista de usuários
+        return $this->connect->getListUsers($filter);      
+    } 
+
+    /* Insere diversos usuários por vez em tabela */
+    function insertMultipleUsers( array $userdata, $company = array() ){
+        //Retorna se não houver dados
+        if(count($userdata) <= 0 || empty($userdata['email']))
+            return 'Linha sem identificador "email", não sendo possível inserir ou adicionar';
+        
+        //Invoca função de incluir um novo usuário
+        return $this->connect->newUser(array_merge($userdata, $company));      
+    }   
     
     /*
         ##### Sessões de usuário
@@ -47,11 +63,10 @@ class User{
     protected function registerSession($userData){
         
         //Gerando hash
-        $cookieToken = password_hash( $userData[0]['email'], CRYPT_BLOWFISH);
-        $_SESSION['user'] = $userData[0];
-        $this->user = $userData;
-        $this->type = $userData[0]['type'];
-
+        $cookieToken = password_hash( $userData['email'], CRYPT_BLOWFISH);
+        $_SESSION['user'] = $userData; //adiciona dados do usuário na sessão
+        $this->user = $_SESSION['user'];
+        
         //Setando cookies
         $cookie = setcookie('gafp', $cookieToken, time()+172800, _PATH_ );
 
@@ -61,7 +76,6 @@ class User{
         else:
             return false;
         endif;
-
     }
 
     /*
