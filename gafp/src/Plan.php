@@ -98,8 +98,10 @@ class Plan extends Connect{
         if( $this->pdo->has('activity',['id' => $id]) )
         {
             $result = $this->pdo->get('activity',[
+                '[>]evidence' => ['activity' => 'id' ]
+            ],[
                 'name', 'description', 'what', 'because', 'place', 'moment', 
-                'who', 'how', 'cost', 'date_created',
+                'who', 'how', 'cost', 'date_created', 'evidence.name', 'evidence.description',
             ],[
                 'id' => $id
             ]);

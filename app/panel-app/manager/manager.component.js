@@ -251,31 +251,34 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             id = $routeParams.id; //pega id URL
 
             //Retorna dados da atividade
-            $http({
+            $activity = $http({
                 url: 'plan/activity/' + id,
                 method: "GET"
             }).then(function(response) {
                 //Atribuindo valores a$scope de escopo do controller
                 if (response.data != undefined) {
                     $scope.updateActivity.current = response.data;
+                    $activity.success = true;
                 }
             });
 
             //Retorna dados da atividade
-            $http({
-                url: 'plan/activity/evidence/' + id,
-                method: "GET"
-            }).then(function(response) {
-                //Atribuindo valores a$scope de escopo do controller
-                if (response.data.length > 0) {
+            /*if ($activity.success) {
+                $http({
+                    url: 'plan/activity/evidence/' + id,
+                    method: "GET"
+                }).then(function(response) {
+                    //Atribuindo valores a$scope de escopo do controller
+                    if (response.data.length > 0) {
 
-                    response.data.forEach(function(element, index) {
-                        $scope.updateActivity.current.evidence[index] = element;
-                    });
-
-                    console.log($scope.updateActivity.current.evidence);
-                }
-            });
+                        response.data.forEach(function(element, index) {
+                            $scope.updateActivity.current.evidence.push(element);
+                        });
+                    }
+                });
+            } else {
+                console.log($activity.success);
+            }*/
 
             //Insere um novo plano no banco
             /*$scope.updateActivity.submit = function() {

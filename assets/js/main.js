@@ -1,3 +1,3 @@
-/*! painel-acompanhamento 2017-09-15 */
+/*! painel-acompanhamento 2017-09-26 */
 
 function disableDefaultLinkAction(){menu=document.querySelector("div.menu").querySelectorAll("a.btn"),this.addEventListener("click",function(e){e.preventDeafult()})}function requestFields(e,t){var n;return e.get(t).then(function(e){if(e.data.length<=0)return!1;n=e.data}),n}function generateCharts(e){var t=function(){return Math.round(100*Math.random())},n=document.getElementById(e).getContext("2d");new Chart(n,{type:"pie",data:{datasets:[{data:[t(),t(),t()],backgroundColor:["blue","red","green"],label:"Dataset 1"}],labels:["Em Progresso","Em Atraso","Finaliza"]},options:{responsive:!0}})}

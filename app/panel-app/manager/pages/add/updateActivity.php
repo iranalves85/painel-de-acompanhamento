@@ -54,11 +54,11 @@
                                 <select class="form-control"></select>
                             </td>
                             <td>
-                                <input type="text" ng-model="" class="form-control" />
+                                <input type="text" class="form-control" />
                             </td>
                             <td>
                                 <div class="form-inline">
-                                    <input type="text" ng-model="" class="col-9 form-control" />
+                                    <input type="text" class="col-9 form-control" />
                                     <span class="btn btn-secondary" ng-click="">Adicionar</span>
                                 </div>
                             </td>
