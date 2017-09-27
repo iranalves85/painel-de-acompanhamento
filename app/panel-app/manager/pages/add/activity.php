@@ -1,9 +1,13 @@
 <div ng-controller="addActivity">
+<form name="addActivity" method="POST" ng-submit="submit()">
     <div class="modal-header">
-        <h1 class="modal-title" id="modal-title">Adicionar Atividade</h1>
+        <h1 class="modal-title" id="modal-title">Atualizar Atividade</h1>
+    </div>
+    <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')">
+        {{alert.msg}}
     </div>
     <div class="modal-body" id="modal-body">
-        <form name="add-plan" method="POST" ng-submit="addActivity.submit()">
+        
             <div class="row">
 
                 <div class="col-md-12 card block">
@@ -12,13 +16,13 @@
                             <label for="business">
                                 Nome da Atividade
                             </label>
-                            <input type="text" name="name" ng-model="addActivity.name" class="form-control" />
+                            <input type="text" name="addActivity.name" ng-model="addActivity.name" class="form-control" ng-required="required" />
                         </div>
                         <div class="col-md-6">
                             <label for="responsible">
                                 Descrição
                             </label>
-                            <input type="text" name="description" ng-model="addActivity.description" class="form-control" />
+                            <input type="text" name="addActivity.description" ng-model="addActivity.description" class="form-control" ng-required="required" />
                         </div>
                     </div>                    
                 </div>
@@ -29,35 +33,27 @@
 
                     <table class="table table-stripped table-bordered">
                         <thead class="thead-inverse">
-                            <th>Nome</th>
-                            <th>Descrição</th>
-                            <th>Arquivo</th>
+                            <th>Modelo</th>
+                            <th>Ação Realizada</th>                            
                         </thead>
-                        <tr ng-repeat="modelItem in addModel.modelItems">
+                        <tr ng-repeat="evidence in addActivity.evidence">
                             <td>
-                                <select class="form-control">
-                                    <option>opção 1</option>
-                                    <option>opção 1</option>
+                                <select name="addActivity.form.evidence[][topic]" class="form-control" ng-model="evidence.topic" ng-options="model as model.name for model in addActivity.model.topics track by model.name" >
                                 </select>
+                                <span class="badge badge-info">{{addActivity.model.topics[0].description}}</span>
                             </td>
                             <td>
-                                <input type="text" value="{{modelItem.description}}" 
-                                name="evidence[{{$index + 1}}][description]" class="form-control" /></td>
-                            <td>
-                                <input type="text" value="{{modelItem.file}}" 
-                                name="evidence[{{$index + 1}}][description]" class="form-control" /></td>
+                                <input name="addActivity.form.evidence[][action]" type="text" value="" class="form-control" ng-model="evidence.action" />
+                            </td>
                         </tr>
                         <tr>
                             <td>
-                                <select class="form-control" ng-options="option as addActivity.item.model in addActivity.item.models track by addActivity.item.model.id"></select>
-                            </td>
-                            <td>
-                                <input type="text" ng-model="addActivity.item.description" class="form-control" />
+                                <select class="form-control" ng-options="model as model.name for model in addActivity.model track by model.name" ng-model="addActivity.addModel.item.topics"></select>
                             </td>
                             <td>
                                 <div class="form-inline">
-                                    <input type="file" ng-model="addActivity.item.file" class="form-control col-9 mr-2" />
-                                    <span class="btn btn-secondary" ng-click="addActivity.evidence.addItem()">Adicionar</span>
+                                    <input ng-model="addActivity.addModel.item.action" type="text" class="col-10 mr-2 form-control" />
+                                    <button type="button" class="btn btn-secondary" ng-click="addItem()">Adicionar</button>
                                 </div>
                             </td>
                         </tr>
@@ -77,48 +73,51 @@
                             <th>Como</th>
                             <th>Custo</th>
                         </thead>
-                        <tr ng-repeat="modelItem in addModel.modelItems">
-                            <td><input type="text" value="{{modelItem.name}}" name="evidence[{{$index + 1}}][name]" class="form-control" /></td>
-                            <td><input type="text" value="{{modelItem.description}}" name="evidence[{{$index + 1}}][description]" class="form-control" /></td>
-                            <td><input type="text" value="{{modelItem.file}}" name="evidence[{{$index + 1}}][description]" class="form-control" /></td>
-                            <td><input type="text" value="{{modelItem.name}}" name="evidence[{{$index + 1}}][name]" class="form-control" /></td>
-                            <td><input type="text" value="{{modelItem.description}}" name="evidence[{{$index + 1}}][description]" class="form-control" /></td>
-                            <td><input type="text" value="{{modelItem.file}}" name="evidence[{{$index + 1}}][description]" class="form-control" /></td>
-                            <td><input type="text" value="{{modelItem.name}}" name="evidence[{{$index + 1}}][name]" class="form-control" /></td>                            
-                        </tr>
                         <tr>
                             <td>
-                                <input type="text" ng-model="addActivity.item.name" class="form-control" />
+                                <input name="addActivity.form.what" type="text" ng-model="addActivity.what" class="form-control" ng-required="required"/>
                             </td>
                             <td>
-                                <input type="text" ng-model="addActivity.item.description" class="form-control" />
+                                <input name="addActivity.form.because" type="text" ng-model="addActivity.because" class="form-control" ng-required="required" />
                             </td>
                             <td>
-                                <input type="text" ng-model="addActivity.item.description" class="form-control" />
+                                <input name="addActivity.form.place" type="text" ng-model="addActivity.place" class="form-control" ng-required="required" />
                             </td>
                             <td>
-                                <input type="text" ng-model="addActivity.item.description" class="form-control" />
+                                <?php
+                                    $date = date('Y-m-d', time() );
+                                ?>
+                                <input name="addActivity.form.moment" min="<?php echo $date; ?>" type="date" ng-model="addActivity.moment" class="form-control" ng-value="{{addActivity.moment | date:'Y-m-d'}}" />
                             </td>
                             <td>
-                                <input type="text" ng-model="addActivity.item.description" class="form-control" />
+                                <input name="addActivity.form.who" type="text" ng-model="addActivity.who" class="form-control"  ng-required="required"/>
                             </td>
                             <td>
-                                <input type="text" ng-model="addActivity.item.description" class="form-control" />
+                                <input name="addActivity.form.how" type="text" ng-model="addActivity.how" class="form-control" ng-required="required" />
                             </td>
                             <td>
-                                <input type="text" ng-model="addActivity.item.description" class="form-control" />
+                                <input name="addActivity.form.cost" type="text" ng-model="addActivity.cost" class="form-control" ng-required="required" />
                             </td>                            
                         </tr>
                     </table>
-                    <span class="btn btn-secondary" ng-click="addActivity.addItem()">Adicionar</span>
                 </div>               
             </div>
-        </form>
+        
     </div>
     <div class="modal-footer">
-        <div class="col-md-12">
-            <input ng-disabled="add-project.$invalid" class="btn btn-success float-right" type="submit" value="Cadastrar">
-        </div>
-        <button class="btn btn-warning" type="button" ng-click="addActivity.cancel()">Cancel</button>
+
+        <ul class="list-inline float-right">
+            <li class="list-inline-item">
+                <button class="btn btn-light" type="button" ng-click="addActivity.cancel()">Cancel</button>
+            </li>
+            <li class="list-inline-item">
+                <input class="btn btn-primary" type="submit" value="Finalizar">
+            </li>
+            <li class="list-inline-item">
+                <input class="btn btn-success" type="submit" value="Gravar">
+            </li>
+        </ul>
+        
     </div>
+</form>
 </div>

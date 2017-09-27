@@ -5,6 +5,20 @@ namespace Gafp;
 class Plan extends Connect{
 
     /* Retorna lista de planos */
+    function getPlan(\Gafp\User $user, $id){
+        
+        $this->user_has_access($user);
+
+        $result = $this->pdo->get('plan',[
+            'name', 'description', 'owner', 'cost', 'goal', 'deadline'
+        ],[
+            'plan.id' => $id
+        ]);
+
+        return $result;
+    }
+
+    /* Retorna lista de planos */
     function getListPlans(\Gafp\User $user, $data){
         
         $this->user_has_access($user);
@@ -97,13 +111,17 @@ class Plan extends Connect{
         //Verifica se dado já existe e define função a exec
         if( $this->pdo->has('activity',['id' => $id]) )
         {
-            $result = $this->pdo->get('activity',[
-                '[>]evidence' => ['activity' => 'id' ]
+            $result = $this->pdo->select('activity',[
+                '[<]evidence'   => ['id' => 'activity' ],
+                '[<]project'    => ['project' => 'id' ],
+                '[>]model'      => ['project.model' => 'id' ]
             ],[
-                'name', 'description', 'what', 'because', 'place', 'moment', 
-                'who', 'how', 'cost', 'date_created', 'evidence.name', 'evidence.description',
+                'activity' => ['activity.name', 'activity.description', 'activity.what', 'activity.because', 'activity.place', 'activity.moment', 'activity.who', 'activity.how', 'activity.cost', 'activity.date_created'], 
+                'evidence' => ['evidence.id','evidence.topic', 'evidence.action'],
+                'project' => ['project.id','project.model'],
+                'model' => ['model.id','model.topics[Object]']
             ],[
-                'id' => $id
+                'activity.id' => $id
             ]);
     
             return $result; //retorna (array) 'id 
@@ -178,9 +196,40 @@ class Plan extends Connect{
 
     }
 
+    // UPDATE  ############################################
+
+    /* Atualiza um plano */
+    function updatePlan( \Gafp\User $user, $id, $data){
+        
+        $this->user_has_access($user);
+
+        //Insere os dados obtidos anteriormente
+        $result = $this->pdo->update('plan', [ 
+            'name'          => $data['name'],
+            'description'   => $data['description'],
+            'owner'         => $data['owner'],
+            'cost'          => $data['cost'],
+            'goal'          => $data['goal'],
+            'deadline'      => $this->data_converter_to_insert($data['deadline'])
+        ],['id' => $id]);
+
+        //Retorna resultado
+        if(isset($result) && !is_null($result)){
+            return array(
+            'type' => 'success', 
+            'msg' => 'Plano atualizado com sucesso!');
+        }
+        else{
+            return array(
+            'type' => 'danger', 
+            'msg' => 'Não foi possível atualizar o plano, tente novamente.');
+        }
+
+    }
+
     // DELETE #############################################
 
-    /* Retorna lista de projetos */
+    /* Deletar um plano */
     function deletePlan( \Gafp\User $user,  $ID){
         
         $this->user_has_access($user); //Verifica permissão
@@ -194,6 +243,23 @@ class Plan extends Connect{
         }
         else{
             return array('type' => 'danger', 'msg' => 'Não foi possível deletar o plano. Tente novamente.');
+        }
+    }
+
+    /* Deletar uma atividade */
+    function deleteActivityPlan( \Gafp\User $user,  $ID){
+        
+        $this->user_has_access($user); //Verifica permissão
+
+        //Contruindo Query
+        $result = $this->pdo->delete('activity',['id' => $ID ]);
+        
+        //Retorna resultado
+        if(is_object($result) && $result){
+            return array('type' => 'success', 'msg' => 'Atividade deletada.');
+        }
+        else{
+            return array('type' => 'danger', 'msg' => 'Não foi possível deletar a atividade. Tente novamente.');
         }
     }
 

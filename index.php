@@ -245,10 +245,37 @@ $app->post('/model', function (Request $request, Response $response) {
 
 /*########## PLAN ###############*/
 
-//Retorna lista de planos
-$app->post('/plan/fields[/{wichData}]', function (Request $request, Response $response){
+//Retorna uma plan especifica
+$app->get('/plan/{id}', function (Request $request, Response $response, $args){     
+    //Variaveis
+    $id = $request->getAttribute('id');
+    return $response->withJson($this->plan->getPlan( $this->user, $id ));
+
+})->setName('Activity Plans');
+
+//Adiciona lista de planos
+$app->post('/plan/{id}', function (Request $request, Response $response, $args){  
     
-    $type = $request->getAttribute('type'); //pega variavel
+    $id = $request->getAttribute('id');
+    $data = $request->getParsedBody();
+    if(isset($id) && $id>0){ //update plan
+        return $response->withJson($this->plan->updatePlan( $this->user, $id, $data ));
+    }
+    else{ //add plan
+        return $response->withJson($this->plan->addPlan( $this->user, $data ));
+    }
+})->setName('Update or Add Plans');
+
+//Deleta plano
+$app->post('/plan/delete/', function (Request $request, Response $response, $args){    
+    $data = $request->getParsedBody();
+    return $response->withJson($this->plan->deletePlan( $this->user, $data ));
+
+})->setName('Delete Plans');
+
+//Retorna lista de planos
+$app->post('/plan/fields/{wichData}', function (Request $request, Response $response){
+    
     $data['field'] = $request->getAttribute('wichData'); //retorna field
     $data['where'] = $request->getParsedBody(); //Junta arrays
     return $response->withJson($this->plan->getPlanFields( $this->user, $data ));
@@ -256,7 +283,7 @@ $app->post('/plan/fields[/{wichData}]', function (Request $request, Response $re
 })->setName('Plans Fields');
 
 //Retorna lista de planos
-$app->post('/plan/list[/{leader}]', function (Request $request, Response $response, $args){
+$app->post('/plan/list/[/{leader}]', function (Request $request, Response $response, $args){
     
     //Variaveis
     $leader = $request->getAttribute('leader');
@@ -275,12 +302,8 @@ $app->post('/plan/list[/{leader}]', function (Request $request, Response $respon
 
 })->setName('Plans Miscelanias');
 
-//Adiciona lista de planos
-$app->post('/plan', function (Request $request, Response $response, $args){    
-    $data = $request->getParsedBody();
-    return $response->withJson($this->plan->addPlan( $this->user, $data ));
 
-})->setName('Plans');
+/*########## ATIVIDADE ###############*/
 
 //Retorna uma atividade especifica
 $app->get('/plan/activity/{id}', function (Request $request, Response $response, $args){     
@@ -306,10 +329,23 @@ $app->get('/plan/activity/evidence/{id}', function (Request $request, Response $
 
 })->setName('Activity Plans');
 
+//Retorna uma atividade especifica
+$app->post('/plan/activity/{id}', function (Request $request, Response $response, $args){     
+    //Variaveis
+    $id = $request->getAttribute('id');
+    if(isset($id) && !is_null($id)){
+        return $response->withJson($this->plan->updateActivityPlan( $this->user, $id ));
+    }
+    else{
+        return $response->withJson($this->plan->addActivityPlan( $this->user ));
+    }   
+
+})->setName('Update Activity Plans');
+
 //Deleta plano
-$app->post('/plan/delete', function (Request $request, Response $response, $args){    
-    $data = $request->getParsedBody();
-    return $response->withJson($this->plan->deletePlan( $this->user, $data ));
+$app->post('/plan/activity/delete/{id}', function (Request $request, Response $response, $args){    
+    $id = $request->getAttribute('id');
+    return $response->withJson($this->plan->deleteActivityPlan( $this->user, $id ));
 
 })->setName('Delete Plans');
 

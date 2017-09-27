@@ -22,7 +22,7 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
 
             //Retorna lista de planos baseado no id do user
             $http({
-                url: 'plan/list',
+                url: 'plan/list/',
                 method: "POST",
                 transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
                 headers: {
@@ -56,7 +56,7 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             $scope.delete = function(id) {
                 //Retorna lista de planos baseado no id do user
                 $http({
-                    url: 'plan/delete',
+                    url: 'plan/delete/',
                     method: "POST",
                     transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
                     headers: {
@@ -74,7 +74,7 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             $scope.reorderPlanList = function() {
                 //Retorna lista de planos baseado no id do user
                 $http({
-                    url: 'plan/list',
+                    url: 'plan/list/',
                     method: "POST",
                     transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -124,7 +124,7 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             $scope.addPlan.submit = function() {
                 //Retorna lista de planos baseado no id do user
                 $http({
-                    url: 'plan',
+                    url: 'plan/',
                     method: "POST",
                     transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -141,6 +141,67 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                     $scope.alerts.push(response.data);
                 });
             };
+
+            //Retorna lista de planos baseado no id do user
+            $http({
+                url: 'plan/fields/users',
+                method: "POST",
+                transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                data: { company: user.company }
+            }).then(function(response) {
+                //Atribuindo valores a$scope de escopo do controller
+                if (response.data.length > 0) {
+                    //Retorna lista de users
+                    $scope.plan.users = response.data;
+                }
+            });
+        }
+    ])
+    .controller('updatePlan', ['$http', '$scope', '$httpParamSerializerJQLike', '$routeParams',
+        function updatePlanController($http, $scope, $httpParamSerializerJQLike, $routeParams) {
+
+            $scope.plan = Array(); //Inicializa o array
+            $scope.updatePlan = Array();
+            $scope.required = true;
+            $scope.alerts = Array();
+            var id = $routeParams.id; //Retorna parametros da url
+
+            //Insere um novo plano no banco
+            $scope.submit = function() {
+                //Retorna lista de planos baseado no id do user
+                $http({
+                    url: 'plan/' + id,
+                    method: "POST",
+                    transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    data: {
+                        name: $scope.updatePlan.name,
+                        description: $scope.updatePlan.description,
+                        owner: $scope.updatePlan.owner,
+                        cost: $scope.updatePlan.cost,
+                        goal: $scope.updatePlan.goal,
+                        deadline: $scope.updatePlan.deadline
+                    }
+                }).then(function(response) {
+                    //Atribuindo valores a$scope de escopo do controller
+                    $scope.alerts.push(response.data);
+                });
+            };
+
+            //Retorna lista de planos baseado no id do user
+            $http({
+                url: 'plan/' + id,
+                method: "GET"
+            }).then(function(response) {
+                //Atribuindo valores a$scope de escopo do controller
+                if (response.data != undefined) {
+                    //Retorna lista de users
+                    $scope.updatePlan = response.data;
+                    $scope.updatePlan.deadline = new Date(response.data.deadline);
+                    console.log($scope.updatePlan);
+                }
+            });
 
             //Retorna lista de planos baseado no id do user
             $http({
@@ -189,7 +250,7 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             $scope.delete = function(id) {
                 //Retorna lista de planos baseado no id do user
                 $http({
-                    url: 'plan/delete',
+                    url: 'plan/activity/delete/' + id,
                     method: "POST",
                     transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
                     headers: {
@@ -207,7 +268,7 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             $scope.reorderActivityList = function() {
                 //Retorna lista de planos baseado no id do user
                 $http({
-                    url: 'plan/list',
+                    url: 'plan/list/',
                     method: "POST",
                     transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -240,93 +301,128 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
 
         }
     ])
-    .controller('updateActivity', ['$http', '$scope', '$httpParamSerializerJQLike', '$routeParams',
-        function updateActivityController($http, $scope, $httpParamSerializerJQLike, $routeParams) {
+    .controller('addActivity', ['$http', '$scope', '$httpParamSerializerJQLike', '$routeParams',
+        function addActivityController($http, $scope, $httpParamSerializerJQLike, $routeParams) {
 
-            $scope.updateActivity = Array();
-            $scope.updateActivity.current = Array(); //Inicializa o array
+            $scope.addActivity = {};
             $scope.required = true;
             $scope.alerts = Array();
 
             id = $routeParams.id; //pega id URL
 
+            //Adicionar item in REALTIME
+            $scope.addItem = function() {
+                $scope.addActivity.evidence.push({
+                    topic: $scope.addActivity.addModel.item.topics,
+                    action: $scope.addActivity.addModel.item.action
+                });
+                delete $scope.addActivity.addModel.item;
+            };
+
             //Retorna dados da atividade
-            $activity = $http({
+            $get = $http({
                 url: 'plan/activity/' + id,
                 method: "GET"
             }).then(function(response) {
                 //Atribuindo valores a$scope de escopo do controller
                 if (response.data != undefined) {
-                    $scope.updateActivity.current = response.data;
-                    $activity.success = true;
+
+                    //Adiciona dados de atividade e modelo
+                    $scope.addActivity = response.data[0].activity;
+                    $scope.addActivity.moment = new Date(response.data[0].activity.moment);
+                    $scope.addActivity.model = response.data[0].model;
+                    $scope.addActivity.evidence = Array();
+
+                    response.data.forEach(function(element, index) {
+                        $scope.addActivity.evidence[index] = element.evidence;
+                    });
                 }
             });
 
-            //Retorna dados da atividade
-            /*if ($activity.success) {
-                $http({
-                    url: 'plan/activity/evidence/' + id,
-                    method: "GET"
-                }).then(function(response) {
-                    //Atribuindo valores a$scope de escopo do controller
-                    if (response.data.length > 0) {
-
-                        response.data.forEach(function(element, index) {
-                            $scope.updateActivity.current.evidence.push(element);
-                        });
-                    }
-                });
-            } else {
-                console.log($activity.success);
-            }*/
 
             //Insere um novo plano no banco
-            /*$scope.updateActivity.submit = function() {
+            $scope.submit = function() {
                 //Retorna lista de planos baseado no id do user
                 $http({
-                    url: 'plan/activity',
+                    url: 'plan/activity' + id,
                     method: "POST",
                     transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     data: {
                         name: $scope.addActivity.name,
                         description: $scope.addActivity.description,
-                        owner: $scope.addActivity.owner,
-                        cost: $scope.addActivity.cost,
-                        goal: $scope.addActivity.goal,
-                        deadline: $scope.addActivity.deadline
+                        evidence: $scope.addActivity.evidence,
+                        what: $scope.addActivity.what,
+                        because: $scope.addActivity.because,
+                        place: $scope.addActivity.place,
+                        moment: $scope.addActivity.moment,
+                        who: $scope.addActivity.who,
+                        cost: $scope.addActivity.cost
                     }
                 }).then(function(response) {
                     //Atribuindo valores a$scope de escopo do controller
                     $scope.alerts.push(response.data);
                 });
-            };*/
+            };
 
         }
     ])
     .controller('addActivity', ['$http', '$scope', '$httpParamSerializerJQLike', '$routeParams',
         function addActivityController($http, $scope, $httpParamSerializerJQLike, $routeParams) {
 
-            $scope.activity = Array(); //Inicializa o array
-            $scope.addActivity = Array();
+            $scope.addActivity = {};
             $scope.required = true;
             $scope.alerts = Array();
+            $scope.addActivity.evidence = Array();
+            $scope.addActivity.model = Array();
+
+            id = $routeParams.id; //pega id URL
+
+            //Adicionar item in REALTIME
+            $scope.addItem = function() {
+                $scope.addActivity.evidence.push({
+                    topic: $scope.addActivity.addModel.item.topics,
+                    action: $scope.addActivity.addModel.item.action
+                });
+                delete $scope.addActivity.addModel.item;
+            };
+
+            //Retorna dados da atividade
+            $get = $http({
+                url: 'model/list',
+                method: "GET"
+            }).then(function(response) {
+                //Atribuindo valores a$scope de escopo do controller
+                if (response.data != undefined) {
+                    //Adiciona dados de atividade e modelo
+                    response.data.forEach(function(element, index) {
+                        $scope.addActivity.model[index] = element.topics;
+                        console.log(element.topics);
+                    });
+                }
+            });
+
+
+
 
             //Insere um novo plano no banco
-            $scope.addActivity.submit = function() {
+            $scope.submit = function() {
                 //Retorna lista de planos baseado no id do user
                 $http({
-                    url: 'plan/activity',
+                    url: 'plan/activity' + id,
                     method: "POST",
                     transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     data: {
                         name: $scope.addActivity.name,
                         description: $scope.addActivity.description,
-                        owner: $scope.addActivity.owner,
-                        cost: $scope.addActivity.cost,
-                        goal: $scope.addActivity.goal,
-                        deadline: $scope.addActivity.deadline
+                        evidence: $scope.addActivity.evidence,
+                        what: $scope.addActivity.what,
+                        because: $scope.addActivity.because,
+                        place: $scope.addActivity.place,
+                        moment: $scope.addActivity.moment,
+                        who: $scope.addActivity.who,
+                        cost: $scope.addActivity.cost
                     }
                 }).then(function(response) {
                     //Atribuindo valores a$scope de escopo do controller
@@ -344,9 +440,15 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             controller: 'myPlans'
         });
         //adiciona plano
-        $routeProvider.when('/plan/add', {
+        $routeProvider.when('/plan/new/', {
             templateUrl: 'app/panel-app/manager/pages/add/plan.php',
             controller: 'addPlan'
+        });
+
+        //adiciona plano
+        $routeProvider.when('/plan/edit/:id', {
+            templateUrl: 'app/panel-app/manager/pages/add/updatePlan.php',
+            controller: 'updatePlan'
         });
 
         //Atividades
@@ -357,11 +459,11 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
         });
         //retorna unico baseado em id
         $routeProvider.when('/plan/activity/edit/:id', {
-            templateUrl: 'app/panel-app/manager/pages/add/updateActivity.php',
-            controller: 'updateActivity'
+            templateUrl: 'app/panel-app/manager/pages/add/addActivity.php',
+            controller: 'addActivity'
         });
         //vai para tela de adição
-        $routeProvider.when('/plan/activity/add', {
+        $routeProvider.when('/activity/new/', {
             templateUrl: 'app/panel-app/manager/pages/add/activity.php',
             controller: 'addActivity'
         });
@@ -372,13 +474,6 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
         templateUrl: 'app/panel-app/manager/manager.template.php',
         controller: ['$http', '$scope', '$httpParamSerializerJQLike',
             function managerAppController($http, $scope, $httpParamSerializerJQLike) {
-
-                $scope.navs = [{
-                    addPlan: {
-                        link: "painel#!/plan/add",
-                        title: "Adicionar Plano"
-                    }
-                }];
 
             }
         ]

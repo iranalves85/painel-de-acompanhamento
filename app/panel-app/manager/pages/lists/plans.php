@@ -7,7 +7,7 @@
             </h2>
         </li>
         <li class="list-inline-item">
-            <a href="painel#!/plan/add" class="btn btn-sm btn-primary" ng-click="addPlan.open()">
+            <a href="painel#!/plan/new/" class="btn btn-sm btn-primary" ng-click="addPlan.open()">
                 Adicionar Plano
             </a>
         </li>

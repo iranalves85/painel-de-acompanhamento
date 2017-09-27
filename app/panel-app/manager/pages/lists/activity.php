@@ -7,7 +7,7 @@
             </h2>
         </li>
         <li class="list-inline-item">
-            <a href="painel#!/plan/activity/add" class="btn btn-sm btn-primary">
+            <a href="painel#!/activity/new/" class="btn btn-sm btn-primary">
                 Adicionar Nova Atividade
             </a>
         </li>

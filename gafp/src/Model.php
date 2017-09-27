@@ -15,7 +15,7 @@ class Model extends Project{
 
         //Contruindo Query
         $result = $this->pdo->select('model',
-        ['id', 'name', 'description'], 
+        ['id', 'name', 'description','topics[Object]'], 
         ['ORDER' => ['id' => 'DESC'] ]);
 
         if(! $result):
