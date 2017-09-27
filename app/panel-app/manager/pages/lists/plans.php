@@ -51,7 +51,7 @@
                 </td>
                 <td>
                     <ul class="list-inline">
-                        <li class="list-inline-item"><a class="btn btn-sm btn-info" href="painel#!/plan/activity/{{plan.id}}">Atividades</a></li>
+                        <li class="list-inline-item"><a class="btn btn-sm btn-info" href="painel#!/plan/{{plan.id}}/activity/">Atividades</a></li>
                         <li class="list-inline-item"><a class="btn btn-sm btn-primary" href="painel#!/plan/edit/{{plan.id}}">Editar</a></li>
                         <li class="list-inline-item">
                             <button class="btn btn-sm btn-danger" 

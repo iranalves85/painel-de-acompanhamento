@@ -212,7 +212,7 @@ $app->get('/projects/delete/{id}', function (Request $request, Response $respons
 //Retorna lista de projectos
 $app->get('/model/{type}', function (Request $request, Response $response, $args){
     
-    $type = $request->getAttribute('type');
+    $type   = $request->getAttribute('type');
 
     switch ($type) {
         case 'list':
@@ -226,6 +226,15 @@ $app->get('/model/{type}', function (Request $request, Response $response, $args
             $response = $response->getBody()->write('Access Not Authorized.');
             break;
     }
+    return $response;
+
+})->setName('models');
+
+//Retorna planos relacionados a um plano
+$app->get('/model/plan/{id}', function (Request $request, Response $response, $args){
+    
+    $id  = $request->getAttribute('id');
+    $response = $response->withJson($this->model->getPlanModels( $this->user, $id ));
     return $response;
 
 })->setName('models');
@@ -254,7 +263,7 @@ $app->get('/plan/{id}', function (Request $request, Response $response, $args){
 })->setName('Activity Plans');
 
 //Adiciona lista de planos
-$app->post('/plan/{id}', function (Request $request, Response $response, $args){  
+$app->post('/plan/[/{id}]', function (Request $request, Response $response, $args){  
     
     $id = $request->getAttribute('id');
     $data = $request->getParsedBody();
@@ -333,17 +342,18 @@ $app->get('/plan/activity/evidence/{id}', function (Request $request, Response $
 $app->post('/plan/activity/{id}', function (Request $request, Response $response, $args){     
     //Variaveis
     $id = $request->getAttribute('id');
-    if(isset($id) && !is_null($id)){
-        return $response->withJson($this->plan->updateActivityPlan( $this->user, $id ));
-    }
-    else{
-        return $response->withJson($this->plan->addActivityPlan( $this->user ));
-    }   
-
+    return $response->withJson($this->plan->updateActivityPlan( $this->user, $id ));
 })->setName('Update Activity Plans');
 
+//Retorna uma atividade especifica
+$app->post('/plan/activity/', function (Request $request, Response $response, $args){     
+    //Variaveis
+    $data = $request->getParsedBody();
+    return $response->withJson($this->plan->addActivityPlan( $this->user, $data ));   
+})->setName('Add Activity Plans');
+
 //Deleta plano
-$app->post('/plan/activity/delete/{id}', function (Request $request, Response $response, $args){    
+$app->get('/plan/activity/delete/{id}', function (Request $request, Response $response, $args){    
     $id = $request->getAttribute('id');
     return $response->withJson($this->plan->deleteActivityPlan( $this->user, $id ));
 

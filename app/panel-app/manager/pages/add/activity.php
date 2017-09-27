@@ -1,7 +1,7 @@
 <div ng-controller="addActivity">
 <form name="addActivity" method="POST" ng-submit="submit()">
     <div class="modal-header">
-        <h1 class="modal-title" id="modal-title">Atualizar Atividade</h1>
+        <h1 class="modal-title" id="modal-title">Adicionar Atividade</h1>
     </div>
     <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')">
         {{alert.msg}}
@@ -36,9 +36,9 @@
                             <th>Modelo</th>
                             <th>Ação Realizada</th>                            
                         </thead>
-                        <tr ng-repeat="evidence in addActivity.evidence">
+                        <tr ng-repeat="evidence in evidences">
                             <td>
-                                <select name="addActivity.form.evidence[][topic]" class="form-control" ng-model="evidence.topic" ng-options="model as model.name for model in addActivity.model.topics track by model.name" >
+                                <select name="addActivity.form.evidence[][topic]" class="form-control" ng-model="evidence.topic" ng-options="model as model.name for model in models track by model.name" >
                                 </select>
                                 <span class="badge badge-info">{{addActivity.model.topics[0].description}}</span>
                             </td>
@@ -48,7 +48,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <select class="form-control" ng-options="model as model.name for model in addActivity.model track by model.name" ng-model="addActivity.addModel.item.topics"></select>
+                                <select class="form-control" ng-options="model as model.name for model in models track by model.name" ng-model="addActivity.addModel.item.topics"></select>
                             </td>
                             <td>
                                 <div class="form-inline">
@@ -87,7 +87,7 @@
                                 <?php
                                     $date = date('Y-m-d', time() );
                                 ?>
-                                <input name="addActivity.form.moment" min="<?php echo $date; ?>" type="date" ng-model="addActivity.moment" class="form-control" ng-value="{{addActivity.moment | date:'Y-m-d'}}" />
+                                <input name="addActivity.form.moment" min="<?php echo $date; ?>" type="date" ng-model="addActivity.moment" class="form-control" ng-value="{{addActivity.moment | date:'Y-m-d'}}" ng-required="required" />
                             </td>
                             <td>
                                 <input name="addActivity.form.who" type="text" ng-model="addActivity.who" class="form-control"  ng-required="required"/>
@@ -108,7 +108,7 @@
 
         <ul class="list-inline float-right">
             <li class="list-inline-item">
-                <button class="btn btn-light" type="button" ng-click="addActivity.cancel()">Cancel</button>
+                <a class="btn btn-light" href="painel#!/" >Voltar</a>
             </li>
             <li class="list-inline-item">
                 <input class="btn btn-primary" type="submit" value="Finalizar">

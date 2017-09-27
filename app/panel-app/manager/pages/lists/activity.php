@@ -1,4 +1,4 @@
-<div class="col-12 project card block" ng-controller="planActivity">
+<div class="col-12 project card block" ng-controller="planListActivity">
 
     <ul class="list-inline">
         <li class="list-inline-item">
@@ -7,7 +7,7 @@
             </h2>
         </li>
         <li class="list-inline-item">
-            <a href="painel#!/activity/new/" class="btn btn-sm btn-primary">
+            <a href="painel#!/plan/{{id}}/activity/new/" class="btn btn-sm btn-primary">
                 Adicionar Nova Atividade
             </a>
         </li>
@@ -44,6 +44,16 @@
             </tr>
         </tbody>
     </table>
+
+    <ul class="list-inline">
+        <li class="list-inline-item float-right">
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                <a class="btn btn-light float-right" href="painel#!/" >Voltar</a>
+                </li>
+            </ul>
+        </li>
+    </ul>    
 
 </div>
 <!-- Minhas Atividades -->

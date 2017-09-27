@@ -196,6 +196,51 @@ class Plan extends Connect{
 
     }
 
+    function addActivityPlan( \Gafp\User $user, $data){
+        
+        $this->user_has_access($user);
+
+        //Insere os dados obtidos anteriormente
+        $result = $this->pdo->insert('activity', [ 
+            'project'       => $data['project'],
+            'plan'          => $data['plan'],
+            'name'          => $data['name'],
+            'description'   => $data['description'],
+            'what'          => $data['what'],
+            'because'          => $data['because'],
+            'place'          => $data['place'],
+            'moment'      => $this->data_converter_to_insert($data['moment']),
+            'who'          => $data['who'],
+            'how'          => $data['how'],
+            'cost'          => $data['cost']
+        ]);
+
+        if( $result && isset($data['evidence']) && count($data['evidence']) > 0 ){
+            //Insere os dados obtidos anteriormente
+            foreach ($data['evidence'] as $key => $value) {
+                $evidenceResult = $this->pdo->insert('evidence', [ 
+                    'project'       => $data['project'],
+                    'plan'          => $data['plan'],
+                    'activity'      => $this->pdo->id(),
+                    'topic'         => $value['topic'],
+                    'action'        => $value['action']
+                ]);
+            }
+            
+        }
+
+        $idResult = $this->pdo->id();
+        
+        //Retorna resultado
+        if(isset($idResult) && $idResult > 0){
+            return array('type' => 'success', 'msg' => 'Atividade criada com sucesso! ID: ' . $idResult);
+        }
+        else{
+            return array('type' => 'danger', 'msg' => 'Não foi possível criar a atividade, tente novamente.');
+        }
+
+    }
+
     // UPDATE  ############################################
 
     /* Atualiza um plano */

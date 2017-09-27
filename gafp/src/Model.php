@@ -7,7 +7,7 @@ class Model extends Project{
 
     /*###### GET ###### */
 
-    /* Retorna lista de projetos */
+    /* Retorna lista de modelos */
     function getListModels( \Gafp\User $user){
         
         //Se usuário não estiver logado e permissão diferente de 'superuser'
@@ -16,7 +16,7 @@ class Model extends Project{
         //Contruindo Query
         $result = $this->pdo->select('model',
         ['id', 'name', 'description','topics[Object]'], 
-        ['ORDER' => ['id' => 'DESC'] ]);
+        ['ORDER' => ['id' => 'DESC']]);
 
         if(! $result):
             return false;
@@ -35,11 +35,33 @@ class Model extends Project{
         $table = $this->tb; //simplificando chamada
 
         //Contruindo Query
-        $query = $this->pdo->select()
-        ->from($table['project'])->where('id', '=', $ID);
+        $result = $this->pdo->get('project',[
+            'id' => $ID    
+        ]);        
 
-        //Executa query
-        $result = $query->execute()->fetch();   
+        if(! $result):
+            return false;
+        else:
+            //Retorna dados de usuário
+            return $result;            
+        endif;
+    }
+
+    /* Retorna lista de modelos */
+    function getPlanModels( \Gafp\User $user, $id){
+        
+        //Se usuário não estiver logado e permissão diferente de 'superuser'
+        $this->user_has_access($user);
+
+        //Contruindo Query
+        $result = $this->pdo->get('plan',[ 
+            '[>]project'    => ['plan.project'  => 'id'],            
+            '[>]model'      => ['project.model'  => 'id'],
+        ],
+        ['model.topics[Object]', 'plan.id(plan)', 'project.id(project)'],
+        [
+            'plan.id' => $id
+        ]);
 
         if(! $result):
             return false;
