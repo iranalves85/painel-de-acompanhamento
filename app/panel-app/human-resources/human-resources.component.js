@@ -3,38 +3,69 @@ module('gafpApp', ['ngRoute', 'ui.bootstrap']);
 $app.controller('dashboard', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibModal',
         function dashboardController($http, $scope, $httpParamSerializerJQLike, $uibModal) {
 
-            //Retorna os dados
-            $http.get('plan/list').then(function(response) {
+            $scope.leaderPlans = Array();
+            $scope.leaderPlansTemplate = 'app/panel-app/human-resources/pages/leaderPlans.php';
+            $scope.myPlansTemplate = 'app/panel-app/manager/pages/lists/plans.php';
 
-                //Atribuindo valores a$scope de escopo do controller
-                if (response.data.length <= 0)
-                    return;
-
-                $scope.plans = Array(); //Inicializa o array
-
-                //Atribuindo valores a$scope de escopo do controller
+            //Atribuindo valores a$scope de escopo do controller
+            $getLeaderPlanList = function(response) {
                 response.data.forEach(function(element, index) {
 
-                    $scope.plans[index] = {
+                    $scope.leaderPlans[index] = {
                         id: element.id,
+                        project: element.project,
                         name: element.name,
                         description: element.description,
-                        company: element.company,
-                        gestor: element.owner,
+                        cost: element.cost,
+                        goal: element.goal,
                         deadline: element.deadline,
-                        status: (element.status === 1) ? "warning" : "danger",
-                        evidence: element.evidence,
+                        status: {
+                            id: element.statusID,
+                            text: element.statusText
+                        },
                         dateCreated: element.date_created
                     };
 
                 }, this);
+            }
+            $data = getData($http, 'plan/leader/list/' + user.id, $getLeaderPlanList);
 
-            });
+            //Aprovar um plano
+            $scope.approvePlan = function(id) {
+                $method = { //definições de objetos
+                    http: $http,
+                    serializer: $httpParamSerializerJQLike,
+                };
+                //função de retorno
+                $approveResponse = function(response) {
+                    if (response.data.type != undefined && response.data.type == 'success') {
+                        alert(response.data.msg);
+                        location.reload();
+                    }
+                }
+                $data = updateData($method, 'plan/status/', id, { status: 3 }, $approveResponse);
+            };
+
+            //Aprovar um plano
+            $scope.openPlan = function(id) {
+                $method = { //definições de objetos
+                    http: $http,
+                    serializer: $httpParamSerializerJQLike,
+                };
+                //função de retorno
+                $openResponse = function(response) {
+                    if (response.data.type != undefined && response.data.type == 'success') {
+                        alert(response.data.msg);
+                        location.reload();
+                    }
+                }
+                $data = updateData($method, 'plan/status/', id, { status: 1 }, $openResponse);
+            };
 
             //Função deve esperar objetos DOM Carregar
-            generateCharts('status');
-            generateCharts('planos');
-            generateCharts('prazos');
+            //generateCharts('status');
+            //generateCharts('planos');
+            //generateCharts('prazos');
 
             /*$scope.addProject = function() {
                 $http({
@@ -60,31 +91,52 @@ $app.controller('dashboard', ['$http', '$scope', '$httpParamSerializerJQLike', '
                 });
             };*/
         }
-    ]).controller('projetos', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibModal',
-        function projetosController($http, $scope, $httpParamSerializerJQLike, $uibModal) {
+    ]).controller('projects', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibModal',
+        function projectsController($http, $scope, $httpParamSerializerJQLike, $uibModal) {
 
-            //Retorna os dados
-            $http.get('projects/list').then(function(response) {
+            $scope.projects = Array();
 
-                //Atribuindo valores a$scope de escopo do controller
-                if (response.data.length <= 0)
-                    return;
-
-                $scope.projects = Array(); //Inicializa o array
-
+            //Atribuindo valores a$scope de escopo do controller
+            $getProjectList = function(response) {
                 //Atribuindo valores a$scope de escopo do controller
                 response.data.forEach(function(element, index) {
 
                     $scope.projects[index] = {
                         id: element.id,
-                        model: element.model,
+                        date_created: element.date_created,
+                        company: element.company,
                         responsible: element.responsible,
                         approver: element.approver
                     };
 
                 }, this);
+            };
 
-            });
+            $data = getData($http, 'projects/', $getProjectList);
+
+            //Função para reordernar lista de projetos
+            $scope.reorderProjectList = function() {
+                //Verifica os valores dos campos estao setados
+                $order = ($scope.order.order != undefined) ? '/' + $scope.order.order.value : "";
+                $by = ($scope.order.by != undefined) ? '/' + $scope.order.by.value : "";
+
+                getData($http,
+                    'projects/lists' + $order + $by,
+                    function(response) {
+                        //Atribuindo valores a$scope de escopo do controller
+                        response.data.forEach(function(element, index) {
+
+                            $scope.projects[index] = {
+                                id: element.id,
+                                company: element.company,
+                                model: element.model,
+                                responsible: element.responsible,
+                                approver: element.approver
+                            };
+
+                        }, this);
+                    });
+            };
 
         }
     ]).controller('gestores', function gestoresController() {
@@ -93,9 +145,10 @@ $app.controller('dashboard', ['$http', '$scope', '$httpParamSerializerJQLike', '
 
     }).controller('boasVindas', function boasVindasController() {
 
-    }).controller('termoFuncionarios', function termoFuncionariosController() {
+    }).controller('regras', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibModal', '$routeParams', function regrasController($http, $scope, $httpParamSerializerJQLike, $uibModal, $routeParams) {
 
-    }).controller('regras', ['$scope', function regrasController($scope) {
+        //Definições de datas e parametros
+        $ProjectID = $routeParams.id;
         $scope.fields = { types: Array() };
         $scope.fields.types = [{
                 id: 1,
@@ -110,36 +163,42 @@ $app.controller('dashboard', ['$http', '$scope', '$httpParamSerializerJQLike', '
                 name: "Horas"
             }
         ];
+
+        //Update regras
+        $scope.defineRules = function() {
+            console.log($scope.yellow);
+        };
+
     }])
     .config(function($routeProvider) {
 
         $routeProvider.when('/', {
-            templateUrl: 'app/panel-app/human-resources/pages/dashboard.html',
+            templateUrl: 'app/panel-app/human-resources/pages/dashboard.php',
             controller: 'dashboard'
         });
 
-        $routeProvider.when('/projetos', {
-            templateUrl: 'app/panel-app/human-resources/pages/projetos.html',
-            controller: 'projetos'
+        $routeProvider.when('/projects', {
+            templateUrl: 'app/panel-app/human-resources/pages/projects.php',
+            controller: 'projects'
         });
 
-        $routeProvider.when('/gestores', {
-            templateUrl: 'app/panel-app/human-resources/pages/gestores.html',
+        $routeProvider.when('/projects/gestores/:id', {
+            templateUrl: 'app/panel-app/human-resources/pages/gestores.php',
             controller: 'gestores'
         });
 
-        $routeProvider.when('/cobranca', {
-            templateUrl: 'app/panel-app/human-resources/pages/cobranca.html',
+        $routeProvider.when('/projects/cobranca/:id', {
+            templateUrl: 'app/panel-app/human-resources/pages/cobranca.php',
             controller: 'cobranca'
         });
 
-        $routeProvider.when('/boas-vindas', {
-            templateUrl: 'app/panel-app/human-resources/pages/boas_vindas.html',
+        $routeProvider.when('/projects/boas-vindas/:id', {
+            templateUrl: 'app/panel-app/human-resources/pages/boas_vindas.php',
             controller: 'boasVindas'
         });
 
-        $routeProvider.when('/regras', {
-            templateUrl: 'app/panel-app/human-resources/pages/regras.html',
+        $routeProvider.when('/projects/regras/:id', {
+            templateUrl: 'app/panel-app/human-resources/pages/regras.php',
             controller: 'regras'
         });
 
@@ -152,30 +211,12 @@ component('humanResourcesApp', {
 
             //Links de navegação
             $scope.navs = [{
-                    link: "#",
-                    title: "Dashboard"
-                },
-                {
-                    link: "painel#!/projetos",
-                    title: "Histórico de Projetos"
-                },
-                {
-                    link: "painel#!/gestores",
-                    title: "Cadastro de Gestor"
-                }, ,
-                {
-                    link: "painel#!/cobranca",
-                    title: "E-mails de Cobrança"
-                },
-                {
-                    link: "painel#!/boas-vindas",
-                    title: "E-mails Boas-Vindas"
-                },
-                {
-                    link: "painel#!/regras",
-                    title: "Definir Regras"
-                }
-            ];
+                link: "#",
+                title: "Dashboard"
+            }, {
+                link: "painel#!/projects",
+                title: "Projetos"
+            }];
 
         }
     ]

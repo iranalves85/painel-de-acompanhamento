@@ -1,2 +1,0 @@
-<div class="container" ng-include="'app/panel-app/superuser/pages/add/project.php'" /></div><!-- add model -->
-<div class="container" ng-include="'app/panel-app/superuser/pages/lists/project.php'" /></div><!-- add model -->

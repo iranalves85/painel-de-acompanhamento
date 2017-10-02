@@ -19,27 +19,18 @@ class Plan extends Connect{
     }
 
     /* Retorna lista de planos */
-    function getListPlans(\Gafp\User $user, $data){
+    function getListPlans(\Gafp\User $user, $id){
         
         $this->user_has_access($user);
-
-        //Se key estiver atribui a variavel
-        if( is_array($data) && array_key_exists('order', $data) ){
-            $order = $data['order'];
-        }
-        else{
-            $order = ['order' => 'date_created', 'by' => 'DESC'];
-        }
 
         $result = $this->pdo->select('plan', [
             '[>]company'    => ['company'   => 'id'],
             '[>]users'      => ['owner'     => 'id'],            
             '[>]status'     => ['status'    => 'id']           
         ],[
-            'plan.id', 'plan.name', 'plan.description', 'plan.goal', 'company.name(company)', 'plan.deadline, status.status'
+            'plan.id', 'plan.name', 'plan.description', 'plan.goal', 'plan.deadline', 'status.status(status)'
         ],[
-            'plan.owner' => $data['id'],
-            'ORDER'  =>  ['plan.' . $order['order'] => $order['by']]
+            'plan.owner' => $id
         ]);
         
         if(! $result):
@@ -51,30 +42,49 @@ class Plan extends Connect{
     }
 
     /* Retorna lista de planos */
-    function getListLeaderPlans(\Gafp\User $user, $data){
+    function getListLeaderPlans(\Gafp\User $user, $id){
         
         $this->user_has_access($user);
+
+        //Retorna email do usuário atual
+        $leader = $this->pdo->get('users',['email'],['id' => $id]);
         
-        //Se key estiver atribui a variavel
-        if( is_array($data) && array_key_exists('order', $data) ){
-            $order = $data['order'];
-        }
-        else{
-            $order = ['order' => 'date_created', 'by' => 'DESC'];
+        //Retornando arrays de id's de subordinados
+        $sub = $this->pdo->select('users',
+        ['id'],['leader[~]' => $leader['email']]);
+
+        //Reestrutura o array de id's
+        $IDSub = [];
+        foreach ($sub as $key => $value) {
+            $IDSub[] = $value['id'];
         }
 
+        //Query que retorna lista de planos de subordinados
         $result = $this->pdo->select('plan', [
-            '[>]company'    => ['company'   => 'id'],
-            '[>]users'      => ['owner'     => 'id'],            
-            '[>]status'     => ['status'    => 'id']           
+            '[>]company'        => ['company'   => 'id'],
+            '[>]users'          => ['owner'     => 'id'],            
+            '[>]status'         => ['status'    => 'id']             
         ],[
-            'plan.id', 'plan.name', 'plan.description', 'company.name(company)', 
-            'users.username(owner)', 'plan.deadline, status.status(status)'
+            'plan.id', 'plan.date_created', 'plan.project', 'plan.name', 'plan.description', 
+            'plan.cost','plan.goal', 'plan.deadline', 'status.id(statusID)', 
+            'status.status(statusText)'
         ],[
-            'plan.status' =>  1,
-            'plan.owner' => $data['id'],
-            'ORDER'  =>  ['plan.' . $order['order'] => $order['by']]
+            'plan.owner' => $IDSub
         ]);
+
+        //Query que retorna lista de planos de subordinados
+        $ruleDates = $this->pdo->select('rule_define', [
+            '[>]rule' => ['type_rule' => 'id']             
+        ],[
+            'rule_define.date(date)', 'rule.rule(rule)'
+        ],[
+            'rule_define.project' => $result[0]['project']
+        ]);
+
+        //Verifica em cada item da lista as regras de datas (primary,warning,success,danger)
+        foreach ($result as $key => $value) {
+            $result[$key]['rule'] = $this->ruleLogic($ruleDates, $result[$key]['deadline']);
+        }        
         
         if(! $result):
             return false;
@@ -272,6 +282,26 @@ class Plan extends Connect{
 
     }
 
+    function updatePlanStatus(\Gafp\User $user, $id, $data){
+        
+        $this->user_has_access($user);
+        
+        //Insere os dados obtidos anteriormente
+        $result = $this->pdo->update('plan', ['status' => $data['status']],['id' => $id]);
+
+        //Retorna resultado
+        if(isset($result) && !is_null($result)){
+            return array(
+            'type' => 'success', 
+            'msg' => ($data['status'] == 3)? 'Plano aprovado!' : 'Plano reaberto!');
+        }
+        else{
+            return array(
+            'type' => 'danger', 
+            'msg' => 'Não foi possível aprovar o plano, tente novamente.');
+        }
+    }   
+
     // DELETE #############################################
 
     /* Deletar um plano */
@@ -306,6 +336,22 @@ class Plan extends Connect{
         else{
             return array('type' => 'danger', 'msg' => 'Não foi possível deletar a atividade. Tente novamente.');
         }
+    }
+
+    ////// Lógica das Regras ///////////////////////
+
+    private function ruleLogic($ruleDates, $planDeadline){
+        
+        //Atribui a data atual
+        $currentDate = date_create(null);
+
+        foreach ($ruleDates as $key => $value) {
+            $rule_date = date_create($value['date']);
+            if( ($rule_date > $currentDate) && ($rule_date < $currentDate) ){
+
+            }
+        }
+        
     }
 
 }

@@ -5,23 +5,67 @@ function disableDefaultLinkAction() {
     });
 }
 
-//Função padrão para requisições de data para campos
-function requestFields($http, $url) {
+//Função padrão para requisições de GET via objeto Angular
+function getData($http, $url, $returnFunction) {
 
-    var $data;
-
-    //Retorna os dados de empresas para alimentar 'select' autocomplete
+    var $dataReturn;
+    //Retorna os dados
     $http.get($url).then(function(response) {
         //Atribuindo valores a$scope de escopo do controller
-        if (response.data.length <= 0) {
-            return false;
+        if (response.data && response.status == 200) {
+            $dataReturn = $returnFunction(response);
         }
-
-        $data = response.data;
-
     });
 
-    return $data;
+    return $dataReturn;
+}
+
+//Função padrão para requisições de GET via objeto Angular
+function postData($obj, $url, $aditional, $data, $returnFunction) {
+
+    var $dataReturn;
+    if ($aditional == undefined) {
+        $aditional = "";
+    }
+
+    $obj.http({
+        url: $url + $aditional,
+        method: 'POST',
+        //Função formatar as$scopeiaveis de forma a funcionar na requisição
+        transformRequest: function(data) { return $obj.serializer(data); },
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: $data
+    }).then(function(response) {
+        $dataReturn = $returnFunction(response);
+    });
+
+    return $dataReturn;
+}
+
+//Função padrão para requisições de GET via objeto Angular
+function updateData($obj, $url, $aditional, $data, $returnFunction) {
+
+    var $dataReturn;
+    if ($aditional == undefined) {
+        $aditional = "";
+    }
+
+    $obj.http({
+        url: $url + $aditional,
+        method: 'PUT',
+        //Função formatar as$scopeiaveis de forma a funcionar na requisição
+        transformRequest: function(data) { return $obj.serializer(data); },
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: $data
+    }).then(function(response) {
+        $dataReturn = $returnFunction(response);
+    });
+
+    return $dataReturn;
 }
 
 function generateCharts($id) {

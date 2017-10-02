@@ -8,7 +8,6 @@
                 </select>
                 <br />
                 <input class="btn btn-success float-right" type="submit" value="Continuar">
-                <input type="hidden" name="company" ng-value="page.projectData.company" /> 
             </form>           
         </div>   
         

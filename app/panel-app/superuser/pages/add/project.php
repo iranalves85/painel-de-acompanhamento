@@ -1,4 +1,4 @@
-<div class="block card main" ng-controller="project">
+<div class="block card main" ng-controller="addProject">
 
     <div class="new-project">
         <h2>Novo Projeto - Etapa {{page.currentPage}}</h2>            

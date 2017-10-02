@@ -41,13 +41,16 @@ class User{
     } 
 
     /* Insere diversos usuários por vez em tabela */
-    function insertMultipleUsers( array $userdata, $company = array() ){
+    function insertMultipleUsers( array $userdata, $project, $company = ''){
         //Retorna se não houver dados
         if(count($userdata) <= 0 || empty($userdata['email']))
-            return 'Linha sem identificador "email", não sendo possível inserir ou adicionar';
+            return 'Linha sem identificador "email", não é permitido inserir ou adicionar.';
         
+        $userdata['project'] = $project; //Adiciona id de projeto ao array
+        $userdata['company'] = $company; //Adiciona id de empresa
+
         //Invoca função de incluir um novo usuário
-        return $this->connect->newUser(array_merge($userdata, $company));      
+        return $this->connect->newUser($userdata);      
     }   
     
     /*

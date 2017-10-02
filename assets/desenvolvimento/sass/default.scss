@@ -26,6 +26,7 @@ body {
     $gptwBrand: #aa272f;
     $roxo: #771174;
     $yellow: #ECA012;
+    min-height: 768px;
     h1,
     h2,
     h3,
@@ -44,6 +45,9 @@ body {
     h3 {
         font-size: 1.0rem;
         font-weight: 400;
+    }
+    main {
+        min-height: 548px;
     }
     .topo {
         background-color: $gptwBrand;

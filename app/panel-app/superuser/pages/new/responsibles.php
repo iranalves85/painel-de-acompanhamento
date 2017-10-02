@@ -1,32 +1,33 @@
-<form name="newProject" method="POST" ng-submit="addProject(4)">
+<form name="newProject" method="POST" ng-submit="selectResponsibles()">
+
     <h2>Selecione os usuários com perfis de RH</h2>
-    <!--<div ng-init="areas = [{name:'Diretoria'},
-                         {name:'Marketing'},
-                         {name:'Controladoria'},
-                         {name:'Recursos Humanos'}]"></div>
-    <div ng-init="responsibles =[
-                        {id: 1, username:'John', area: [{name: 'Marketing'},{name:'Controladoria'}] },
-                        {id: 2, username:'Mary', area: [{name: 'Recursos Humanos'}] },
-                        {id: 3, username:'Mike', area: [{name: 'Marketing'}] },
-                        {id: 4, username:'Adam', area: [{name: 'Controladoria'}] }
-                         ]"></div>-->
+
     <div class="row">
         <div class="col-md-6">            
             <label for="area">
-                Departamento
+                Filtro por Departamento
             </label>
-            <select class="form-control" name="area" ng-model="areaFilter" multiple>
-                <option value="">Todos</option>
-                <option ng-repeat="area in areas" value="{{area.name}}">{{area.name}}</option>
-            </select>
+
+            <select class="form-control" size="10" name="area" 
+            ng-model="showAreaUsers" multiple>
+                <option value="" selected>Todos</option>
+                <option ng-repeat="area in areas" ng-value="area.name">{{area.name}}</option>           
+            </select>      
+                    
         </div>
         <div class="col-md-6">
             <label for="responsible">
-                Responsável
+                Responsável {{selectedUsers}}
             </label>
-            <select class="form-control" name="responsible" ng-model="responsible" multiple>
-                <option ng-repeat="responsible in responsibles | filter:areaFilter" ng-value="responsible.id">{{responsible.username}}</option>
+
+            <select class="form-control" size="10" name="responsible" ng-model="page.projectData.responsibles" multiple>
+                <option 
+                ng-repeat="responsible in responsibles | areaFilter:{area:showAreaUsers}" 
+                ng-value="responsible.id">
+                    {{responsible.username}} | {{responsible.email}}
+                </option>
             </select>
+
         </div>
         <div class="col-12">
             <br />

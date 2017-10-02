@@ -1,4 +1,4 @@
-<div class="container" ng-controller="modelo">
+<div class="container" ng-controller="model">
 
     <h1>Modelos</h1>
 
@@ -11,18 +11,18 @@
                 </h2>
             </li>
             <li class="list-inline-item">
-                <a class="btn btn-sm btn-primary" href="#modal">
+                <a class="btn btn-sm btn-primary" href="painel#!/model/new/">
                     Adicionar Modelo
                 </a>
             </li>
             <li class="list-inline-item float-right">
                 <ul class="list-inline">
                     <li class="list-inline-item">
-                        <select ng-init="order = [{value:'date_created',text:'Recentes'}, {value:'company',text:'Empresas'}, {value:'responsible',text:'Responsáveis'}]" name="" id="" class="btn btn-light" ng-model="order.data" ng-options="item as item.text for item in order track by item.value" ng-change="reorderProjectList()">
+                        <select ng-init="order = [{value:'date_created',text:'Recentes'}, {value:'name',text:'Nome'}, {value:'description',text:'Descrição'}]" name="" id="" class="btn btn-light" ng-model="order.order" ng-options="item as item.text for item in order track by item.value" ng-change="reorderModelList()">
                         </select>
                     </li>
                     <li class="list-inline-item">
-                        <select ng-init="orderby = [{value:'ASC',text:'Alfabética'}, {value:'DESC',text:'Descendente'}]" name="" id="" class="btn btn-light" ng-model="order.by" ng-options="item as item.text for item in orderby track by item.value " ng-change="reorderProjectList()">
+                        <select ng-init="orderby = [{value:'ASC',text:'Alfabética'}, {value:'DESC',text:'Descendente'}]" name="" id="" class="btn btn-light" ng-model="order.by" ng-options="item as item.text for item in orderby track by item.value " ng-change="reorderModelList()">
                         </select>
                     </li>
                     <li class="list-inline-item">
@@ -47,8 +47,10 @@
                     <td>{{model.description}}</td>
                     <td>
                         <ul class="list-inline">
-                            <li class="list-inline-item"><a class="btn btn-sm" href="model/edit/{{model.id}}">Editar</a></li>
-                            <li class="list-inline-item"><a class="btn btn-sm btn-danger" href="model/delete/{{model.id}}">Excluir</a></li>
+                            <li class="list-inline-item"><a class="btn btn-sm" href="painel#!/model/edit/{{model.id}}">Editar</a></li>
+                            <li class="list-inline-item">
+                                <button class="btn btn-sm btn-danger" ng-click="delete(model.id)">Excluir</button>
+                            </li>
                         </ul>
                     </td>
                 </tr>

@@ -16,7 +16,6 @@
         <!-- menu -->
 
         <div ng-view></div>
-        <!-- carrega templates -->
 
     </section>
 

@@ -7,14 +7,14 @@
             </h2>
         </li>
         <li class="list-inline-item">
-            <a href="#" class="btn btn-sm btn-primary">
+            <a href="painel#!/projects/new/" class="btn btn-sm btn-primary">
                 Adicionar Projeto
             </a>
         </li>
         <li class="list-inline-item float-right">
             <ul class="list-inline">
                 <li class="list-inline-item">
-                    <select ng-init="order = [{value:'date_created',text:'Recentes'}, {value:'company',text:'Empresas'}, {value:'responsible',text:'Responsáveis'}]" name="" id="" class="btn btn-light" ng-model="order.data" ng-options="item as item.text for item in order track by item.value" ng-change="reorderProjectList()">
+                    <select ng-init="order = [{value:'date_created',text:'Recentes'}, {value:'company',text:'Empresas'}, {value:'user',text:'Responsáveis'}]" name="" id="" class="btn btn-light" ng-model="order.order" ng-options="item as item.text for item in order track by item.value" ng-change="reorderProjectList()">
                     </select>
                 </li>
                 <li class="list-inline-item">
@@ -29,9 +29,10 @@
         </li>
     </ul>
 
-    <table class="table table-striped table-bordered">
-        <thead class="thead-inverse">
+    <table class="table table-striped table-sm table-bordered">
+        <thead>
             <th>ID</th>
+            <th>Criado</th>
             <th>Empresa</th>
             <th>Modelo</th>
             <th>Responsável</th>
@@ -41,9 +42,14 @@
         <tbody>
             <tr ng-repeat="project in projects | filter:pesquisa">
                 <td>{{project.id}}</td>
+                <td>{{project.date_created | date:'Y-m-d'}}</td>
                 <td>{{project.company}}</td>
                 <td>{{project.model}}</td>
-                <td>{{project.responsible}}</td>
+                <td>
+                    <ul>
+                        <li ng-repeat="responsible in project.responsible">{{responsible.username}}</li>
+                    </ul>
+                </td>
                 <td>{{project.approver}}</td>
                 <td>
                     <ul class="list-inline">
@@ -51,7 +57,7 @@
                             <a class="btn btn-sm" href="painel#!/projects/edit/{{project.id}}">Editar</a>
                         </li>
                         <li class="list-inline-item">
-                            <a class="btn btn-sm btn-danger delete" id="{{project.id}}" href="projects/delete/{{project.id}}">Excluir</a>
+                            <button class="btn btn-sm btn-danger" ng-click="delete(project.id)">Excluir</button>
                         </li>
                     </ul>
                 </td>

@@ -29,7 +29,7 @@
         </li>
     </ul>
 
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped table-sm table-bordered">
         <thead class="thead-inverse">
             <th>Plano</th>
             <th>Descrição</th>
@@ -43,11 +43,14 @@
                 <td>{{plan.name}}</td>
                 <td>{{plan.description}}</td>
                 <td>{{plan.goal}}</td>
-                <td>{{plan.deadline}}</td>
                 <td>
-                    <span class="badge badge-primary badge-{{ plan.status }}">
-                        {{ plan.status === "danger" ? "Em atraso" : "Atenção" }}
+                    {{plan.deadline}}
+                    <span class="badge badge-primary badge-{{ plan.rule }}">
+                        {{ plan.rule === "danger" ? "Em atraso" : "Atenção" }}
                     </span>
+                </td>
+                <td>
+                    {{plan.status}}                    
                 </td>
                 <td>
                     <ul class="list-inline">

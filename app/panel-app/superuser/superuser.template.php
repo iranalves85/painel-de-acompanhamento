@@ -15,8 +15,10 @@
         </div>
         <!-- menu -->
 
-        <div ng-view></div>
-        <!-- carrega templates -->
+        <div class="container">
+            <div ng-view></div>
+            <!-- carrega templates -->
+        </div>
 
     </section>
 

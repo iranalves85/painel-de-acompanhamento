@@ -20,38 +20,24 @@ $app.controller('myPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
 
             };*/
 
-            //Retorna lista de planos baseado no id do user
-            $http({
-                url: 'plan/list/',
-                method: "POST",
-                transformRequest: function(data) { return $httpParamSerializerJQLike(data); },
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                data: {
-                    id: user.id
-                }
-            }).then(function(response) {
+            //Atribuindo valores a$scope de escopo do controller
+            $getPlanList = function(response) {
+                response.data.forEach(function(element, index) {
 
-                //Atribuindo valores a$scope de escopo do controller
-                if (response.data.length > 0) {
-                    //Atribuindo valores a$scope de escopo do controller
-                    response.data.forEach(function(element, index) {
+                    $scope.plans[index] = {
+                        id: element.id,
+                        name: element.name,
+                        description: element.description,
+                        company: element.company,
+                        goal: element.goal,
+                        deadline: element.deadline,
+                        status: element.status,
+                        dateCreated: element.date_created
+                    };
 
-                        $scope.plans[index] = {
-                            id: element.id,
-                            name: element.name,
-                            description: element.description,
-                            company: element.company,
-                            goal: element.goal,
-                            deadline: element.deadline,
-                            status: (element.status === 1) ? "warning" : "danger",
-                            dateCreated: element.date_created
-                        };
-
-                    }, this);
-                }
-            });
+                }, this);
+            }
+            $data = getData($http, 'plan/list/' + user.id, $getPlanList);
 
             $scope.delete = function(id) {
                 //Retorna lista de planos baseado no id do user

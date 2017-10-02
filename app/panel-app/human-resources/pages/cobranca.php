@@ -13,7 +13,7 @@
                         <label for="responsible">
                             Mensagem
                         </label>
-                        <textarea name="mensagem" ng-value="mensagem" ng-model="mensagem" class="form-control"></textarea>
+                        <textarea name="mensagem" rows="10" ng-value="mensagem" ng-model="mensagem" class="form-control"></textarea>
                         <br />
                         <input class="btn btn-success float-right" type="submit" value="Enviar">
                     </div>

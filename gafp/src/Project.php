@@ -11,38 +11,48 @@ class Project extends Connect{
         
         $this->user_has_access($user);
 
+        //Query
         $result = $this->pdo->select('project', [
             '[>]company'    => ['company' => 'id'],
             '[>]model'      => ['model' => 'id'],
-            '[>]users'      => ['user' => 'id'],
-            '[>]approver'   => ['approver'=> 'id']           
+            '[>]users'      => ['approver'=> 'id']           
         ],[
-            'project.id', 'company.name(company)', 'model.name(model)', 'users.username(responsible)', 'approver.name(approver)'
+            'project.id', 'project.date_created', 'project.responsible[Object]',
+            'company.name(company)', 'model.name(model)', 'users.username(approver)'
         ],[
-            'project.status' =>  1,
             'ORDER'  =>  ['project.' . $order['order'] => $order['by']]
         ]);
 
+        foreach ($result as $key => $value) {
+           //Se houver responsáveis, adicionar ao array
+            if( isset($value['responsible']) && count($value['responsible']) > 0 ){   
+                $result[$key]['responsible'] = $user->getUsers(['id' => $value['responsible']]);
+            }
+        }
+        
         return $this->data_return($result);
 
     }
 
     /* Retorna lista de projetos */
-    function getProject( $ID, \Gafp\User $user){
+    function getProject( \Gafp\User $user, $ID){
         
         $this->user_has_access($user);
        
         $result = $this->pdo->get('project', [
             '[>]company'    => ['company' => 'id'],
             '[>]model'      => ['model' => 'id'],
-            '[>]users'      => ['user' => 'id'],
-            '[>]approver'   => ['approver'=> 'id']           
+            '[>]users'      => ['approver'=> 'id']          
         ],[
-            'company.name(company)', 'model.name(model)', 'users.username(responsible)', 'approver.name(approver)'
+            'company.id(company)',
+            'model.id(model)', 'responsible[Object]', 
+            'users.id(approver)'
         ],[
-            'project.status' =>  1,
             'project.id'  =>  $ID
         ]);
+
+        //Retorna todos os usuários do projeto
+        $result['users'] = $user->getUsers(['project' => $ID]);
 
         return $this->data_return($result);
     }
@@ -120,7 +130,7 @@ class Project extends Connect{
         
         $this->user_has_access($user); //Verifica permissão
 
-        $defaultColumns = array('company', 'model', 'users', 'approver'); //tipos permitidos
+        $defaultColumns = array('company', 'model', 'users', 'responsible', 'approver'); //tipos permitidos
         
         //Se for diferente do defido, retorna acesso não autorizado
         if( !in_array($type_field, $defaultColumns) )
@@ -175,9 +185,25 @@ class Project extends Connect{
     //Função que adiciona usuários ao projeto
     private function addProject_users_FieldData($user, $data){
 
-        $company = ['company' => $data['company']];
-        $file = $data['uploadFile']['file']->file;
-        $result = [];
+        $company = $data['company']; //company a ser adicionado ao usuário do arquivo
+
+        //Define o id do projeto a inserir os usuários
+        if(isset($data['project']) && $data['project'] != 0){
+            //Atribui ID de projeto
+            $project = $data['project'];
+        }
+        else{
+            //Executa query adicionando dados prévios ao projeto
+            $this->pdo->insert('project',[
+                'company' => $company
+            ]);
+
+            //Retorna o ID do projeto criado
+            $project = $this->pdo->id();
+        }         
+        
+        $file = $data['uploadFile']['file']->file; //Arquivo enviado para variavel
+        $result = []; //Inicializa array
 
         $filetype = \PHPExcel_IOFactory::identify($file);//Identifica arquivo
         $objReader = \PHPExcel_IOFactory::createReader($filetype); //inicializa classe de leitura
@@ -200,6 +226,7 @@ class Project extends Connect{
         if( !empty($result['error']) )
             return $result;
 
+        $result['success'] = false;
         //Intera sobre o número de linhas no arquivo de upload
         foreach($objWorksheet->getRowIterator() as $rowIndex => $row) {
             //Ignora primeira linha
@@ -211,10 +238,10 @@ class Project extends Connect{
             //Combinamos os dois arrays para definir keys e values em um só
             $currentData = array_combine($columnNames[0], $arrayRow[0]);
             //Executa função de adicionar usuário
-            $response = $user->insertMultipleUsers($currentData, $company);
+            $response = $user->insertMultipleUsers($currentData, $project, $company);
             //Verifica se houve algum erro e interrompe upload
             if(empty($response) || is_null($response)){
-                $result['error'][]= "Houve algum problema na linha " . $rowIndex . ", não foi possível inserir ou atualizar os dados";
+                $result['error'][]= "Houve algum problema na linha'" . $rowIndex . "', não foi possível inserir ou atualizar os usuários.";
                 break;
             }
             else{
@@ -222,29 +249,107 @@ class Project extends Connect{
             }            
         }
 
-        //Se houve sucesso na inserção, trazer os user adicionados
+        //Se houve sucesso na inserção
         if($result['success']){
-            $getUsers = $user->getUsers($company);
+
+            //ID do projeto
+            $projectID = $project;
+
+            //Retorna lista de usuários do projeto
+            $userList = $user->getUsers(
+                ['project' => $projectID, 
+                'type_user[!~]' => 'superuser']);            
+
+            //Retorna lista de usuários junto com ID do projeto
+            return array('users' => $userList, 'project' => $projectID); 
+        }
+        else{ //Retorna erros adquiridos no looping
+            $result['error'][] = "Houve algum problema na linha '" . $rowIndex . "', não foi possível inserir ou atualizar os usuários.";
+            return $result;
         }
         
-        return $getUsers;
     }
 
+    //Última etapa na inserção de um novo projeto
     private function addProject_approver_FieldData($user = '', $data){
-        $input = filter_var($data, FILTER_SANITIZE_STRING);
-        $result = $this->pdo->insert('approver',['name' => $input]);
-        return $result->id(); //retorna id
+
+        //Projeto ID
+        $project    = filter_var($data['project'], FILTER_SANITIZE_NUMBER_INT);   
+        //Model ID
+        $model    = filter_var($data['model'], FILTER_SANITIZE_NUMBER_INT);      
+        //Array de ID's de usuários responsáveis
+        $users      = serialize(filter_var_array($data['responsibles'], FILTER_SANITIZE_STRING));
+        //ID do Aprovador
+        $approver   = filter_var($data['approver'], FILTER_SANITIZE_NUMBER_INT);
+
+        //Query de inserção
+        $result = $this->pdo->update('project',
+        [   
+            'model' => $model,
+            'responsible' => $users,
+            'approver' => $approver ],
+        ['id' => $project]);
+
+        //Retorna resultado
+        if(isset($result) && !is_null($result)){
+            return array(
+            'type' => 'success', 
+            'msg' => 'Projeto criado com sucesso!');
+        }
+        else{
+            return array(
+            'type' => 'danger', 
+            'msg' => 'Houve algum problema na criação do projeto, tente novamente.');
+        }
     }
 
-    /* Retorna lista de projetos */
-    function deleteProject( $ID, \Gafp\User $user){
+    //Atualizar um projeto
+    function updateProject(\Gafp\User $user, $ID, $data){
+        //Projeto ID
+        $project    = filter_var($ID, FILTER_SANITIZE_NUMBER_INT);   
+        //Model ID
+        $model    = filter_var($data['model'], FILTER_SANITIZE_NUMBER_INT);      
+        //Array de ID's de usuários responsáveis
+        $users      = serialize(filter_var_array($data['responsible'], FILTER_SANITIZE_STRING));
+        //ID do Aprovador
+        $approver   = filter_var($data['approver'], FILTER_SANITIZE_NUMBER_INT);
+
+        //Query de inserção
+        $result = $this->pdo->update('project',
+        [   
+            'model' => $model,
+            'responsible' => $users,
+            'approver' => $approver ],
+        ['id' => $project]);
+
+        //Retorna resultado
+        if(isset($result) && !is_null($result)){
+            return array(
+            'type' => 'success', 
+            'msg' => 'Projeto atualizado com sucesso!');
+        }
+        else{
+            return array(
+            'type' => 'danger', 
+            'msg' => 'Houve algum problema na atualização do projeto, tente novamente.');
+        }
+    }
+
+    /* Deletar um modelo */
+    function deleteProject( \Gafp\User $user,  $ID){
         
-        $this->user_has_access($user);
+        $this->user_has_access($user); //Verifica permissão
 
         //Contruindo Query
-        $result = $this->pdo->delete('project',['id' => $ID]);   
-
-        return $this->data_return($result);
+        $result = $this->pdo->delete('project',['id' => $ID ]);
+        
+        //Retorna resultado
+        if(is_object($result) && $result){
+            return array('type' => 'success', 'msg' => 'Projeto deletado.');
+        }
+        else{
+            return array('type' => 'danger', 'msg' => 'Não foi possível deletar o projeto. Tente novamente.');
+        }
     }
 
 }

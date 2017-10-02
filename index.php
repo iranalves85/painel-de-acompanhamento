@@ -134,39 +134,48 @@ $app->get('/painel', function (Request $request, Response $response, $args) {
 
 /*##### PROJETCS ############# */
 
-//Retorna lista de projectos
-$app->get('/projects/{type}[/{wichData}]', function (Request $request, Response $response){
-    
-    $type = $request->getAttribute('type');
+//Retorna uma plan especifica
+$app->get('/projects/{id}', function (Request $request, Response $response, $args){     
+    //Variaveis
+    $id = $request->getAttribute('id');
+    return $response->withJson($this->project->getProject( $this->user, $id ));
 
-    switch ($type) {
-        case 'list':
-            $response = $response->withJson($this->project->getListProjects( $this->user ));
-            break; 
-        case 'fields':
-            $wichData = $request->getAttribute('wichData');
-            $response = $response->withJson($this->project->getProjectFields( $this->user, $wichData ));break;           
-        default:
-            $response = $response->getBody()->write('Access Not Authorized.');
-            break;
-    }
-    return $response;
+})->setName('Project');
+
+//Retorna uma plan especifica
+$app->put('/projects/{id}', function (Request $request, Response $response, $args){     
+    //Variaveis
+    $id = $request->getAttribute('id');
+    $data = $request->getParsedBody();
+    return $response->withJson($this->project->updateProject( $this->user, $id, $data ));
+
+})->setName('Update Project');
+
+//Reordenando lista de projetos ordenados
+$app->get('/projects/[/{order}[/{by}]]', function (Request $request, Response $response){
+    
+    $order = [
+        'order' => ($request->getAttribute('order')) ? $request->getAttribute('order') : 'date_created',
+        'by'    => ($request->getAttribute('by'))? $request->getAttribute('by') : 'DESC',
+    ];
+    return $response->withJson($this->project->getListProjects( $this->user, $order ));
 
 })->setName('projects');
 
-//Reordenando lista de projetos
-$app->post('/projects/list', function (Request $request, Response $response){
+//Retorna campos especificos de projectos
+$app->get('/projects/fields/{wichData}', function (Request $request, Response $response){
     
-    $order = $request->getParsedBody();
-    $response = $response->withJson($this->project->getListProjects( $this->user, $order ));
-    return $response;
+    $wichData = $request->getAttribute('wichData');
+    return $response->withJson($this->project->getProjectFields( $this->user, $wichData ));
 
 })->setName('projects');
 
-//Última etapa para cadastramento projeto
-$app->post('/projects', function (Request $request, Response $response) {
-    
-});  
+//Deleta projeto
+$app->delete('/projects/delete/{id}', function (Request $request, Response $response, $args){    
+    $id = $request->getAttribute('id');
+    return $response->withJson($this->model->deleteProject( $this->user, $id ));
+
+})->setName('Delete Project');
 
 //Adicionar campos de novos projetos
 $app->post('/projects/fields[/{wichData}]', function (Request $request, Response $response, $args) {
@@ -189,48 +198,41 @@ $app->post('/projects/fields[/{wichData}]', function (Request $request, Response
     
 });
 
-//Editar um projeto existente
-$app->get('/projects/edit/{id}', function (Request $request, Response $response, $args) {
-    $id = $request->getAttribute('id');
-    $result = $this->project->getProject( $id, $this->user ); //Executa query        
-    $response->getBody()->write($result); //Retorna os dados
 
-    return $response;
-});
-
-//Deletar um projeto
-$app->get('/projects/delete/{id}', function (Request $request, Response $response, $args) {
-    $id = $request->getAttribute('id');
-    $result = $this->project->deleteProject( $id, $this->user ); //Executa query        
-    $response->getBody()->write($result); //Retorna os dados
-
-    return $response;
-});
 
 /* ###### MODELS ###############*/
 
-//Retorna lista de projectos
-$app->get('/model/{type}', function (Request $request, Response $response, $args){
-    
-    $type   = $request->getAttribute('type');
+//Retorna um modelo baseado num id
+$app->get('/model/{id}', function (Request $request, Response $response) {
+    $id  = $request->getAttribute('id');
+    return $response->withJson($this->model->getModel( $this->user, $id ));
+});
 
-    switch ($type) {
-        case 'list':
-            $response = $response->withJson($this->model->getListModels( $this->user ));
-            break; 
-        case 'fields':
-            $wichData = $request->getAttribute('wichData');
-            $response = $response->withJson($this->model->getProjectFields( $this->user, $wichData ));  
-            break;
-        default:
-            $response = $response->getBody()->write('Access Not Authorized.');
-            break;
-    }
-    return $response;
+//Retorna um modelo baseado num id
+$app->put('/model/{id}', function (Request $request, Response $response) {
+    $id  = $request->getAttribute('id');
+    $data = $request->getParsedBody();
+    return $response->withJson($this->model->updateModel( $this->user, $id, $data ));
+});
+
+//Retorna lista de modelos baseados em ordenação
+$app->get('/model/[/{order}[/{by}]]', function (Request $request, Response $response, $args){
+    $order = [
+        'order' => ($request->getAttribute('order')) ? $request->getAttribute('order') : 'date_created',
+        'by'    => ($request->getAttribute('by'))? $request->getAttribute('by') : 'DESC',
+    ];
+    return $response->withJson($this->model->getListModels( $this->user, $order ));
 
 })->setName('models');
 
-//Retorna planos relacionados a um plano
+$app->get('/model/fields/{wichData}', function (Request $request, Response $response, $args){
+    
+    $wichData = $request->getAttribute('wichData');
+    return $response->withJson($this->model->getProjectFields( $this->user, $wichData ));  
+
+})->setName('models');
+
+//Retorna lista de modelos para determinado plano
 $app->get('/model/plan/{id}', function (Request $request, Response $response, $args){
     
     $id  = $request->getAttribute('id');
@@ -239,7 +241,7 @@ $app->get('/model/plan/{id}', function (Request $request, Response $response, $a
 
 })->setName('models');
 
-//URL para envio de credenciais para login
+//Adiciona um modelo
 $app->post('/model', function (Request $request, Response $response) {
     
     $data = $request->getParsedBody(); //Retorna os dados serializado em array
@@ -250,6 +252,15 @@ $app->post('/model', function (Request $request, Response $response) {
 
     return $response;
 });
+
+//Deleta modelo
+$app->delete('/model/delete/{id}', function (Request $request, Response $response, $args){    
+    $id = $request->getAttribute('id');
+    return $response->withJson($this->model->deleteModel( $this->user, $id ));
+
+})->setName('Delete Model');
+
+
     
 
 /*########## PLAN ###############*/
@@ -262,9 +273,8 @@ $app->get('/plan/{id}', function (Request $request, Response $response, $args){
 
 })->setName('Activity Plans');
 
-//Adiciona lista de planos
-$app->post('/plan/[/{id}]', function (Request $request, Response $response, $args){  
-    
+//Atualiza ou adiciona um plano novo
+$app->post('/plan/[/{id}]', function (Request $request, Response $response, $args){     
     $id = $request->getAttribute('id');
     $data = $request->getParsedBody();
     if(isset($id) && $id>0){ //update plan
@@ -276,40 +286,39 @@ $app->post('/plan/[/{id}]', function (Request $request, Response $response, $arg
 })->setName('Update or Add Plans');
 
 //Deleta plano
-$app->post('/plan/delete/', function (Request $request, Response $response, $args){    
+$app->delete('/plan/delete/', function (Request $request, Response $response, $args){    
     $data = $request->getParsedBody();
     return $response->withJson($this->plan->deletePlan( $this->user, $data ));
-
 })->setName('Delete Plans');
 
 //Retorna lista de planos
-$app->post('/plan/fields/{wichData}', function (Request $request, Response $response){
-    
+$app->post('/plan/fields/{wichData}', function (Request $request, Response $response){    
     $data['field'] = $request->getAttribute('wichData'); //retorna field
     $data['where'] = $request->getParsedBody(); //Junta arrays
     return $response->withJson($this->plan->getPlanFields( $this->user, $data ));
-
 })->setName('Plans Fields');
 
 //Retorna lista de planos
-$app->post('/plan/list/[/{leader}]', function (Request $request, Response $response, $args){
-    
+$app->get('/plan/list/{id}', function (Request $request, Response $response, $args){    
     //Variaveis
-    $leader = $request->getAttribute('leader');
-    $data = $request->getParsedBody();
+    $id = $request->getAttribute('id');
+    return  $response->withJson($this->plan->getListPlans( $this->user, $id ));
+})->setName('Lista de Plans');
 
-    //Se var definida
-    if( empty($leader) && $leader == 'leader' ):
-        //retorna lista de planos de func
-        $response = $response->withJson($this->plan->getListLeaderPlans( $this->user, $data ));
-    else:
-        //retorna lista individual
-        $response = $response->withJson($this->plan->getListPlans( $this->user, $data ));
-    endif;
-
-    return $response;
-
+//Retorna lista de planos dos líderes
+$app->get('/plan/leader/list/{id}', function (Request $request, Response $response, $args){    
+    //Variaveis
+    $leader = $request->getAttribute('id');
+    return $response->withJson($this->plan->getListLeaderPlans( $this->user, $leader ));
 })->setName('Plans Miscelanias');
+
+//Atualização de Status
+$app->put('/plan/status/{id}', function (Request $request, Response $response, $args){     
+    //Variaveis
+    $id = $request->getAttribute('id');
+    $data = $request->getParsedBody();
+    return $response->withJson($this->plan->updatePlanStatus( $this->user, $id, $data ));
+})->setName('Update Plans Status');
 
 
 /*########## ATIVIDADE ###############*/
@@ -322,7 +331,7 @@ $app->get('/plan/activity/{id}', function (Request $request, Response $response,
 
 })->setName('Activity Plans');
 
-//Retorna uma atividade especifica
+//Retorna lista de atividades de um plano
 $app->get('/plan/activity/list/{id}', function (Request $request, Response $response, $args){     
     //Variaveis
     $id = $request->getAttribute('id');
@@ -330,34 +339,36 @@ $app->get('/plan/activity/list/{id}', function (Request $request, Response $resp
 
 })->setName('Activity Plans');
 
-//Retorna uma atividade especifica
-$app->get('/plan/activity/evidence/{id}', function (Request $request, Response $response, $args){     
-    //Variaveis
-    $id = $request->getAttribute('id');
-    return $response->withJson($this->plan->getActivityEvidence( $this->user, $id ));
-
-})->setName('Activity Plans');
-
-//Retorna uma atividade especifica
-$app->post('/plan/activity/{id}', function (Request $request, Response $response, $args){     
-    //Variaveis
-    $id = $request->getAttribute('id');
-    return $response->withJson($this->plan->updateActivityPlan( $this->user, $id ));
-})->setName('Update Activity Plans');
-
-//Retorna uma atividade especifica
+//Adiciona uma atividade especifica
 $app->post('/plan/activity/', function (Request $request, Response $response, $args){     
     //Variaveis
     $data = $request->getParsedBody();
     return $response->withJson($this->plan->addActivityPlan( $this->user, $data ));   
 })->setName('Add Activity Plans');
 
+//Atualiza atividade especifica
+$app->put('/plan/activity/{id}', function (Request $request, Response $response, $args){     
+    //Variaveis
+    $id = $request->getAttribute('id');
+    return $response->withJson($this->plan->updateActivityPlan( $this->user, $id ));
+})->setName('Update Activity Plans');
+
 //Deleta plano
-$app->get('/plan/activity/delete/{id}', function (Request $request, Response $response, $args){    
+$app->delete('/plan/activity/delete/{id}', function (Request $request, Response $response, $args){    
     $id = $request->getAttribute('id');
     return $response->withJson($this->plan->deleteActivityPlan( $this->user, $id ));
 
 })->setName('Delete Plans');
+
+/// Evidence
+
+//Retorna uma evidencias de atividade especifica
+$app->get('/plan/activity/evidence/{id}', function (Request $request, Response $response, $args){     
+    //Variaveis
+    $id = $request->getAttribute('id');
+    return $response->withJson($this->plan->getActivityEvidence( $this->user, $id ));
+
+})->setName('Activity Plans');
 
 
 /* #APP INIT ----------------------------------------------------*/

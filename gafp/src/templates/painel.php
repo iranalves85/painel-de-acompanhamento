@@ -28,6 +28,7 @@ $email      = $_SESSION['user']['email'];
 <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
 <script src="node_modules/angular-route/angular-route.min.js"></script>
 <script src="node_modules/angular-file-upload/dist/angular-file-upload.min.js"></script>
+<script src="node_modules/angular-filter/dist/angular-filter.min.js"></script>
 
 <?php 
     //Adiciona arquivos de acordo com o tipo de acesso

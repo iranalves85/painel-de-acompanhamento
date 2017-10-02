@@ -56,7 +56,7 @@ class Connect{
             $prepare = $this->pdo->pdo->prepare('users', $select);
             //Executa query e retorna resultado
             $result = $this->pdo->get('users', [
-                'id', 'email', 'username', 'area[Object]', 'company', 'approver', 'type_user[Object]'
+                'id', 'email', 'username', 'area[Object]', 'project', 'type_user[Object]'
             ], $select); 
 
             return $result;
@@ -85,7 +85,7 @@ class Connect{
                 } 
                 $user_data[$key] = serialize($explode);
             else:
-                $user_data[$key] = ($key == 'password')? password_hash(filter_var($value, FILTER_SANITIZE_STRING), CRYPT_BLOWFISH) : filter_var($value, FILTER_SANITIZE_STRING); 
+                $user_data[$key] = ($key == 'password')? password_hash(filter_var($value, FILTER_SANITIZE_STRING), PASSWORD_DEFAULT) : filter_var($value, FILTER_SANITIZE_STRING); 
             endif;            
         }
         

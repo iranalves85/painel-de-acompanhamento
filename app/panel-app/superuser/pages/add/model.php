@@ -1,21 +1,21 @@
-<div class="col-12 main card block" ng-controller="modelo">
+<div class="col-12 main card block" ng-controller="addModel">
         <div class="new-project">
 
             <h2>Novo Modelo</h2>
 
-            <form name="add-project" method="POST" ng-submit="addModel.submit()">
+            <form name="add-model" method="POST" ng-submit="submit()">
                 <div class="row">
                     <div class="col-md-6">
                         <label for="business">
                             Nome
                         </label>
-                        <input type="text" name="name" ng-model="addModel.name" class="form-control" />
+                        <input type="text" name="name" ng-model="addModel.name" class="form-control" ng-required="required" />
                     </div>
                     <div class="col-md-6">
                         <label for="responsible">
                                 Descrição
                             </label>
-                        <input type="text" name="description" ng-model="addModel.description" class="form-control" />
+                        <input type="text" name="description" ng-model="addModel.description" class="form-control" ng-required="required" />
                     </div>
                     <br />
                     <div class="col-md-12 block">
@@ -36,7 +36,7 @@
                                 <td>
                                     <div class="form-inline">
                                         <input type="text" ng-model="addModel.item.description" class="form-control col-9 mr-2" />
-                                        <span class="btn btn-secondary" ng-click="addModel.addItem()">Adicionar</span>
+                                        <button class="btn btn-secondary" type="button" ng-click="addModel.addItem()">Adicionar</button>
                                     </div>
                                 </td>
                             </tr>
