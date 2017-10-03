@@ -88,7 +88,7 @@ class Connect{
                 $user_data[$key] = ($key == 'password')? password_hash(filter_var($value, FILTER_SANITIZE_STRING), PASSWORD_DEFAULT) : filter_var($value, FILTER_SANITIZE_STRING); 
             endif;            
         }
-        
+
         //Prevenir contra SQL injections
         $prepare = $this->pdo->pdo->prepare('users', ['email' => $user_data['email']]);
 
@@ -105,6 +105,16 @@ class Connect{
             $result = $this->pdo->id();
 
         endif;
+
+        return $result;
+    }
+
+    /* Adicionar um novo usuário ou atualizar existente no sistema */
+    function getSingleUser( $filter = array() ){
+        
+        $result = $this->pdo->get('users', [
+            'id', 'username', 'email', 'area[Object]'
+        ], $filter);
 
         return $result;
     }

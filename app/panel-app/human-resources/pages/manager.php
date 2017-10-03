@@ -1,42 +1,40 @@
-<div class="container" ng-controller="gestores">
+<div class="container" ng-controller="manager">
 
-    <h1>{{projeto.name}} / Gestores</h1>
+    <h1>Projeto / Gestores</h1>
 
     <div class="col-12 block card main">
 
         <div class="new-project">
 
-            <h2>
-                Novo Gestor
-            </h2>
+            <h2>Novo Gestor</h2>
 
-            <form action="projects" name="add-project" method="post" enctype="multipart/form-data">
+            <form name="add-manager" method="post" ng-submit="newUser()">
                 <div class="row">
 
                     <div class="col-md-3">
                         <label for="responsible">
                             Nome Completo
                         </label>
-                        <input type="text" name="name" ng-value="name" ng-model="name" class="form-control" />
+                        <input type="text" name="name" ng-value="name" ng-model="manager.name" class="form-control" ng-required="required" placeholder="Insira o nome completo do usuário" />
                     </div>
                     <div class="col-md-3">
                         <label for="responsible">
                             E-mail
                         </label>
-                        <input type="email" name="email" ng-value="name" class="form-control" />
+                        <input type="email" name="email" ng-value="name" class="form-control" ng-model="manager.email" ng-required="required" placeholder="Insira um e-mail válido." />
                     </div>
                     <div class="col-md-3">
                         <label for="model">
                             Password
                         </label>
-                        <input type="password" name="password" ng-value="password" ng-model="password" class="form-control" />
+                        <input type="text" name="password" ng-value="password" ng-model="manager.password" class="form-control" ng-required="required" placeholder="******" />
                     </div>
 
                     <div class="col-md-3">
                         <label for="business">
-                            Área
+                            Área / Departamento
                         </label>
-                        <input type="text" name="area" ng-value="area.id" ng-model="area" uib-typeahead="company.company for company in companys | filter:$viewValue | limitTo:8" class="form-control" />
+                        <input type="text" name="area" ng-value="area" ng-model="manager.area" class="form-control" ng-required="required"  placeholder="Insira as áreas na qual o usuário faz parte." />
                     </div>
                     <div class="col-md-12">
                         <br />
@@ -61,22 +59,32 @@
             </li>
         </ul>
 
-        <table class="table table-stripped table-bordered">
-            <thead class="thead-inverse">
+        <table class="table table-striped table-sm table-bordered">
+            <thead>
                 <th>Nome</th>
                 <th>E-mail</th>
-                <th>Área</th>
+                <th>Área / Departamento</th>
                 <th>Ação</th>
             </thead>
             <tbody>
-                <tr ng-repeat="gestor in gestores | filter:pesquisa">
-                    <td>{{gestor.name}}</td>
+                <tr ng-repeat="gestor in users | filter:pesquisa">
+                    <td>{{gestor.username}}</td>
                     <td>{{gestor.email}}</td>
-                    <td>{{gestor.area}}</td>
+                    <td>
+                        <ul>
+                            <li ng-repeat="area in gestor.area">
+                                {{area}}
+                            </li>                            
+                        </ul>
+                    </td>
                     <td>
                         <ul class="list-inline">
-                            <li class="list-inline-item"><a href="gestor/edit/{{plan.id}}">Editar</a></li>
-                            <li class="list-inline-item"><a href="gestor/delete/{{plan.id}}">Excluir</a></li>
+                            <li class="list-inline-item">
+                                <a class="btn btn-sm" href="painel#!/projects/manager/edit/{{gestor.id}}">Editar</a>
+                            </li>
+                            <li class="list-inline-item">
+                                <button type="button" class="btn btn-sm btn-danger" ng-click="deleteUser(gestor.id)">Excluir</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>

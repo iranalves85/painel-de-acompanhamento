@@ -352,4 +352,163 @@ class Project extends Connect{
         }
     }
 
+
+    //////// Definições do projeto
+
+    //Retorna regra do projeto
+    function getRuleProject(\Gafp\User $user, $ID ){
+        
+        $this->user_has_access($user); //Verifica permissão
+
+        //Verifica se existe registro do projeto no banco
+        if( $this->pdo->has('rule_define',['project' => $ID ]) ){
+            //Pega regras cadastradas
+            $result = $this->pdo->get('rule_define',['rules[Object]'],['project' => $ID]); 
+        }
+        else{
+            $result = false;
+        }    
+        
+        //Retorna resultado
+        if(is_array($result) && $result){
+            return $result;
+        }
+
+    }
+
+    //Adiciona ou atualiza regras do projeto
+    function updateRuleProject(\Gafp\User $user, $ID, $data ){
+
+        $this->user_has_access($user); //Verifica permissão
+
+        foreach ($data as $key => $value) {
+            $value['types'] = filter_var_array($value['types'], FILTER_SANITIZE_STRING);
+            $value['qtd'] = filter_var($value['qtd'], FILTER_SANITIZE_NUMBER_INT);
+        }
+
+        //Verifica se existe registro do projeto no banco
+        if( $this->pdo->has('rule_define',['project' => $ID ]) ){
+            //Atualizando a linha
+            $result = $this->pdo->update('rule_define',[
+                'rules' => serialize($data)
+            ],['project' => $ID]);
+        }
+        else{
+            //Criando uma nova linha
+            $result = $this->pdo->insert('rule_define',[
+                'project' => $ID,
+                'rules' => serialize($data)
+            ]);
+        }  
+        
+        //Retorna resultado
+        if(is_object($result) && $result){
+            return array('type' => 'success', 'msg' => 'Regras atualizadas.');
+        }
+        else{
+            return array('type' => 'danger', 'msg' => 'Não foi possível atualizar as regras. Tente novamente.');
+        }
+
+    }   
+
+    //Retorna msg de email cadastrado
+    function getMail(\Gafp\User $user, $id, $type ){        
+        $this->user_has_access($user); //Verifica permissão
+        //Insere dados no banco
+        $result = $this->pdo->get('emails',['message'],['type'=> $type, 'project' => $id] );
+        //Retorna resultado
+        if(is_array($result) && $result){
+            return $result;
+        }
+    }
+
+    //Adiciona ou atualiza regras do projeto
+    function sendMail(\Gafp\User $user, \PHPMailer\PHPMailer\PHPMailer $mail,  $data ){
+        
+        $this->user_has_access($user); //Verifica permissão
+
+        $project = filter_var($data['project'], FILTER_SANITIZE_NUMBER_INT); 
+        $msg    = filter_var($data['msg'], FILTER_SANITIZE_STRING);
+        $type   = filter_var($data['type'], FILTER_SANITIZE_STRING);
+
+        //Se dados não forem em formato de array
+        if( !is_array($data) && !isset($data['email'] )){
+            return;
+        }
+
+        //Adiciona os e-mails dos usuários selecionados
+        if( isset($data['users']) && count($data['users']) > 0 ){
+            foreach ($data['users'] as $key => $value) {
+                //Adiciona o usuário ao recipiente de email
+                $mail->addAddress($value['email'], $value['username']);
+            }
+        }
+
+        //Adiciona e-mail de usuário selecionado alguma área
+        if( isset($data['areas']) && count($data['areas']) > 0 ){
+            //Percorre array e traz usuários das áreas selecionadas
+            foreach ($data['areas'] as $key => $value) {
+                $userList = $user->getUsers([
+                    'area[~]' => $value
+                ]);
+            }
+            //Se não houver usuários
+            if(count($userList) <= 0 ){
+                return;
+            }
+            //Adiciona os usuários ao PHPMailer
+            foreach ($userList as $key => $value) {
+                //Adiciona o usuário ao recipiente de email
+                $mail->addAddress($value['email'], $value['username']);
+            }
+        }
+
+        //Adiciona a mensagem no banco do projeto para envio futuros
+        if( isset($data['msg']) && !empty($msg) ){
+            if( $this->pdo->has('emails',['project' => $project, 'type' => $type ]) ){
+                //Atualiza os dados no banco
+                $result = $this->pdo->update('emails',
+                [   'type' => $type,
+                    'message' => $msg
+                ],
+                [   'project' => $project,
+                    'type'  => $type    ]);
+            }
+            else{
+                //Insere dados no banco
+                $result = $this->pdo->insert('emails',
+                [  'project' => $project,
+                   'type' => $type,
+                   'message' => $msg
+                ]);
+            }            
+        }
+
+        //Definições PHPMailer
+        $mail->isSMTP();                                      
+        $mail->Host = _HOST_;  
+        $mail->SMTPAuth = true;                               
+        $mail->Username = _USER_EMAIL_;                 
+        $mail->Password = _USER_PASS_;                           
+        $mail->SMTPSecure = _SMTP_SECURE_;                            
+        $mail->Port = _PORT_;
+        $mail->setFrom('from@example.com', 'Mailer');
+        $mail->setLanguage('pt_br');
+
+        //Content
+        $mail->isHTML(true);  // Formato do E-mail
+        $mail->Subject = ($type == 'charge')? 'Cobrança' : 'Boas-Vindas'; //Assunto
+        $mail->Body    = $msg; //Mensagem html
+        $mail->AltBody = $msg; //Mensagem plain-text
+                
+        //Retorna resultado
+        if($mail->send()){
+            return array('type' => 'success', 'msg' => 'E-mail enviado com sucesso.');
+        }
+        else{
+            return array('type' => 'danger', 'msg' => 'Não foi possível enviar o e-mail. Tente novamente.');
+        }
+
+    }
+
 }

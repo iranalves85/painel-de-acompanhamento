@@ -29,15 +29,20 @@ $email      = $_SESSION['user']['email'];
 <script src="node_modules/angular-route/angular-route.min.js"></script>
 <script src="node_modules/angular-file-upload/dist/angular-file-upload.min.js"></script>
 <script src="node_modules/angular-filter/dist/angular-filter.min.js"></script>
+<script>
+    //Inicializa objeto Angular  
+    $app = angular.module('gafpApp', 
+    ['ngRoute', 'angularFileUpload', 'ui.bootstrap', 'angular.filter']);
+</script>
 
 <?php 
     //Adiciona arquivos de acordo com o tipo de acesso
-    foreach ($type_user as $access) {
+    foreach ($type_user as $access):
 ?>
-    <script src="app/panel-app/<?php echo $access . '/'. $access;  ?>.component.js"></script> 
+    <script src="app/panel-app/<?php echo $access . '/'. $access;  ?>.component.js"></script>
 
 <?php
-    }
+    endforeach;
 ?>
 
 <script src="http://momentjs.com/downloads/moment.js" /></script>
@@ -97,13 +102,15 @@ $email      = $_SESSION['user']['email'];
 
         <?php 
             //Adiciona as tags para inserção de template angular
+            $priority = array('superuser' => 1,'human-resources' => 2, 'manager' => 3);
             foreach ($type_user as $app) {
-                //include_once('app/panel-app/superuser/superuser.template.php');
-                echo '<' . $app . '-app></'. $app . '-app>';
+                if(array_key_exists($app, $priority)){
+                    //include_once('app/panel-app/superuser/superuser.template.php');
+                    echo '<' . $app . '-app></'. $app . '-app>';
+                    break;
+                }                
             }
         ?>
-
-        <div class="modal-parent"></div><!-- modal -->
         
     </main>
 

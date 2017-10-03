@@ -57,10 +57,10 @@ class Model extends Project{
 
         //Contruindo Query
         $result = $this->pdo->get('plan',[ 
-            '[>]project'    => ['plan.project'  => 'id'],            
+            '[>]project'    => ['project'  => 'id'],            
             '[>]model'      => ['project.model'  => 'id'],
         ],
-        ['model.topics[Object]', 'plan.id(plan)', 'project.id(project)'],
+        ['model.topics[Object](models)', 'plan.id(plan)', 'project.id(project)'],
         [
             'plan.id' => $id
         ]);

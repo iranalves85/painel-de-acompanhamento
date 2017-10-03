@@ -32,16 +32,16 @@
                     <td>
                         <ul class="list-inline">
                             <li class="list-inline-item">
-                                <a class="btn btn-sm" href="painel#!/projects/cobranca/{{project.id}}">E-mail de Cobrança</a>
+                                <a class="btn btn-sm" href="painel#!/projects/charge/{{project.id}}">E-mail de Cobrança</a>
                             </li>
                             <li class="list-inline-item">
-                                <a class="btn btn-sm" href="painel#!/projects/boas-vindas/{{project.id}}">E-mail de Boas-Vindas</a>
+                                <a class="btn btn-sm" href="painel#!/projects/welcome/{{project.id}}">E-mail de Boas-Vindas</a>
                             </li>
                             <li class="list-inline-item">
-                                <a class="btn btn-sm" href="painel#!/projects/gestores/{{project.id}}">Gestores</a>
+                                <a class="btn btn-sm" href="painel#!/projects/manager/{{project.id}}">Gestores</a>
                             </li>
                             <li class="list-inline-item">
-                                <a class="btn btn-sm" href="painel#!/projects/regras/{{project.id}}">Definir Regras</a>
+                                <a class="btn btn-sm" href="painel#!/projects/rules/{{project.id}}">Definir Regras</a>
                             </li>                            
                         </ul>
                     </td>

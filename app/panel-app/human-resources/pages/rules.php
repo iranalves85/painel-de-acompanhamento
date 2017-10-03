@@ -1,6 +1,6 @@
-<div class="container" ng-controller="regras">
+<div class="container" ng-controller="rules">
 
-    <h1>{{projeto.name}} / Configuração de Regras</h1>
+    <h1>Projeto / Configuração de Regras</h1>
 
     <div class="regras">
         <form method="POST" name="definir-regras" ng-submit="defineRules()">
@@ -12,18 +12,18 @@
                     <div class="form-group row">
                         <div class="col-4">
                             <label>Quantidade</label>
-                            <input class="form-control" type="number" min="1" name="yellow[qtd]" ng-model="yellow.qtd">
+                            <input class="form-control" type="number" min="1" name="warning[qtd]" ng-model="warning.qtd">
                         </div>
                         <div class="col-8">
                             <label>Mês / Dias / Horas</label>
-                            <select class="form-control" name="yellow[type]" ng-options="type as type.name for type in fields.types track by type.name" ng-model="yellow.types"></select>
+                            <select class="form-control" name="warning[type]" ng-options="type as type.name for type in rules track by type.id" ng-model="warning.types"></select>
                         </div>
                     </div>
                     <ul class="list-inline">
                         <li class="list-inline-item">
-                            <input name="yellow[conditional]" type="radio" value="0" selected="selected" ng-model="yellow.conditional">Antes</li>
+                            <input name="warning[conditional]" type="radio" value="0" selected="selected" ng-model="warning.conditional">Antes</li>
                         <li class="list-inline-item">
-                            <input name="yellow[conditional]" type="radio" value="1" ng-model="yellow.conditional">Depois</li>
+                            <input name="warning[conditional]" type="radio" value="1" ng-model="warning.conditional">Depois</li>
                     </ul>
                 </div>
 
@@ -32,18 +32,18 @@
                     <div class="form-group row">
                         <div class="col-4">
                             <label>Quantidade</label>
-                            <input class="form-control" type="number" min="1" name="red[qtd]" ng-model="red.qtd">
+                            <input class="form-control" type="number" min="1" name="danger[qtd]" ng-model="danger.qtd">
                         </div>
                         <div class="col-8">
                             <label>Mês / Dias / Horas</label>
-                            <select class="form-control" name="red[type]" ng-options="type as type.name for type in fields.types track by type.name" ng-model="red.types"></select>
+                            <select class="form-control" name="danger[type]" ng-options="type as type.name for type in rules track by type.name" ng-model="danger.types"></select>
                         </div>
                     </div>
                     <ul class="list-inline">
                         <li class="list-inline-item">
-                            <input name="red[conditional]" type="radio" value="0" ng-model="red.conditional" selected="selected">Antes</li>
+                            <input name="danger[conditional]" type="radio" value="0" ng-model="danger.conditional" selected="selected">Antes</li>
                         <li class="list-inline-item">
-                            <input name="red[conditional]" type="radio" value="1" ng-model="red.conditional">Depois</li>
+                            <input name="danger[conditional]" type="radio" value="1" ng-model="danger.conditional">Depois</li>
                     </ul>                    
                 </div>
 

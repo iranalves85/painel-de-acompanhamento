@@ -16,13 +16,13 @@
                             <label for="business">
                                 Nome da Atividade
                             </label>
-                            <input type="text" name="addActivity.name" ng-model="addActivity.name" class="form-control" ng-required="required" />
+                            <input type="text" name="addActivity.name" ng-model="activty.name" class="form-control" ng-required="required" />
                         </div>
                         <div class="col-md-6">
                             <label for="responsible">
                                 Descrição
                             </label>
-                            <input type="text" name="addActivity.description" ng-model="addActivity.description" class="form-control" ng-required="required" />
+                            <input type="text" name="addActivity.description" ng-model="activity.description" class="form-control" ng-required="required" />
                         </div>
                     </div>                    
                 </div>
@@ -40,7 +40,6 @@
                             <td>
                                 <select name="addActivity.form.evidence[][topic]" class="form-control" ng-model="evidence.topic" ng-options="model as model.name for model in models track by model.name" >
                                 </select>
-                                <span class="badge badge-info">{{addActivity.model.topics[0].description}}</span>
                             </td>
                             <td>
                                 <input name="addActivity.form.evidence[][action]" type="text" value="" class="form-control" ng-model="evidence.action" />
@@ -75,28 +74,28 @@
                         </thead>
                         <tr>
                             <td>
-                                <input name="addActivity.form.what" type="text" ng-model="addActivity.what" class="form-control" ng-required="required"/>
+                                <input name="addActivity.form.what" type="text" ng-model="activity.what" class="form-control" ng-required="required"/>
                             </td>
                             <td>
-                                <input name="addActivity.form.because" type="text" ng-model="addActivity.because" class="form-control" ng-required="required" />
+                                <input name="addActivity.form.because" type="text" ng-model="activity.because" class="form-control" ng-required="required" />
                             </td>
                             <td>
-                                <input name="addActivity.form.place" type="text" ng-model="addActivity.place" class="form-control" ng-required="required" />
+                                <input name="addActivity.form.place" type="text" ng-model="activity.place" class="form-control" ng-required="required" />
                             </td>
                             <td>
                                 <?php
                                     $date = date('Y-m-d', time() );
                                 ?>
-                                <input name="addActivity.form.moment" min="<?php echo $date; ?>" type="date" ng-model="addActivity.moment" class="form-control" ng-value="{{addActivity.moment | date:'Y-m-d'}}" ng-required="required" />
+                                <input name="addActivity.form.moment" min="<?php echo $date; ?>" type="date" ng-model="activity.moment" class="form-control" ng-value="{{addActivity.moment | date:'Y-m-d'}}" ng-required="required" />
                             </td>
                             <td>
-                                <input name="addActivity.form.who" type="text" ng-model="addActivity.who" class="form-control"  ng-required="required"/>
+                                <input name="addActivity.form.who" type="text" ng-model="activity.who" class="form-control"  ng-required="required"/>
                             </td>
                             <td>
-                                <input name="addActivity.form.how" type="text" ng-model="addActivity.how" class="form-control" ng-required="required" />
+                                <input name="addActivity.form.how" type="text" ng-model="activity.how" class="form-control" ng-required="required" />
                             </td>
                             <td>
-                                <input name="addActivity.form.cost" type="text" ng-model="addActivity.cost" class="form-control" ng-required="required" />
+                                <input name="addActivity.form.cost" type="text" ng-model="aactivity.cost" class="form-control" ng-required="required" />
                             </td>                            
                         </tr>
                     </table>

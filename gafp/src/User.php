@@ -34,10 +34,70 @@ class User{
         endif;
     }
 
-    /* Insere diversos usuários por vez em tabela */
+    /* Retorna um usuário especifico */
+    function getUser( $filter = array() ){
+        //Invoca função de retornar lista de usuários
+        return $this->connect->getSingleUser($filter);      
+    } 
+
+    /* Retorna lista de usuários */
     function getUsers( $filter = array() ){
         //Invoca função de retornar lista de usuários
         return $this->connect->getListUsers($filter);      
+    } 
+
+    /* Insere um único usuário */
+    function addUser( \Gafp\Connect $connect, $projectID, $data ){
+        // Retorna id de empresa relacionado ao projeto
+        $result = $connect->pdo->get('project',
+            ['company'],
+            ['id' => $projectID ]);
+
+        //Se tipo de usuário não foi definido
+        if( !isset($data['type_user']) ){
+            $data['type_user'] = 'manager';
+        }
+
+        // Se retorno for verdadeiro
+        if($result){
+            return $this->insertMultipleUsers($data, $projectID, $result['company']);    
+        }
+        
+    } 
+
+    /* Insere um único usuário */
+    function updateUser( \Gafp\Connect $connect, $userID, $data ){
+        
+        $user_data = [];
+        $columnToSerialize = ['area', 'leader', 'type_user'];
+        $result = '';
+
+        //Prepara as informações para inserção no banco
+        foreach ($data as $key => $value) {
+            //aplicando filtro de string
+            if( in_array($key, $columnToSerialize) ):            
+                $explode = explode(',', filter_var($value, FILTER_SANITIZE_STRING));
+                foreach ($explode as $k => $v) {
+                    $explode[$k] = trim($v);
+                } 
+                $user_data[$key] = serialize($explode);                    
+            else:
+                $user_data[$key] = ($key == 'password')? password_hash(filter_var($value, FILTER_SANITIZE_STRING), PASSWORD_DEFAULT) : filter_var($value, FILTER_SANITIZE_STRING);
+            endif;            
+        }
+
+        //Prevenir contra SQL injections
+        $prepare = $connect->pdo->pdo->prepare('users', ['id' => $userID]);
+
+        //Verifica se usuário existe no banco, baseado no email
+        if( $connect->pdo->has( $prepare->queryString, ['id' => $userID] )):
+            //Executa update e retorna resultado
+            $update = $connect->pdo->update('users', $user_data, ['id' => $userID]); 
+            $result = $update->rowCount();
+        endif;
+
+        return $result;
+        
     } 
 
     /* Insere diversos usuários por vez em tabela */
@@ -51,7 +111,7 @@ class User{
 
         //Invoca função de incluir um novo usuário
         return $this->connect->newUser($userdata);      
-    }   
+    }
     
     /*
         ##### Sessões de usuário

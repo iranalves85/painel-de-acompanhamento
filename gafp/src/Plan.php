@@ -63,27 +63,19 @@ class Plan extends Connect{
         $result = $this->pdo->select('plan', [
             '[>]company'        => ['company'   => 'id'],
             '[>]users'          => ['owner'     => 'id'],            
-            '[>]status'         => ['status'    => 'id']             
+            '[>]status'         => ['status'    => 'id'],
+            '[>]rule_define'    => ['project'   => 'project']        
         ],[
             'plan.id', 'plan.date_created', 'plan.project', 'plan.name', 'plan.description', 
-            'plan.cost','plan.goal', 'plan.deadline', 'status.id(statusID)', 
-            'status.status(statusText)'
+            'plan.cost','plan.goal', 'plan.deadline', 'users.username', 'status.id(statusID)', 
+            'status.status(statusText)', 'rule_define.rules(rules)'
         ],[
             'plan.owner' => $IDSub
         ]);
 
-        //Query que retorna lista de planos de subordinados
-        $ruleDates = $this->pdo->select('rule_define', [
-            '[>]rule' => ['type_rule' => 'id']             
-        ],[
-            'rule_define.date(date)', 'rule.rule(rule)'
-        ],[
-            'rule_define.project' => $result[0]['project']
-        ]);
-
         //Verifica em cada item da lista as regras de datas (primary,warning,success,danger)
         foreach ($result as $key => $value) {
-            $result[$key]['rule'] = $this->ruleLogic($ruleDates, $result[$key]['deadline']);
+           // $result[$key]['rules'] = $this->ruleLogic($result[$key]['rules'], $result[$key]['deadline']);
         }        
         
         if(! $result):
@@ -186,11 +178,12 @@ class Plan extends Connect{
 
         //Insere os dados obtidos anteriormente
         $result = $this->pdo->insert('plan', [ 
-            'name'          => $data['name'],
-            'description'   => $data['description'],
-            'owner'         => $data['owner'],
-            'cost'          => $data['cost'],
-            'goal'          => $data['goal'],
+            'project'       => filter_var($data['project'], FILTER_SANITIZE_NUMBER_INT),
+            'name'          => filter_var($data['name'], FILTER_SANITIZE_STRING),
+            'description'   => filter_var($data['description'], FILTER_SANITIZE_STRING),
+            'owner'         => filter_var($data['owner'], FILTER_SANITIZE_NUMBER_INT),
+            'cost'          => filter_var($data['cost'], FILTER_SANITIZE_STRING),
+            'goal'          => filter_var($data['goal'], FILTER_SANITIZE_STRING),
             'deadline'      => $this->data_converter_to_insert($data['deadline'])
         ]);
 

@@ -9,6 +9,11 @@ require 'gafp/autoload.php'; //carregando classes
 
 define('_PREFIX_', 'pa_'); //Definindo prefixo de tabelas
 define('_PATH_', 'http://localhost/desenvolvimento/painel-acompanhamento/'); //Definindo domínio da aplicação
+define('_HOST_', 'smtp1.example.com;smtp2.example.com'); // HOST de Envio
+define('_USER_EMAIL_', 'user@example.com');   //Email de envio
+define('_USER_PASS_', 'secret'); //Password de email
+define('_SMTP_SECURE_', 'tls');  // Enable TLS encryption, `ssl` also accepted
+define('_PORT_', 587);   //Porta
 
 $config = [
     'settings' => [
@@ -33,9 +38,14 @@ $container['view'] = function ($container) {
     return new \Slim\Views\PhpRenderer('./gafp/src/templates/');
 };
 
-// Registrando um componente de conexão ao banco de dados
+// PHP Excel
 $container['phpexcel'] = function ($container) {
     return new \PHPExcel();
+};
+
+// PHP Mailer
+$container['phpmailer'] = function ($container) {
+    return new \PHPMailer\PHPMailer\PHPMailer();
 };
 
 // Registrando um componente de conexão ao banco de dados
@@ -51,7 +61,6 @@ $container['model'] = function($container){
     return new \Gafp\Model(_PREFIX_);
 };
 
-//
 $container['plan'] = function($container){
     return new \Gafp\Plan(_PREFIX_);
 };
@@ -198,6 +207,72 @@ $app->post('/projects/fields[/{wichData}]', function (Request $request, Response
     
 });
 
+/*########### USUARIOS DO PROJETO  */
+
+//Retorna usuário especifico
+$app->get('/projects/user/{id}', function (Request $request, Response $response) {
+    $id  = $request->getAttribute('id'); //id do usuário
+    return $response->withJson($this->user->getUser(['id' => $id]));
+});
+
+//Retorna lista de usuários do projeto
+$app->put('/projects/user/{id}', function (Request $request, Response $response) {
+    $id  = $request->getAttribute('id');
+    $data   = $request->getParsedBody();
+    return $response->withJson($this->user->updateUser($this->connect, $id, $data));
+});
+
+//Retorna lista de usuários do projeto
+$app->get('/projects/users/{id}', function (Request $request, Response $response) {
+    $id  = $request->getAttribute('id');
+    return $response->withJson($this->user->getUsers(['project' => $id]));
+});
+
+//Retorna lista de usuários do projeto
+$app->get('/projects/users/manager/{id}', function (Request $request, Response $response) {
+    $id  = $request->getAttribute('id');
+    return $response->withJson($this->user->getUsers(['project' => $id, 'type_user[~]' => 'manager']));
+});
+
+//Adiciona usuários ao projeto
+$app->post('/projects/users/manager/{id}', function (Request $request, Response $response, $args) {
+    $id     = $request->getAttribute('id');
+    $data   = $request->getParsedBody();
+    return $response->withJson($this->user->addUser($this->connect, $id, $data));
+});
+
+
+/*########## EMAILS ###############*/
+//Grava msg no bd e envia e-mails
+$app->post('/projects/sendmail/', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    return $response->withJson( $this->project->sendMail( $this->user, $this->phpmailer, $data ) );
+});
+
+//Retorna msg do BD
+$app->get('/projects/sendmail/{type}/{id}', function (Request $request, Response $response) {
+    $id  = $request->getAttribute('id');
+    $type  = $request->getAttribute('type');
+    return $response->withJson( $this->project->getMail( $this->user, $id, $type ));
+});
+
+
+/*########## REGRAS ###############*/
+
+//Inserir e atualizar as regras de datas
+$app->get('/projects/rules/{id}', function (Request $request, Response $response) {
+    $id  = $request->getAttribute('id');
+    return $response->withJson($this->project->getRuleProject( $this->user, $id));
+});
+
+//Inserir e atualizar as regras de datas
+$app->put('/projects/rules/{id}', function (Request $request, Response $response) {
+    $id  = $request->getAttribute('id');
+    $data = $request->getParsedBody();
+    return $response->withJson($this->project->updateRuleProject( $this->user, $id, $data ));
+});
+
+
 
 
 /* ###### MODELS ###############*/
@@ -310,7 +385,7 @@ $app->get('/plan/leader/list/{id}', function (Request $request, Response $respon
     //Variaveis
     $leader = $request->getAttribute('id');
     return $response->withJson($this->plan->getListLeaderPlans( $this->user, $leader ));
-})->setName('Plans Miscelanias');
+})->setName('Leader Plans List');
 
 //Atualização de Status
 $app->put('/plan/status/{id}', function (Request $request, Response $response, $args){     

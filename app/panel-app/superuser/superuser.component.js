@@ -1,4 +1,3 @@
-$app = angular.module('gafpApp', ['ngRoute', 'angularFileUpload', 'ui.bootstrap', 'angular.filter']);
 $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$uibModal',
         function projectController($http, $scope, $httpParamSerializerJQLike, $uibModal) {
 
@@ -587,12 +586,13 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
         function updateModelController($http, $scope, $httpParamSerializerJQLike, $routeParams) {
             //Id do modelo atual
             $modelID = $routeParams.id;
+            $scope.models = {};
+
             //Função de retorno na requisição
             $getModelReturn = function(response) {
                 //Atribuindo valores a$scope de escopo do controller
                 $scope.models = response.data;
             };
-
             //Retorna os modelos em lista
             $modelData = getData($http, 'model/' + $modelID, $getModelReturn);
 
@@ -600,6 +600,9 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             $scope.updateModel = {};
             $scope.updateModel.modelItems = [];
             $scope.updateModel.updateItem = function() {
+                if ($scope.updateModel.item === undefined) {
+                    return;
+                }
                 $scope.models.topics.push({
                     name: $scope.updateModel.item.name,
                     description: $scope.updateModel.item.description

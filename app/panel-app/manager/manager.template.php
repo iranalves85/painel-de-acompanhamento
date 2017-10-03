@@ -1,13 +1,23 @@
 <div class="app-main">
 
-    <section class="content container">
+    <section class="content">
 
-        <div ng-view></div>
-        <!-- carrega templates -->
+        <div class="menu">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg navbar-text navbar-light">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item" ng-repeat="nav in navs">
+                            <a class="nav-link" href="{{nav.link}}">{{nav.title}}</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- menu -->
 
-        <?php 
-            //Se tiver subordinados, carregar lista de planos dos funcionários
-        ?>
+        <div class="container">
+            <div ng-view></div>
+        </div><!-- container -->        
 
     </section>
 

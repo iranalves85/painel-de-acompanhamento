@@ -5,7 +5,7 @@
     <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')">
         {{alert.msg}}
     </div>
-    <form name="add-plan" method="POST" ng-submit="addPlan.submit()">
+    <form name="add-plan" method="POST" ng-submit="submit()">
         <div class="modal-body" id="modal-body">        
                 <div class="row">
 
