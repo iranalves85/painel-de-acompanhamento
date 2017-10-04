@@ -4,9 +4,10 @@
 ✔ Estrutura a lógica do programa
 ✔ Verificar o roteamento no arquivo "index.php", pois "login/" não esta funcionando
 ✔ Método de validação de usuário deve estar disponível para a aplicação inteira, talvez usando a global $_SESSIONd
-☐ Ao editar uma atividade de um plano, os filtros de evidencias não estão sendo selecionados automaticamente.
 ✔ AddItem() não está funcionando -> E:\xampp\htdocs\desenvolvimento\painel-acompanhamento\app\panel-app\manager\manager.component.js
-☐ Os campos auto-insert não estão funcionando, devido a variavel local
-☐ Atualizar Atividade -> trazer apenas o modelo do projeto.
+✔ Os campos auto-insert não estão funcionando, devido a variavel local
+✔ Atualizar Atividade -> trazer apenas o modelo do projeto.
+☐ Fazer funcionar função de reordenar para todas as listas
+☐ Ao editar uma atividade de um plano, os filtros de evidencias não estão sendo selecionados automaticamente.
 
 

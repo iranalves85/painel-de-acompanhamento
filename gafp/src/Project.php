@@ -57,6 +57,23 @@ class Project extends Connect{
         return $this->data_return($result);
     }
 
+    /* Retorna lista de projetos */
+    function getResponsibleProject( \Gafp\User $user, $projectID, $ID){
+        
+        $this->user_has_access($user); //permissão
+        //Query do projeto
+        $result = $this->pdo->get('project', ['responsible[Object]'],['id' => $projectID]);
+        //Verifica se retornou array de resultado
+        if($result <= 0){
+            return false;
+        }
+        //Procura id do usuário no array
+        $found = array_search( strval($ID), $result['responsible'], false);
+        //Verifica resultado é diferente de booleano
+        return (!is_bool($found) && $found !== false)? true : false;  //Se encontrou true
+        
+    }
+
     /* Retorna valores para campos relativos a projetos */
     function getProjectFields(\Gafp\User $user, $field = ""){
 

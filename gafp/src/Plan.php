@@ -133,10 +133,15 @@ class Plan extends Connect{
 
     //Retorna lista de atividades relacionadas com id do Plano
     function getListActivityPlan(\Gafp\User $user, $id ){
-        $this->user_has_access($user);
+        
+        $this->user_has_access($user); //permissão de usuário
 
-        $result = $this->pdo->select('activity',[
-            'id', 'name', 'description', 'date_created'
+        $result = $this->pdo->select('activity',
+        [   '[>]status'         => ['status'    => 'id'],
+            '[>]rule_define'    => ['project'   => 'project']
+        ],
+        [
+            'activity.id', 'activity.name', 'activity.description', 'activity.date_created', 'activity.moment', 'status.id(statusID)', 'status.status(statusText)', 'rule_define.rules(rules)'
         ],[
             'plan' => $id
         ]);

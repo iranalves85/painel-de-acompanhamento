@@ -25,13 +25,24 @@
             <th>Atividade</th>
             <th>Descrição</th>
             <th>Data de criação</th>
+            <th>Prazo de Entrega</th>
+            <th>Status</th>
             <th>Ação</th>
         </thead>
         <tbody>
             <tr ng-repeat="activity in activitys | filter:pesquisa">
                 <td>{{activity.name}}</td>
                 <td>{{activity.description}}</td>
-                <td>{{activity.dateCreated}}</td>
+                <td>{{activity.date_created}}</td>
+                <td>
+                    {{activity.moment}}
+                    <span class="badge badge-primary badge-{{ activity.rule }}">
+                        {{ activity.rule }}
+                    </span>
+                </td>
+                <td>
+                    {{activity.statusText}}                    
+                </td>
                 <td>
                     <ul class="list-inline">
                         <li class="list-inline-item"><a class="btn btn-sm btn-primary" href="painel#!/plan/activity/edit/{{activity.id}}">Editar</a></li>

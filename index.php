@@ -143,7 +143,7 @@ $app->get('/painel', function (Request $request, Response $response, $args) {
 
 /*##### PROJETCS ############# */
 
-//Retorna uma plan especifica
+//Retorna um projeto especifica
 $app->get('/projects/{id}', function (Request $request, Response $response, $args){     
     //Variaveis
     $id = $request->getAttribute('id');
@@ -151,7 +151,7 @@ $app->get('/projects/{id}', function (Request $request, Response $response, $arg
 
 })->setName('Project');
 
-//Retorna uma plan especifica
+//Adiciona um projeto
 $app->put('/projects/{id}', function (Request $request, Response $response, $args){     
     //Variaveis
     $id = $request->getAttribute('id');
@@ -215,7 +215,7 @@ $app->get('/projects/user/{id}', function (Request $request, Response $response)
     return $response->withJson($this->user->getUser(['id' => $id]));
 });
 
-//Retorna lista de usuários do projeto
+//Adiciona um usuário ao projeto
 $app->put('/projects/user/{id}', function (Request $request, Response $response) {
     $id  = $request->getAttribute('id');
     $data   = $request->getParsedBody();
@@ -229,9 +229,17 @@ $app->get('/projects/users/{id}', function (Request $request, Response $response
 });
 
 //Retorna lista de usuários do projeto
+$app->get('/projects/users/responsible/{project}/{id}', function (Request $request, Response $response) {
+    $project  = $request->getAttribute('project');
+    $id       = $request->getAttribute('id');
+    return $response->withJson($this->project->getResponsibleProject($this->user, $project, $id));
+});
+
+
+//Retorna lista de usuários do projeto
 $app->get('/projects/users/manager/{id}', function (Request $request, Response $response) {
     $id  = $request->getAttribute('id');
-    return $response->withJson($this->user->getUsers(['project' => $id, 'type_user[~]' => 'manager']));
+    return $response->withJson($this->user->getUsers(['project' => $id, 'type_user[~]' => 0]));
 });
 
 //Adiciona usuários ao projeto
@@ -361,9 +369,9 @@ $app->post('/plan/[/{id}]', function (Request $request, Response $response, $arg
 })->setName('Update or Add Plans');
 
 //Deleta plano
-$app->delete('/plan/delete/', function (Request $request, Response $response, $args){    
-    $data = $request->getParsedBody();
-    return $response->withJson($this->plan->deletePlan( $this->user, $data ));
+$app->delete('/plan/delete/{id}', function (Request $request, Response $response, $args){    
+    $id = $request->getAttribute('id');
+    return $response->withJson($this->plan->deletePlan( $this->user, $id ));
 })->setName('Delete Plans');
 
 //Retorna lista de planos

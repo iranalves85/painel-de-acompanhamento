@@ -16,13 +16,6 @@
         <!-- menu -->
 
         <div class="container">
-
-            <div ng-controller="dashboard" ng-if="true">
-                <div ng-include="leaderPlansTemplate"></div>
-                <!-- leadersPlans -->
-            </div>
-            <!-- dashboard -->
-
             <div ng-view></div>
         </div><!-- container -->
 

@@ -45,7 +45,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="responsible">
-                                    Duração
+                                    Data de Entrega
                                 </label>
                                 <?php
                                     $date = date('Y-m-d', time() );

@@ -25,9 +25,9 @@
                                 <th>Nome</th>
                                 <th>Descrição</th>
                             </thead>
-                            <tr ng-repeat="topic in models.topics">
-                                <td><input type="text" ng-value="topic.name" name="{{topic.name}}" class="form-control" /></td>
-                                <td><input type="text" ng-value="topic.description" name="{{topic.description}}" class="form-control" /></td>
+                            <tr ng-repeat="topic in models.topics track by $index">
+                                <td><input type="text" ng-value="topic.name" name="{{topic.name}}" class="form-control" ng-model="models.topics[$index].name" /></td>
+                                <td><input type="text" ng-value="topic.description" name="{{topic.description}}" class="form-control" ng-model="models.topics[$index].description" /></td>
                             </tr>
                             <tr>
                                 <td>
@@ -36,7 +36,7 @@
                                 <td>
                                     <div class="form-inline">
                                         <input type="text" ng-model="updateModel.item.description" class="form-control col-9 mr-2" />
-                                        <button class="btn btn-secondary" type="button" ng-click="updateModel.updateItem()">Adicionar</button>
+                                        <button class="btn btn-secondary" type="button" ng-click="addItem()">Adicionar</button>
                                     </div>
                                 </td>
                             </tr>
@@ -49,7 +49,7 @@
                                 <a class="btn btn-light" href="painel#!/model">Voltar</a>
                             </li>
                             <li class="list-inline-item">
-                                <input ng-disabled="add-project.$invalid" class="btn btn-success" type="submit" value="Cadastrar">
+                                <input ng-disabled="add-project.$invalid" class="btn btn-success" type="submit" value="Atualizar">
                             </li>
                         </ul>
                         

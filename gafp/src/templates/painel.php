@@ -4,8 +4,9 @@
 *  30/08/2017
 */
 
-/* Informações do usuário */
+require_once('gafp/src/Connect.php');
 
+/* Informações do usuário */
 $type_user  = $_SESSION['user']['type_user'];
 $username   = $_SESSION['user']['username'];
 $email      = $_SESSION['user']['email'];
@@ -35,15 +36,12 @@ $email      = $_SESSION['user']['email'];
     ['ngRoute', 'angularFileUpload', 'ui.bootstrap', 'angular.filter']);
 </script>
 
-<?php 
-    //Adiciona arquivos de acordo com o tipo de acesso
-    foreach ($type_user as $access):
-?>
-    <script src="app/panel-app/<?php echo $access . '/'. $access;  ?>.component.js"></script>
-
-<?php
-    endforeach;
-?>
+<?php  if( $type_user == 'superuser' ): //Carrega script ?>
+<script src="app/panel-app/superuser/superuser.component.js"></script>
+<?php else: ?>
+<script src="app/panel-app/human-resources/human-resources.component.js"></script>
+<script src="app/panel-app/manager/manager.component.js"></script>
+<?php endif; ?>
 
 <script src="http://momentjs.com/downloads/moment.js" /></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js" ></script>
@@ -100,17 +98,11 @@ $email      = $_SESSION['user']['email'];
             </div>-->
         </div>
 
-        <?php 
-            //Adiciona as tags para inserção de template angular
-            $priority = array('superuser' => 1,'human-resources' => 2, 'manager' => 3);
-            foreach ($type_user as $app) {
-                if(array_key_exists($app, $priority)){
-                    //include_once('app/panel-app/superuser/superuser.template.php');
-                    echo '<' . $app . '-app></'. $app . '-app>';
-                    break;
-                }                
-            }
-        ?>
+        <?php  if( $type_user == 'superuser' ): ?>
+        <superuser-app></superuser-app>
+        <?php else: ?>
+        <manager-app></manager-app>
+        <?php endif; ?>
         
     </main>
 

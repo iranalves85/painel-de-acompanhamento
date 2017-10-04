@@ -68,6 +68,21 @@ function updateData($obj, $url, $aditional, $data, $returnFunction) {
     return $dataReturn;
 }
 
+//Função padrão para requisições de DELETE
+function deleteData($http, $url, $returnFunction) {
+
+    var $dataReturn;
+
+    $obj.http({
+        url: $url,
+        method: 'DELETE'
+    }).then(function(response) {
+        $dataReturn = $returnFunction(response);
+    });
+
+    return $dataReturn;
+}
+
 function generateCharts($id) {
 
     var randomScalingFactor = function() {

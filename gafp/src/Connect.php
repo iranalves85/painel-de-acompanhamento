@@ -55,9 +55,9 @@ class Connect{
             //Prepara para executar a requisição
             $prepare = $this->pdo->pdo->prepare('users', $select);
             //Executa query e retorna resultado
-            $result = $this->pdo->get('users', [
-                'id', 'email', 'username', 'area[Object]', 'project', 'type_user[Object]'
-            ], $select); 
+            $result = $this->pdo->get('users', 
+            ['[>]type_user' => ['type_user' => 'id'] ],
+            ['users.id', 'users.email', 'users.username', 'users.area[Object]', 'users.project', 'type_user.type(type_user)'], $select); 
 
             return $result;
 
@@ -72,7 +72,7 @@ class Connect{
     function newUser($data){
 
         $user_data = [];
-        $columnToSerialize = ['area', 'leader', 'type_user'];
+        $columnToSerialize = ['area', 'leader'];
         $result = '';
 
         //Prepara as informações para inserção no banco
@@ -84,8 +84,10 @@ class Connect{
                     $explode[$k] = trim($v);
                 } 
                 $user_data[$key] = serialize($explode);
+            elseif( $key == 'type_user'):
+                $user_data[$key] = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
             else:
-                $user_data[$key] = ($key == 'password')? password_hash(filter_var($value, FILTER_SANITIZE_STRING), PASSWORD_DEFAULT) : filter_var($value, FILTER_SANITIZE_STRING); 
+                $user_data[$key] = ($key == 'password')? password_hash(filter_var($value, FILTER_SANITIZE_STRING), PASSWORD_DEFAULT) : filter_var($value, FILTER_SANITIZE_STRING);
             endif;            
         }
 

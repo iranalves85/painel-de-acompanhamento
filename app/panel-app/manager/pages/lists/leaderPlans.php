@@ -41,8 +41,8 @@
                 <td>{{plan.deadline}}</td>
                 <td>
                     <span class="badge badge-primary badge-{{ plan.status }}">
-                                            {{ plan.status === "danger" ? "Em atraso" : "Atenção" }}
-                                        </span>
+                        {{ plan.status === "danger" ? "Em atraso" : "Atenção" }}
+                    </span>
                 </td>
                 <td>
                     <ul class="list-inline">

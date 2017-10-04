@@ -13,11 +13,8 @@
 
     <table class="table table-striped table-sm table-bordered">
         <thead>
-            <th>Criado</th>
-            <th>Projeto</th>
             <th>Plano</th>
             <th>Descrição</th>
-            <th>Custo</th>
             <th>Meta</th>
             <th>Prazo de Entrega</th>
             <th>Status</th>
@@ -25,16 +22,12 @@
         </thead>
         <tbody>
             <tr ng-repeat="plan in leaderPlans | filter:atraso">
-                <td>{{plan.dateCreated}}</td>
-                <td>{{plan.project}}</td>
                 <td>{{plan.name}}</td>
                 <td>{{plan.description}}</td>
-                <td>{{plan.cost}}</td>
                 <td>{{plan.goal}}</td>
                 <td>
                     {{plan.deadline}}
-                    <br />
-                    <span class="badge badge-primary badge-{{plan.deadline.badge    }}">
+                    <span class="badge badge-primary badge-{{plan.deadline.badge}}">
                         {{plan.rule.text}}
                     </span>
                 </td>

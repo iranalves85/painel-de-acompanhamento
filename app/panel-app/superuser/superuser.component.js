@@ -18,6 +18,7 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                     $scope.projects[index] = {
                         id: element.id,
                         date_created: element.date_created,
+                        model: element.model,
                         company: element.company,
                         responsible: element.responsible,
                         approver: element.approver
@@ -586,20 +587,18 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
         function updateModelController($http, $scope, $httpParamSerializerJQLike, $routeParams) {
             //Id do modelo atual
             $modelID = $routeParams.id;
-            $scope.models = {};
+            $scope.models = {
+                topics: Array()
+            };
 
-            //Função de retorno na requisição
-            $getModelReturn = function(response) {
+            //Retorna os modelos em lista
+            $modelData = getData($http, 'model/' + $modelID, function(response) {
                 //Atribuindo valores a$scope de escopo do controller
                 $scope.models = response.data;
-            };
-            //Retorna os modelos em lista
-            $modelData = getData($http, 'model/' + $modelID, $getModelReturn);
+            });
 
             //Adicionar item in REALTIME
-            $scope.updateModel = {};
-            $scope.updateModel.modelItems = [];
-            $scope.updateModel.updateItem = function() {
+            $scope.addItem = function() {
                 if ($scope.updateModel.item === undefined) {
                     return;
                 }
@@ -610,6 +609,7 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                 delete $scope.updateModel.item;
             };
 
+            //Ao enviar formulário
             $scope.submit = function() {
 
                 //Objeto com objeto angular
@@ -618,17 +618,14 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                     serializer: $httpParamSerializerJQLike,
                 };
 
-                //Definindo função de retorno
-                $addModelReturn = function(response) {
+                //Submete o formulário para add novo model
+                updateData($method, 'model/', $modelID, $scope.models, function(response) {
                     //Se resposta for true redireciona ao painel
                     if (response.data.type != undefined && response.data.type == 'success') {
                         alert(response.data.msg);
                         location.reload();
                     }
-                };
-
-                //Submete o formulário para add novo model
-                $data = updateData($method, 'model/', $modelID, $scope.models, $addModelReturn);
+                });
 
             }; //submit
         }

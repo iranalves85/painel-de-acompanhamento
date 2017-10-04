@@ -55,7 +55,7 @@ class User{
 
         //Se tipo de usuário não foi definido
         if( !isset($data['type_user']) ){
-            $data['type_user'] = 'manager';
+            $data['type_user'] = 0;
         }
 
         // Se retorno for verdadeiro
@@ -69,7 +69,7 @@ class User{
     function updateUser( \Gafp\Connect $connect, $userID, $data ){
         
         $user_data = [];
-        $columnToSerialize = ['area', 'leader', 'type_user'];
+        $columnToSerialize = ['area', 'leader'];
         $result = '';
 
         //Prepara as informações para inserção no banco
@@ -80,7 +80,9 @@ class User{
                 foreach ($explode as $k => $v) {
                     $explode[$k] = trim($v);
                 } 
-                $user_data[$key] = serialize($explode);                    
+                $user_data[$key] = serialize($explode);  
+            elseif( $key == 'type_user'):
+                    $user_data[$key] = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
             else:
                 $user_data[$key] = ($key == 'password')? password_hash(filter_var($value, FILTER_SANITIZE_STRING), PASSWORD_DEFAULT) : filter_var($value, FILTER_SANITIZE_STRING);
             endif;            
