@@ -11,8 +11,18 @@
                 Adicionar Nova Atividade
             </a>
         </li>
+        <li class="list-inline-item">
+            <a class="btn btn-sm btn-secondary" href="" onclick="window.history.back();" >Voltar</a>
+        </li>
         <li class="list-inline-item float-right">
             <ul class="list-inline">
+                <li class="list-inline-item">
+                    <select name="" id="" class="btn btn-light" ng-model="order"
+                        ng-change="reorderList()">
+                            <option ng-repeat="item in order track by item.value" 
+                            value="{{item.value}}">{{item.text}}</option>
+                    </select>
+                </li>
                 <li class="list-inline-item">
                     <input class="form-control" type="text" name="search" id="" placeholder="Pesquisa" ng-model="pesquisa">
                 </li>
@@ -20,8 +30,8 @@
         </li>
     </ul>
 
-    <table class="table table-striped table-bordered">
-        <thead class="thead-inverse">
+    <table class="table table-striped table-sm table-bordered">
+        <thead>
             <th>Atividade</th>
             <th>Descrição</th>
             <th>Data de criação</th>
@@ -30,14 +40,14 @@
             <th>Ação</th>
         </thead>
         <tbody>
-            <tr ng-repeat="activity in activitys | filter:pesquisa">
+            <tr ng-repeat="activity in activitys | filter:pesquisa | orderBy:orderDefine:reverse">
                 <td>{{activity.name}}</td>
                 <td>{{activity.description}}</td>
-                <td>{{activity.date_created}}</td>
+                <td>{{activity.date_created  | date:'dd-MM-yyyy HH:mm:ss'}}</td>
                 <td>
-                    {{activity.moment}}
-                    <span class="badge badge-primary badge-{{ activity.rule }}">
-                        {{ activity.rule }}
+                    {{activity.moment  | date:'dd-MM-yyyy'}}
+                    <span class="badge badge-primary badge-{{ activity.rules.badge }}">
+                        {{ activity.rules.msg }}
                     </span>
                 </td>
                 <td>
@@ -54,17 +64,7 @@
                 </td>
             </tr>
         </tbody>
-    </table>
-
-    <ul class="list-inline">
-        <li class="list-inline-item float-right">
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                <a class="btn btn-light float-right" href="painel#!/" >Voltar</a>
-                </li>
-            </ul>
-        </li>
-    </ul>    
+    </table>   
 
 </div>
 <!-- Minhas Atividades -->

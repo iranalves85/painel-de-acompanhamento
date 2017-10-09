@@ -4,6 +4,7 @@ body {
     position: absolute;
     overflow-x: hidden;
     width: 100%;
+    font-size: 0.9rem;
 }
 
 .login-box {
@@ -26,7 +27,6 @@ body {
     $gptwBrand: #aa272f;
     $roxo: #771174;
     $yellow: #ECA012;
-    min-height: 768px;
     h1,
     h2,
     h3,
@@ -46,9 +46,7 @@ body {
         font-size: 1.0rem;
         font-weight: 400;
     }
-    main {
-        min-height: 548px;
-    }
+    main {}
     .topo {
         background-color: $gptwBrand;
         padding: 10px 0px;
@@ -80,9 +78,6 @@ body {
                 margin-bottom: 0px;
             }
         }
-        .container[ng-controller] {
-            padding: 40px 0px;
-        }
         label {
             color: #444;
             font-weight: 700;
@@ -103,4 +98,14 @@ body {
     background-color: #fff;
     padding: 15px;
     margin: 15px auto;
+}
+
+.table {
+    tr {
+        td {
+            .list-inline {
+                margin: 0px;
+            }
+        }
+    }
 }

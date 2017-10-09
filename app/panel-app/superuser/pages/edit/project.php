@@ -6,9 +6,9 @@
 
         <div class="row" class="ng-cloak">
 
-            <div class="form-group block card col-md-3">
+            <div class="form-group block card col-6 col-md-3">
                 <h3>Empresa</h3>
-                <select class="form-control" name="company" ng-model="project.company">
+                <select class="form-control" name="company" ng-model="project.company" disabled>
                     <option ng-repeat="company in companys track by company.id" 
                     ng-value="{{company.id}}" ng-selected="company.id == project.company">
                         {{company.name}}
@@ -16,7 +16,7 @@
                 </select>
             </div><!-- Formulário de Empresas -->
 
-            <div class="col-md-3 block card">
+            <div class="col-6 col-md-3 block card">
                 <div class="form-group">
                     <h3>Modelo</h3>            
                     <select class="form-control" name="model" ng-model="project.model">
@@ -29,7 +29,7 @@
                 
             </div><!-- Formulário de Empresas -->
 
-            <div class="form-group card block">
+            <div class="col-12 col-md-auto form-group card block">
                 <h3>Envio arquivo com usuários a serem adicionados ou atualizados no projeto</h3>
                 <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')">
                     {{alert.msg}}
@@ -106,7 +106,15 @@
             </div>    
 
             <div class="col block">
-                <input class="btn btn-success float-right" type="submit" value="Atualizar Projeto">
+                <ul class="list-inline float-right">
+                    <li class="list-inline-item">
+                        <a onclick="window.history.back();" href="" class="btn btn-secondary">Voltar</a>
+                    </li>
+                    <li class="list-inline-item">
+                        <input class="btn btn-success" type="submit" value="Atualizar Projeto">
+                    </li>
+                </ul>
+                
             </div>     
 
     </form>

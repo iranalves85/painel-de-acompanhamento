@@ -356,17 +356,22 @@ $app->get('/plan/{id}', function (Request $request, Response $response, $args){
 
 })->setName('Activity Plans');
 
+//Adiciona um plano novo
+$app->post('/plan', function (Request $request, Response $response, $args){     
+    
+    $data = $request->getParsedBody();
+    return $response->withJson($this->plan->addPlan( $this->user, $data ));
+
+})->setName('Update Add Plans');
+
 //Atualiza ou adiciona um plano novo
-$app->post('/plan/[/{id}]', function (Request $request, Response $response, $args){     
+$app->put('/plan/{id}', function (Request $request, Response $response, $args){     
+    
     $id = $request->getAttribute('id');
     $data = $request->getParsedBody();
-    if(isset($id) && $id>0){ //update plan
-        return $response->withJson($this->plan->updatePlan( $this->user, $id, $data ));
-    }
-    else{ //add plan
-        return $response->withJson($this->plan->addPlan( $this->user, $data ));
-    }
-})->setName('Update or Add Plans');
+    return $response->withJson($this->plan->updatePlan( $this->user, $id, $data ));
+
+})->setName('Update Plans');
 
 //Deleta plano
 $app->delete('/plan/delete/{id}', function (Request $request, Response $response, $args){    
@@ -433,8 +438,17 @@ $app->post('/plan/activity/', function (Request $request, Response $response, $a
 $app->put('/plan/activity/{id}', function (Request $request, Response $response, $args){     
     //Variaveis
     $id = $request->getAttribute('id');
-    return $response->withJson($this->plan->updateActivityPlan( $this->user, $id ));
+    $data = $request->getParsedBody();
+    return $response->withJson($this->plan->updateActivityPlan( $this->user, $id, $data ));
 })->setName('Update Activity Plans');
+
+//Atualiza atividade especifica
+$app->put('/plan/activity/status/{id}', function (Request $request, Response $response, $args){     
+    //Variaveis
+    $id = $request->getAttribute('id');
+    $data = $request->getParsedBody();
+    return $response->withJson($this->plan->updateActivityPlanStatus( $this->user, $id, $data ));
+})->setName('Update Activity Plans Status');
 
 //Deleta plano
 $app->delete('/plan/activity/delete/{id}', function (Request $request, Response $response, $args){    

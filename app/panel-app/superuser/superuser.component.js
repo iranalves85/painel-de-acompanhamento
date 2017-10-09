@@ -29,29 +29,17 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             $data = getData($http, 'projects/', $getProjectList);
 
             //Função para reordernar lista de projetos
-            $scope.reorderProjectList = function() {
-                //Verifica os valores dos campos estao setados
-                $order = ($scope.order.order != undefined) ? '/' + $scope.order.order.value : "";
-                $by = ($scope.order.by != undefined) ? '/' + $scope.order.by.value : "";
-
-                getData($http,
-                    'projects/' + $order + $by,
-                    function(response) {
-                        //Atribuindo valores a$scope de escopo do controller
-                        response.data.forEach(function(element, index) {
-
-                            $scope.projects[index] = {
-                                id: element.id,
-                                company: element.company,
-                                model: element.model,
-                                responsible: element.responsible,
-                                approver: element.approver
-                            };
-
-                        }, this);
-                    });
+            var order = [{ value: 'date_created', text: 'Recentes' },
+                { value: 'company', text: 'Empresas' },
+                { value: 'responsible', text: 'Responsáveis' }
+            ];
+            $scope.order = order;
+            $scope.orderDefine = 'date_created';
+            $scope.reverse = true;
+            $scope.reorderList = function() {
+                $scope.reverse = ($scope.orderDefine === $scope.order.value) ? !$scope.reverse : false;
+                $scope.orderDefine = $scope.order.value;
             };
-
 
             //Função de deletar um projeto
             $scope.delete = function(id) {
@@ -60,10 +48,7 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
 
                 if ($response) {
                     //Retorna lista de planos baseado no id do user
-                    $http({
-                        url: 'projects/delete/' + id,
-                        method: "DELETE"
-                    }).then(function(response) {
+                    deleteData($http, 'projects/delete/' + id, function(response) {
                         //Atribuindo valores a$scope de escopo do controller
                         if (response.data.type != 'undefined') {
                             alert(response.data.msg);
@@ -204,6 +189,7 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                             return;
 
                         } else if (response.users.length > 0) {
+
                             //Atribuir valores no scopo do angular
                             response.users.forEach(function(element, index) {
                                 //Adiciona a var responsibles
@@ -238,6 +224,22 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             $scope.page = Array();
             $scope.responsibles = Array();
             $scope.areas = Array();
+
+            //Atribuir opções no seletor de area
+            $areas = function(objectToInterate) {
+                angular.forEach(objectToInterate, function(value, key) {
+                    value.area.forEach(function(el, index) {
+                        //Verifica se já existe um item com mesmo valor
+                        $elExist = $scope.areas.find(function(value) {
+                            return (value.name == el) ? true : false;
+                        }, this);
+                        //Se falso, adiciona item ao array
+                        if (!$elExist) {
+                            $scope.areas.push({ name: el });
+                        }
+                    });
+                });
+            };
 
             //------------------------------------ Etapa 1 e 2 - Empresa e Modelo
 
@@ -378,6 +380,7 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                             return;
 
                         } else if (response.users.length > 0) {
+
                             //Atribuir valores no scopo do angular
                             response.users.forEach(function(element, index) {
                                 //Adiciona a var responsibles
@@ -385,16 +388,11 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                                     id: element.id,
                                     username: element.username,
                                     email: element.email,
-                                    area: Array()
+                                    area: element.area
                                 };
 
-                                //Para cada array de área adicionar                            
-                                element.area.forEach(function(el, ind) {
-                                    if (el !== "") {
-                                        $scope.areas.push({ name: el });
-                                        $scope.responsibles[index].area.push({ name: el });
-                                    }
-                                });
+                                //Adiciona as áreas dos novos usuários
+                                $areas($scope.responsibles);
 
                             });
 
@@ -435,8 +433,6 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                 $responsibles = $scope.page.projectData.responsibles; //Lista de id's selecionados
                 $approver = $scope.page.projectData.approver; //Id selecionado
                 $project = $scope.page.projectData.project; //id do projeto
-
-                console.log($scope.page.projectData);
 
                 $url = steps[4]['url']; //url post
                 $method = { //definições de objetos
@@ -485,7 +481,8 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
 
             $scope.models = Array(); //Inicializa o array
 
-            $getModelList = function(response) {
+            //Retorna os modelos em lista
+            $modelListData = getData($http, 'model/', function(response) {
                 //Atribuindo valores a$scope de escopo do controller
                 response.data.forEach(function(element, index) {
                     $scope.models[index] = {
@@ -495,27 +492,26 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                         topics: element.topics
                     };
                 }, this);
-            };
-
-            //Retorna os modelos em lista
-            $modelListData = getData($http, 'model/', $getModelList);
+            });
 
             //Função para reordernar lista de projetos
-            $scope.reorderModelList = function() {
-                //Verifica os valores dos campos estao setados
-                $order = ($scope.order.order != undefined) ? '/' + $scope.order.order.value : "";
-                $by = ($scope.order.by != undefined) ? '/' + $scope.order.by.value : "";
-                //Retorna os dados reorganizados
-                getData($http, 'model' + $order + $by, $getModelList);
+            var order = [{ value: 'id', text: 'ID' },
+                { value: 'model', text: 'Nome' },
+                { value: 'description', text: 'Descrição' }
+            ];
+            $scope.order = order;
+            $scope.orderDefine = 'id';
+            $scope.reverse = true;
+            $scope.reorderList = function() {
+                $scope.reverse = ($scope.orderDefine === $scope.order.value) ? !$scope.reverse : false;
+                $scope.orderDefine = $scope.order.value;
             };
 
             //Função de deletar um modelo
             $scope.delete = function(id) {
                 //Retorna lista de planos baseado no id do user
-                $http({
-                    url: 'model/delete/' + id,
-                    method: "GET"
-                }).then(function(response) {
+
+                deleteData($http, 'model/delete/' + id, function(response) {
                     //Atribuindo valores a$scope de escopo do controller
                     if (response.data.type != 'undefined') {
                         alert(response.data.msg);

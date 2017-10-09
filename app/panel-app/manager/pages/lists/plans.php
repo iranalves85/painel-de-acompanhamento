@@ -21,12 +21,10 @@
         <li class="list-inline-item float-right">
             <ul class="list-inline">
                 <li class="list-inline-item">
-                    <select ng-init="order = [{value:'date_created',text:'Recentes'}, {value:'deadline',text:'Prazo de Entrega'}, {value:'status',text:'Status'}]" name="" id="" class="btn btn-light" ng-model="order.data" ng-options="item as item.text for item in order track by item.value"
-                        ng-change="reorderPlanList()">
-                    </select>
-                </li>
-                <li class="list-inline-item">
-                    <select ng-init="orderby = [{value:'ASC',text:'Alfabética'}, {value:'DESC',text:'Descendente'}]" name="" id="" class="btn btn-light" ng-model="order.direction" ng-options="item as item.text for item in orderby track by item.value " ng-change="reorderPlanList()">
+                    <select name="" id="" class="btn btn-light" 
+                    ng-model="order" ng-change="reorderList()">
+                        <option ng-repeat="item in order track by item.value" 
+                            value="{{item.value}}">{{item.text}}</option>
                     </select>
                 </li>
                 <li class="list-inline-item">
@@ -46,18 +44,18 @@
             <th>Ação</th>
         </thead>
         <tbody>
-            <tr ng-repeat="plan in plans | filter:pesquisa">
+            <tr ng-repeat="plan in plans | filter:pesquisa | orderBy:orderDefine:reverse">
                 <td>{{plan.name}}</td>
                 <td>{{plan.description}}</td>
                 <td>{{plan.goal}}</td>
                 <td>
-                    {{plan.deadline}}
-                    <span class="badge badge-primary badge-{{ plan.rule }}">
-                        {{ plan.rule === "danger" ? "Em atraso" : "Atenção" }}
+                    {{plan.deadline | date:'dd-MM-yyyy'}}
+                    <span class="badge badge-primary badge-{{ plan.rules.badge }}">
+                        {{ plan.rules.msg }}
                     </span>
                 </td>
                 <td>
-                    {{plan.status}}                    
+                    {{plan.statusText}}                    
                 </td>
                 <td>
                     <ul class="list-inline">
@@ -89,14 +87,12 @@
             <li class="list-inline-item float-right">
                 <ul class="list-inline">
                     <li class="list-inline-item">
-                        <select ng-init="order = [{value:'date_created',text:'Recentes'}, {value:'deadline',text:'Prazo de Entrega'}, {value:'status',text:'Status'}]" name="" id="" class="btn btn-light" ng-model="order.data" ng-options="item as item.text for item in order track by item.value"
-                            ng-change="reorderPlanList()">
+                        <select name="" id="" class="btn btn-light" ng-model="order"
+                            ng-change="reorderList()">
+                            <option ng-repeat="item in order track by item.value" 
+                            value="{{item.value}}">{{item.text}}</option>
                         </select>
-                    </li>
-                    <li class="list-inline-item">
-                        <select ng-init="orderby = [{value:'ASC',text:'Alfabética'}, {value:'DESC',text:'Descendente'}]" name="" id="" class="btn btn-light" ng-model="order.direction" ng-options="item as item.text for item in orderby track by item.value " ng-change="reorderPlanList()">
-                        </select>
-                    </li>
+                    </li>                    
                     <li class="list-inline-item">
                         <input class="form-control" type="text" name="search" id="" placeholder="Pesquisa" ng-model="pesquisa">
                     </li>
@@ -115,15 +111,15 @@
                 <th>Ação</th>
             </thead>
             <tbody>
-                <tr ng-repeat="plan in plans | filter:pesquisa">
+                <tr ng-repeat="plan in plans | filter:pesquisa | orderBy:orderDefine:reverse">
                     <td>{{plan.username}}</td>
                     <td>{{plan.name}}</td>
                     <td>{{plan.description}}</td>
                     <td>{{plan.goal}}</td>
                     <td>
-                        {{plan.deadline}}
-                        <span class="badge badge-primary badge-{{ plan.rule }}">
-                            {{ plan.rule === "danger" ? "Em atraso" : "Atenção" }}
+                        {{plan.deadline  | date:'dd-MM-yyyy'}}
+                        <span class="badge badge-primary badge-{{ plan.rules.badge }}">
+                            {{ plan.rules.msg }}
                         </span>
                     </td>
                     <td>

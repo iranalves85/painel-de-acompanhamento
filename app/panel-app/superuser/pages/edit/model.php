@@ -36,7 +36,7 @@
                                 <td>
                                     <div class="form-inline">
                                         <input type="text" ng-model="updateModel.item.description" class="form-control col-9 mr-2" />
-                                        <button class="btn btn-secondary" type="button" ng-click="addItem()">Adicionar</button>
+                                        <button class="btn btn-sm btn-primary" type="button" ng-click="addItem()">Adicionar</button>
                                     </div>
                                 </td>
                             </tr>
@@ -46,7 +46,7 @@
                     <div class="col-md-12">
                         <ul class="list-inline float-right">
                             <li class="list-inline-item">
-                                <a class="btn btn-light" href="painel#!/model">Voltar</a>
+                                <a onclick="window.history.back();" href="" class="btn btn-secondary">Voltar</a>
                             </li>
                             <li class="list-inline-item">
                                 <input ng-disabled="add-project.$invalid" class="btn btn-success" type="submit" value="Atualizar">

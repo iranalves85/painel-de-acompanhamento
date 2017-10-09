@@ -1,7 +1,5 @@
 <div class="container" ng-controller="projects">
 
-    <h1>Projetos</h1>
-
     <div class="col-12 project card block">
 
         <ul class="list-inline">

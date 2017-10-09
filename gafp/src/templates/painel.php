@@ -106,16 +106,6 @@ $email      = $_SESSION['user']['email'];
         
     </main>
 
-    <footer class="footer">
-        <div class="row">
-            <div class="col-12">
-                <h6>
-                    GPTW - Painel de Acompanhamento - v0.1
-                </h6>
-            </div>
-        </div>
-    </footer><!-- Rodapé -->
-
 </body>
 
 </html>

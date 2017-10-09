@@ -17,7 +17,7 @@
         </div>
         <div class="col-md-6">
             <label for="responsible">
-                Responsável {{selectedUsers}}
+                Responsável
             </label>
 
             <select class="form-control" size="10" name="responsible" ng-model="page.projectData.responsibles" multiple>

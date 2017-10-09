@@ -50,7 +50,7 @@
                                 <?php
                                     $date = date('Y-m-d', time() );
                                 ?>
-                                <input type="date" min="<?php echo $date; ?>" name="deadline" ng-model="updatePlan.deadline" ng-value="{{updatePlan.deadline | date: 'Y-m-d'}}" class="form-control" ng-required="required" />
+                                <input type="date" min="<?php echo $date; ?>" name="deadline" ng-model="updatePlan.deadline" class="form-control" ng-required="required" />
                             </div>
                         </div>                    
                     </div>

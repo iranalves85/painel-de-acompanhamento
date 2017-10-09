@@ -1,8 +1,17 @@
 <div class="container" ng-controller="email">
 
-    <h1>Projeto / E-mail de Boas Vindas</h1>
-
     <div class="col-12 block card main">
+
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <h2 class="titulo-secao">
+                    Projeto / E-mail de Boas Vindas
+                </h2>
+            </li>
+            <li class="list-inline-item">
+                <a onclick="window.history.back();" href="" class="btn btn-sm btn-secondary">Voltar</a>
+            </li>
+        </ul>
 
         <div class="boas-vindas">
 
@@ -33,8 +42,11 @@
 
                     </div>
                     <div class="col-12">
-                        <br />
-                        <input class="btn btn-success float-right" type="submit" value="Enviar">
+                        <ul class="list-inline float-right">
+                            <li class="list-inline-item">
+                                <input class="btn btn-success" type="submit" value="Enviar">
+                            </li>
+                        </ul> 
                     </div>
                 </div>
             </form>

@@ -1,7 +1,5 @@
 <div class="container" ng-controller="model">
 
-    <h1>Modelos</h1>
-
     <div class="col-12 project block card block">
 
         <ul class="list-inline">
@@ -18,13 +16,11 @@
             <li class="list-inline-item float-right">
                 <ul class="list-inline">
                     <li class="list-inline-item">
-                        <select ng-init="order = [{value:'date_created',text:'Recentes'}, {value:'name',text:'Nome'}, {value:'description',text:'Descrição'}]" name="" id="" class="btn btn-light" ng-model="order.order" ng-options="item as item.text for item in order track by item.value" ng-change="reorderModelList()">
+                        <select name="" id="" class="btn btn-light" ng-model="order" ng-change="reorderList()">
+                            <option ng-repeat="item in order track by item.value" 
+                            value="{{item.value}}">{{item.text}}</option>
                         </select>
-                    </li>
-                    <li class="list-inline-item">
-                        <select ng-init="orderby = [{value:'ASC',text:'Alfabética'}, {value:'DESC',text:'Descendente'}]" name="" id="" class="btn btn-light" ng-model="order.by" ng-options="item as item.text for item in orderby track by item.value " ng-change="reorderModelList()">
-                        </select>
-                    </li>
+                    </li>                   
                     <li class="list-inline-item">
                         <input class="form-control" type="text" name="search" id="" placeholder="Pesquisa" ng-model="pesquisa">
                     </li>
@@ -33,15 +29,15 @@
             </li>
         </ul>
 
-        <table class="table table-striped table-bordered">
-            <thead class="thead-inverse">
+        <table class="table table-striped table-sm table-bordered">
+            <thead>
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Descrição</th>
                 <th>Ação</th>
             </thead>
             <tbody>
-                <tr ng-repeat="model in models | filter:pesquisa">
+                <tr ng-repeat="model in models | filter:pesquisa | orderBy:orderDefine:reverse">
                     <td>{{model.id}}</td>
                     <td>{{model.model}}</td>
                     <td>{{model.description}}</td>

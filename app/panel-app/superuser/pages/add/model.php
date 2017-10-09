@@ -20,8 +20,8 @@
                     <br />
                     <div class="col-md-12 block">
 
-                        <table class="table table-stripped table-bordered">
-                            <thead class="thead-inverse">
+                        <table class="table table-striped table-sm table-bordered">
+                            <thead>
                                 <th>Nome</th>
                                 <th>Descrição</th>
                             </thead>

@@ -1,12 +1,14 @@
 <div class="container" ng-controller="manager">
 
-    <h1>Projeto / Gestores</h1>
-
     <div class="col-12 block card main">
 
         <div class="new-project">
 
-            <h2>Novo Gestor</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <h2>Novo Gestor</h2>
+                </li>
+            </ul>
 
             <form name="add-manager" method="post" ng-submit="newUser()">
                 <div class="row">
@@ -53,6 +55,9 @@
                 <h2 class="titulo-secao">
                     Lista de Gestores
                 </h2>
+            </li>
+            <li class="list-inline-item">
+                <a onclick="window.history.back();" href="" class="btn btn-sm btn-secondary">Voltar</a>
             </li>
             <li class="list-inline-item float-right">
                 <input class="form-control" type="text" name="search" id="" placeholder="Pesquisa" ng-model="pesquisa">

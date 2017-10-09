@@ -14,11 +14,10 @@
         <li class="list-inline-item float-right">
             <ul class="list-inline">
                 <li class="list-inline-item">
-                    <select ng-init="order = [{value:'date_created',text:'Recentes'}, {value:'company',text:'Empresas'}, {value:'user',text:'Responsáveis'}]" name="" id="" class="btn btn-light" ng-model="order.order" ng-options="item as item.text for item in order track by item.value" ng-change="reorderProjectList()">
-                    </select>
-                </li>
-                <li class="list-inline-item">
-                    <select ng-init="orderby = [{value:'ASC',text:'Alfabética'}, {value:'DESC',text:'Descendente'}]" name="" id="" class="btn btn-light" ng-model="order.by" ng-options="item as item.text for item in orderby track by item.value " ng-change="reorderProjectList()">
+                    <select name="" id="" class="btn btn-light" ng-model="order" 
+                    ng-change="reorderList()">
+                        <option ng-repeat="item in order track by item.value" 
+                            value="{{item.value}}">{{item.text}}</option>
                     </select>
                 </li>
                 <li class="list-inline-item">
@@ -40,7 +39,7 @@
             <th>Ação</th>
         </thead>
         <tbody>
-            <tr ng-repeat="project in projects | filter:pesquisa">
+            <tr ng-repeat="project in projects | filter:pesquisa | orderBy:orderDefine:reverse">
                 <td>{{project.id}}</td>
                 <td>{{project.date_created | date:'Y-m-d'}}</td>
                 <td>{{project.company}}</td>

@@ -98,7 +98,7 @@
                             <td>
                                 <div class="form-inline">
                                     <input ng-model="addActivity.addModel.item.action" type="text" class="col-10 mr-2 form-control" />
-                                    <button type="button" class="btn btn-secondary" ng-click="addItem()">Adicionar</button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-click="addItem()">Adicionar</button>
                                 </div>
                             </td>
                         </tr>
@@ -112,10 +112,7 @@
 
         <ul class="list-inline float-right">
             <li class="list-inline-item">
-                <a class="btn btn-light" href="painel#!/" >Voltar</a>
-            </li>
-            <li class="list-inline-item">
-                <input class="btn btn-primary" type="submit" value="Finalizar">
+            <a onclick="window.history.back();" href="" class="btn btn-secondary">Voltar</a>
             </li>
             <li class="list-inline-item">
                 <input class="btn btn-success" type="submit" value="Gravar">

@@ -73,7 +73,7 @@ function deleteData($http, $url, $returnFunction) {
 
     var $dataReturn;
 
-    $obj.http({
+    $http({
         url: $url,
         method: 'DELETE'
     }).then(function(response) {

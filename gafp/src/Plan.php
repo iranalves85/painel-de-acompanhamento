@@ -12,7 +12,7 @@ class Plan extends Connect{
         $result = $this->pdo->get('plan',[
             'name', 'description', 'owner', 'cost', 'goal', 'deadline'
         ],[
-            'plan.id' => $id
+            'id' => $id
         ]);
 
         return $result;
@@ -26,12 +26,18 @@ class Plan extends Connect{
         $result = $this->pdo->select('plan', [
             '[>]company'    => ['company'   => 'id'],
             '[>]users'      => ['owner'     => 'id'],            
-            '[>]status'     => ['status'    => 'id']           
+            '[>]status'      => ['status'    => 'id'],
+            '[>]rule_define'    => ['project'   => 'project']             
         ],[
-            'plan.id', 'plan.name', 'plan.description', 'plan.goal', 'plan.deadline', 'status.status(status)'
+            'plan.id', 'plan.name', 'plan.description', 'plan.goal', 'plan.deadline', 'status.status(statusText)', 'rule_define.rules(rules)'
         ],[
             'plan.owner' => $id
         ]);
+
+        //Verifica em cada item da lista as regras de datas (primary,warning,success,danger)
+        foreach ($result as $key => $value) {
+           $result[$key]['rules'] = $this->ruleLogic($result[$key]['rules'], $result[$key]['deadline']);
+        }   
         
         if(! $result):
             return false;
@@ -75,7 +81,7 @@ class Plan extends Connect{
 
         //Verifica em cada item da lista as regras de datas (primary,warning,success,danger)
         foreach ($result as $key => $value) {
-           // $result[$key]['rules'] = $this->ruleLogic($result[$key]['rules'], $result[$key]['deadline']);
+           $result[$key]['rules'] = $this->ruleLogic($result[$key]['rules'], $result[$key]['deadline']);
         }        
         
         if(! $result):
@@ -118,10 +124,10 @@ class Plan extends Connect{
                 '[<]project'    => ['project' => 'id' ],
                 '[>]model'      => ['project.model' => 'id' ]
             ],[
-                'activity' => ['activity.name', 'activity.description', 'activity.what', 'activity.because', 'activity.place', 'activity.moment', 'activity.who', 'activity.how', 'activity.cost', 'activity.date_created'], 
-                'evidence' => ['evidence.id','evidence.topic', 'evidence.action'],
-                'project' => ['project.id','project.model'],
-                'model' => ['model.id','model.topics[Object]']
+                'activity' => ['activity.name', 'activity.description', 'activity.what', 'activity.because', 'activity.place', 'activity.moment', 'activity.who', 'activity.how','activity.cost', 'activity.status', 'activity.date_created'], 
+                'evidence' => ['evidence.id(evidenceID)','evidence.topic[Object]', 'evidence.action'],
+                'project' => ['project.id(projectID)','project.model'],
+                'model' => ['model.id(modelID)','model.topics[Object]']
             ],[
                 'activity.id' => $id
             ]);
@@ -138,13 +144,18 @@ class Plan extends Connect{
 
         $result = $this->pdo->select('activity',
         [   '[>]status'         => ['status'    => 'id'],
-            '[>]rule_define'    => ['project'   => 'project']
+            '[>]rule_define'    => ['project'   => 'project'],
         ],
         [
             'activity.id', 'activity.name', 'activity.description', 'activity.date_created', 'activity.moment', 'status.id(statusID)', 'status.status(statusText)', 'rule_define.rules(rules)'
         ],[
             'plan' => $id
         ]);
+
+        //Verifica em cada item da lista as regras de datas (primary,warning,success,danger)
+        foreach ($result as $key => $value) {
+            $result[$key]['rules'] = $this->ruleLogic($result[$key]['rules'], $result[$key]['moment']);
+        } 
         
         if(! $result):
             return false;
@@ -215,29 +226,27 @@ class Plan extends Connect{
             'name'          => $data['name'],
             'description'   => $data['description'],
             'what'          => $data['what'],
-            'because'          => $data['because'],
-            'place'          => $data['place'],
-            'moment'      => $this->data_converter_to_insert($data['moment']),
-            'who'          => $data['who'],
-            'how'          => $data['how'],
+            'because'       => $data['because'],
+            'place'         => $data['place'],
+            'moment'        => $this->data_converter_to_insert($data['moment']),
+            'who'           => $data['who'],
+            'how'           => $data['how'],
             'cost'          => $data['cost']
         ]);
+
+        $idResult = $this->pdo->id(); //Id do insert para utilizar nas evidencias
 
         if( $result && isset($data['evidence']) && count($data['evidence']) > 0 ){
             //Insere os dados obtidos anteriormente
             foreach ($data['evidence'] as $key => $value) {
                 $evidenceResult = $this->pdo->insert('evidence', [ 
-                    'project'       => $data['project'],
-                    'plan'          => $data['plan'],
-                    'activity'      => $this->pdo->id(),
+                    'activity'      => $idResult,
                     'topic'         => $value['topic'],
                     'action'        => $value['action']
                 ]);
             }
             
         }
-
-        $idResult = $this->pdo->id();
         
         //Retorna resultado
         if(isset($idResult) && $idResult > 0){
@@ -280,6 +289,79 @@ class Plan extends Connect{
 
     }
 
+    /* Atualiza um plano */
+    function updateActivityPlan( \Gafp\User $user, $id, $data){
+        
+        $this->user_has_access($user);
+
+        //Insere os dados obtidos anteriormente
+        $result = $this->pdo->update('activity', [ 
+            'name'          => $data['name'],
+            'description'   => $data['description'],
+            'what'          => $data['what'],
+            'because'       => $data['because'],
+            'place'         => $data['place'],
+            'moment'        => $this->data_converter_to_insert($data['moment']),
+            'who'           => $data['who'],
+            'how'           => $data['how'],
+            'cost'          => $data['cost']
+        ],['id' => $id]);
+
+        //Se tiver campos de evindecias preenchidos atualizar
+        if( $result && isset($data['evidence']) && count($data['evidence']) > 0 ){
+            
+            //Inicializa
+            $evidence   = []; //array
+            $evidenceID = $data['evidence'][0]['evidenceID']; //id
+
+            //Percorre array para adicionar valores corretos
+            foreach ( $data['evidence'] as $key => $value ) {
+
+                //Atribuindo data
+                $topic   = serialize(filter_var_array($value['topic'], 
+                FILTER_SANITIZE_STRING ));
+                $action  = filter_var($value['action'], 
+                FILTER_SANITIZE_STRING);
+                $evidenceID = ( isset($value['evidenceID'] ))? filter_var($value['evidenceID'], FILTER_SANITIZE_NUMBER_INT) : null;
+                
+                //Adiciona ou atualiza um item
+                if( !is_null($evidenceID) && $this->pdo->has('evidence',['id' => $value['evidenceID']]))
+                {
+                    //Atualiza a evidencia
+                    $evidenceResult = $this->pdo->update('evidence',
+                    [
+                        'topic' => $topic, 
+                        'action' => $action ],
+                    ['id' => $evidenceID ]);
+                }
+                else{
+                    //Insere uma evidencia
+                    $evidenceResult = $this->pdo->insert('evidence',
+                    [
+                        'activity' => $id,
+                        'topic' => $topic, 
+                        'action' => $action 
+                    ]);
+                }
+                
+            }
+
+        }
+
+        //Retorna resultado
+        if(isset($result) && !is_null($result)){
+            return array(
+            'type' => 'success', 
+            'msg' => 'Atividade atualizada com sucesso!');
+        }
+        else{
+            return array(
+            'type' => 'danger', 
+            'msg' => 'Não foi possível atualizar a atividade, tente novamente.');
+        }
+
+    }
+
     function updatePlanStatus(\Gafp\User $user, $id, $data){
         
         $this->user_has_access($user);
@@ -300,6 +382,26 @@ class Plan extends Connect{
         }
     }   
 
+    function updateActivityPlanStatus(\Gafp\User $user, $id, $data){
+        
+        $this->user_has_access($user);
+        
+        //Insere os dados obtidos anteriormente
+        $result = $this->pdo->update('activity', ['status' => $data['status']],['id' => $id]);
+
+        //Retorna resultado
+        if(isset($result) && !is_null($result)){
+            return array(
+            'type' => 'success', 
+            'msg' => ($data['status'] == 2)? 'Atividade Finalizada!' : 'Atividade Reaberta!');
+        }
+        else{
+            return array(
+            'type' => 'danger', 
+            'msg' => 'Não foi possível atualizar status da atividade, tente novamente.');
+        }
+    } 
+
     // DELETE #############################################
 
     /* Deletar um plano */
@@ -308,7 +410,7 @@ class Plan extends Connect{
         $this->user_has_access($user); //Verifica permissão
 
         //Contruindo Query
-        $result = $this->pdo->delete('plan',['id' => $ID['id']]);
+        $result = $this->pdo->delete('plan',['id' => $ID]);
         
         //Retorna resultado
         if(is_object($result) && $result){
@@ -339,17 +441,70 @@ class Plan extends Connect{
     ////// Lógica das Regras ///////////////////////
 
     private function ruleLogic($ruleDates, $planDeadline){
+
+        //var de definição
+        $status  = array(
+            'warning' => array('badge' => 'warning', 'msg' => 'Atenção'), 
+            'danger'  => array('badge' => 'danger',  'msg' => 'Em Atraso'), 
+            'normal'  => array('badge' => 'normal',  'msg' => 'Em Progresso') 
+        );
+        $final = $status['normal']; //Status padrão a retornar
+
+        //Se plano não tiver data definida
+        if(empty($planDeadline)){
+            //Retorna status do plano e atividade
+            return $final;
+        }
+
+        $rule = unserialize($ruleDates); //deserializa dados
+        $warning = $rule['warning']; //definições de alerta
+        $danger  = $rule['danger']; //definições em atraso
+        //Trasforma data em tipo "Data"
+        $deadline = date_create($planDeadline);
+        $currentDate = date_create();
+        $interval = [];
         
-        //Atribui a data atual
-        $currentDate = date_create(null);
-
-        foreach ($ruleDates as $key => $value) {
-            $rule_date = date_create($value['date']);
-            if( ($rule_date > $currentDate) && ($rule_date < $currentDate) ){
-
-            }
+        //Alerta
+        if( !empty($warning) ){            
+            $interval['warning'] = $this->date_conditional($warning, $deadline); //converte em data
         }
         
+        //Em atraso
+        if( !empty($danger) ){            
+            $interval['danger'] = $this->date_conditional($danger, $deadline); //converte em data
+        }
+        
+        //Se farol 'warning' for maior que a data atual
+        if( $currentDate >= $interval['warning'] && $currentDate < $interval['danger'] ){
+            return $status['warning'];
+        }
+        //Se farol 'danger' for maior que a data atual
+        else if($currentDate >= $interval['danger']){
+            return $status['danger'];
+        }
+        else{
+            //Retorna status do plano e atividade
+            return $final;
+        }
+        
+    }
+
+    /* Função de conversão de data */
+    private function date_conditional($date_array, $date){
+
+        //qtd de horários
+        //'h' = 1 horas, 'd' = 24horas, 'm' = 720horas
+        $qtdConvert = array('h' => 3600, 'd' => 43200, 'm' => 1296000 );
+        $deadline = strtotime($date->format('Y-m-d')); //Converte data final timestamp
+
+        if($date_array['conditional'] == 1){ //Após
+            $dateDefined = ($date_array['qtd'] * $qtdConvert[$date_array['types']['identificador']]);
+            return date_create(date('Y-m-d', $deadline + $dateDefined)); //calculo data atual mais horas definidas
+        }
+        else{ //Antes
+            $dateDefined = ($date_array['qtd'] * $qtdConvert[$date_array['types']['identificador']]);
+            return date_create(date('Y-m-d', $deadline - $dateDefined)); //calculo data atual mais horas definidas
+        }
     }
 
 }
