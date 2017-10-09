@@ -1,1 +1,0 @@
-SELECT pa_model.id,pa_model.name,pa_model.description,pa_model.topics FROM pa_plan LEFT JOIN pa_model ON pa_plan.id = pa_model.id LEFT JOIN pa_project ON pa_plan.project = pa_project.id WHERE pa_plan.id = '54' LIMIT 1

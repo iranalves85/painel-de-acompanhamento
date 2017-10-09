@@ -7,26 +7,44 @@ body {
     font-size: 0.9rem;
 }
 
+$gptwBrand: #aa272f;
+$roxo: #771174;
+$yellow: #ECA012;
+.login-bg {
+    background-color: #eee;
+    height: 300px;
+}
+
 .login-box {
     background-color: #fff;
-    text-align: center;
-    h1 {
-        position: relative;
-        display: block;
-        max-width: 100px;
-        //text-indent: -9000px;
-        font-size: 0%;
-        margin: 25px auto 10px;
-        img {
-            max-width: 100%;
+    margin-top: 5%;
+    .logo {
+        background-color: $gptwBrand;
+        color: #fff;
+        margin: auto -15px;
+        h1 {
+            position: relative;
+            display: block;
+            max-width: 100px;
+            //text-indent: -9000px;
+            font-size: 0%;
+            margin: 25px auto 10px;
+            img {
+                max-width: 100%;
+            }
         }
+        p {
+            font-weight: bolder;
+        }
+    }
+    h2 {
+        color: #777;
+        margin: 20px auto 15px;
+        text-transform: uppercase;
     }
 }
 
 .panel {
-    $gptwBrand: #aa272f;
-    $roxo: #771174;
-    $yellow: #ECA012;
     h1,
     h2,
     h3,

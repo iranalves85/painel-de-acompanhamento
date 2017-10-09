@@ -1,33 +1,41 @@
-<section class="manager">
+<section class="login-bg">
     <div class="container">
 
         <div class="row justify-content-center">
-            <div class="col-md-4 login-box">
+            <div class="col-10 col-md-6 col-lg-4 login-box card">
 
-                <h1>GPTW - Painel de Acompanhamento de plano de ações
-                    <img src="assets/images/gptw-logo-app.png" alt="GPTW - Painel de Acompanhamento de plano de ações" srcset=""></h1>
-                <p class="lead">Painel de Acompanhamento</p>
+                <div class="logo text-center">
 
-                <h2>Login</h2>
+                    <h1>GPTW - Painel de Acompanhamento de plano de ações
+                        <img src="assets/images/gptw-logo-app.png" alt="GPTW - Painel de Acompanhamento de plano de ações" srcset=""></h1>
 
-                <form name="login" method="post" ng-submit="submit()">
-                    <div class="col-12">
-                        <label for="email">e-mail:</label>
-                        <input id="email" type="email" name="email" class="form-control" ng-model="email.text" placeholder="Seu e-mail" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="password">Senha:</label>
-                        <input id="password" type="password" name="password" ng-model="password.text" class="form-control" placeholder="Sua senha" required>
-                    </div>
-                    <div class="col-12">
-                        <input type="submit" value="Entrar" class="btn btn-primary btn-block">
-                    </div>
-                </form>
-
-                <div role="alert alert-warning">
-                    {{loginError}}
+                    <p class="lead text-center">Painel de Acompanhamento</p>
                 </div>
 
+                <h2 class="text-center">Login</h2>
+
+                <form name="login" method="post" ng-submit="submit()">
+                    <div class="form-group row">
+                        <label for="email" class="col-sm-3 col-form-label">E-mail</label>
+                        <div class="col-sm-9">
+                            <input id="email" type="email" name="email" class="form-control" ng-model="email.text" placeholder="Seu e-mail" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="password" class="col-sm-3 col-form-label">Senha</label>
+                        <div class="col-sm-9">
+                            <input id="password" type="password" name="password" ng-model="password.text" class="form-control" placeholder="Sua senha" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-12">
+                            <input type="submit" value="Entrar" class="btn btn-primary float-right">
+                        </div>
+                    </div>
+                    <div class="alert alert-warning text-center" ng-if="loginError">
+                        {{loginError}}
+                    </div>
+                </form>
             </div>
         </div>
 
