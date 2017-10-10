@@ -42,7 +42,7 @@ $email      = $_SESSION['user']['email'];
 <script src="app/panel-app/human-resources/human-resources.component.js"></script>
 <script src="app/panel-app/manager/manager.component.js"></script>
 <?php endif; ?>
-
+<script src="app/panel-app/charts.component.js"></script>
 <script src="http://momentjs.com/downloads/moment.js" /></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js" ></script>
 <script src="assets/js/main.js" type="text/javascript"></script>
@@ -71,32 +71,6 @@ $email      = $_SESSION['user']['email'];
     </header><!-- Topo -->
 
     <main>
-
-        <div class="container">
-            <!--<h1>Dashboard</h1>
-            <div class="block card main">
-                <div class="graficos-de-status text-center">
-                    <ul class="row list-inline">
-                        <li class="col">
-                            <h2 class="text-center">Status do Projeto</h2>
-                            <canvas id="status" width="150" height="150"></canvas>
-                        </li>
-                        <li class="col">
-                            <h2 class="text-center">Status de Aprovações</h2>
-                            <canvas id="planos" width="150" height="150"></canvas>
-                        </li>
-                        <li class="col">
-                            <h2 class="text-center">Plano de Funcionários</h2>
-                            <canvas id="prazos" width="150" height="150"></canvas>
-                        </li>
-                        <li class="col">
-                            <h2 class="text-center">Plano Individual</h2>
-                            <canvas id="prazos" width="150" height="150"></canvas>
-                        </li>
-                    </ul>
-                </div>
-            </div>-->
-        </div>
 
         <?php  if( $type_user == 'superuser' ): ?>
         <superuser-app></superuser-app>

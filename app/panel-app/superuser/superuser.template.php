@@ -15,6 +15,8 @@
         </div>
         <!-- menu -->
 
+        <charts-app></charts-app>
+
         <div class="container">
             <div ng-view></div>
             <!-- carrega templates -->
