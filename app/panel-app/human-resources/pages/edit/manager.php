@@ -20,7 +20,7 @@
                         <label for="responsible">
                             E-mail
                         </label>
-                        <input type="email" name="email" ng-value="name" class="form-control" ng-model="manager.email" ng-required="required" placeholder="Insira um e-mail válido." />
+                        <input type="email" name="email" ng-value="name" class="form-control" ng-model="manager.email" ng-required="required" placeholder="Insira um e-mail válido." ng-disabled="id == user" />
                     </div>
                     <div class="col-md-3">
                         <label for="model">
@@ -39,7 +39,7 @@
                         <br />
                         <ul class="list-item  float-right">
                             <li class="list-inline-item">
-                                <a href="painel#!/projects/" class="btn btn-light">Voltar</a>
+                                <a onclick="window.history.back();" href="" class="btn btn-light">Voltar</a>
                             </li>
                             <li class="list-inline-item">
                                 <input class="btn btn-success" type="submit" value="Atualizar">

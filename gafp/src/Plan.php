@@ -31,7 +31,8 @@ class Plan extends Connect{
         ],[
             'plan.id', 'plan.name', 'plan.description', 'plan.goal', 'plan.deadline', 'status.status(statusText)', 'rule_define.rules(rules)'
         ],[
-            'plan.owner' => $id
+            'plan.owner' => $id,
+            'plan.status[!]' => 3
         ]);
 
         //Verifica em cada item da lista as regras de datas (primary,warning,success,danger)
@@ -44,6 +45,119 @@ class Plan extends Connect{
         else:
             //Retorna dados de usuário
             return $result;            
+        endif;
+    }
+
+    /* Conta planos para montar gráficos */
+    function countPlansByStatus(\Gafp\User $user, $dataConditional){
+        
+        $this->user_has_access($user);
+
+        //condição
+        /*$condition = [
+            ':id' => $dataConditional['project']
+        ];
+        //Retorna qtd de itens por status
+        $result = $this->pdo->query("SELECT count(status) AS qtd, status FROM " . _PREFIX_ . "plan WHERE project = :id GROUP BY status",
+        $condition)->fetchAll(); */ 
+
+        $status = [
+            'owner' => array(),
+            'leader' => array()
+        ];
+
+        //Condição
+        $condition = [
+            'plan.project' => $dataConditional['project'],
+            'plan.status[!]' => 3
+        ];
+        //Colunas padrões a retornar
+        $columns = [
+            '[>]status'         => ['status'    => 'id'],
+            '[>]rule_define'    => ['project'   => 'project']             
+        ];
+
+        //Adiciona condições especificas
+        if( isset($dataConditional['column']) ){
+            $condition[$dataConditional['column']] = $dataConditional['value'];
+        }
+
+        //Adiciona condições especificas para usuário
+        if( isset($dataConditional['user']) ){
+            //Adiciona condição
+            $condition['plan.owner'] = $dataConditional['user']; 
+            //Pega lista de planos de funcionarios e converte em status
+            $leadersPlan = $this->getListLeaderPlans($user, $dataConditional['user']);
+            //Retorna qtd de alertas de planos
+            $status['leader'] = (is_array($leadersPlan))? $this->countPlanStatus($leadersPlan) : false;
+        }
+
+        //Query
+        $result = $this->pdo->select('plan', $columns, [
+            'plan.deadline','status.status(statusText)', 'rule_define.rules(rules)'
+        ], $condition);
+
+        //Adiciona os alertas
+        foreach ($result as $key => $value) {
+            $result[$key]['rules'] = $this->ruleLogic($result[$key]['rules'], 
+            $result[$key]['deadline']);
+        }
+
+        //Retorna qtd de alertas de planos
+        $status['owner'] = $this->countPlanStatus($result);        
+
+        if(! $status):
+            return false;
+        else:
+            //Retorna dados de usuário
+            return $status;            
+        endif;
+    }
+
+    /* Conta planos para montar gráficos */
+    function countApprovedPlansByStatus(\Gafp\User $user, $dataConditional){
+        
+        $this->user_has_access($user);
+
+        //condição
+        $condition = [
+            ':id' => $dataConditional['project']
+        ];
+
+        //Retorna qtd de itens por status
+        $result = $this->pdo->query("SELECT count(plan.status) AS value, status.status AS badge FROM " . _PREFIX_ . "plan as plan LEFT JOIN " . _PREFIX_ . "status AS status ON plan.status = status.id WHERE plan.project = :id GROUP BY plan.status",
+        $condition)->fetchAll();
+
+        //Definindo valores padrões
+        //Contagem de itens
+        $status = array(
+            'approved' => array('badge' => "Aprovado", 'value' => 0),
+            //'finished' => array('badge' => "Finalizado", 'value' => 0),
+            'default'  => array('badge' => "Em Aberto", 'value' => 0)
+        );
+
+        foreach ($result as $key => $value) {
+            switch ($value['badge']) {
+                case "Aprovado":
+                    $status['approved']['value'] = $value['value'];
+                    break;
+                /*case "Finalizado":
+                    $status['finished']['value'] = $value['value'];
+                    break;*/
+                case "Em Aberto":
+                    $status['default']['value'] = $value['value'];
+                    break;
+                default:
+                    continue;
+                    break;
+            }            
+        }       
+
+        if(! $status):
+            return false;
+        else:
+            //Retorna dados de usuário
+            return $status;            
         endif;
     }
 
@@ -444,9 +558,9 @@ class Plan extends Connect{
 
         //var de definição
         $status  = array(
-            'warning' => array('badge' => 'warning', 'msg' => 'Atenção'), 
-            'danger'  => array('badge' => 'danger',  'msg' => 'Em Atraso'), 
-            'normal'  => array('badge' => 'normal',  'msg' => 'Em Progresso') 
+            'warning' => array('badge' => 'warning', 'msg' => _WARNING_), 
+            'danger'  => array('badge' => 'danger',  'msg' => _DANGER_), 
+            'normal'  => array('badge' => 'normal',  'msg' => _PROGRESS_) 
         );
         $final = $status['normal']; //Status padrão a retornar
 
@@ -477,10 +591,12 @@ class Plan extends Connect{
         //Se farol 'warning' for maior que a data atual
         if( $currentDate >= $interval['warning'] && $currentDate < $interval['danger'] ){
             return $status['warning'];
+            die();
         }
         //Se farol 'danger' for maior que a data atual
         else if($currentDate >= $interval['danger']){
             return $status['danger'];
+            die();
         }
         else{
             //Retorna status do plano e atividade
@@ -494,7 +610,7 @@ class Plan extends Connect{
 
         //qtd de horários
         //'h' = 1 horas, 'd' = 24horas, 'm' = 720horas
-        $qtdConvert = array('h' => 3600, 'd' => 43200, 'm' => 1296000 );
+        $qtdConvert = array('h' => 3600, 'd' => 86400, 'm' => 2592000 );
         $deadline = strtotime($date->format('Y-m-d')); //Converte data final timestamp
 
         if($date_array['conditional'] == 1){ //Após
@@ -505,6 +621,35 @@ class Plan extends Connect{
             $dateDefined = ($date_array['qtd'] * $qtdConvert[$date_array['types']['identificador']]);
             return date_create(date('Y-m-d', $deadline - $dateDefined)); //calculo data atual mais horas definidas
         }
+    }
+
+    private function countPlanStatus($planArray){
+        
+        //Definindo valores padrões
+        $status['warning'] = ['badge' => _WARNING_, 'value' => 0];
+        $status['danger']  = ['badge' => _DANGER_, 'value' => 0];
+        $status['default'] = ['badge' => _PROGRESS_, 'value' => 0];
+
+        //Contagem de itens
+        foreach ($planArray as $key => $value) {
+            switch ($value['rules']['msg']) {
+                case _WARNING_:
+                    $status['warning']['value'] = $status['warning']['value'] + 1;
+                    break;
+                case _DANGER_:
+                    $status['danger']['value'] = $status['danger']['value'] + 1;
+                    break;
+                case _PROGRESS_:
+                    $status['default']['value'] = $status['default']['value'] + 1;
+                    break;
+                default:
+                    continue;
+                    break;
+            }
+            
+        }  
+
+        return $status;
     }
 
 }

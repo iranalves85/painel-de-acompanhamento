@@ -15,6 +15,11 @@ define('_USER_PASS_', 'secret'); //Password de email
 define('_SMTP_SECURE_', 'tls');  // Enable TLS encryption, `ssl` also accepted
 define('_PORT_', 587);   //Porta
 
+//define Name_Alerts
+define('_PROGRESS_', 'Em Progresso'); //Password de email
+define('_WARNING_', 'Atenção');  // Enable TLS encryption, `ssl` also accepted
+define('_DANGER_', 'Em Atraso');   //Porta
+
 $config = [
     'settings' => [
         'displayErrorDetails' => true
@@ -281,8 +286,6 @@ $app->put('/projects/rules/{id}', function (Request $request, Response $response
 });
 
 
-
-
 /* ###### MODELS ###############*/
 
 //Retorna um modelo baseado num id
@@ -407,6 +410,19 @@ $app->put('/plan/status/{id}', function (Request $request, Response $response, $
     $data = $request->getParsedBody();
     return $response->withJson($this->plan->updatePlanStatus( $this->user, $id, $data ));
 })->setName('Update Plans Status');
+
+//Retorna contagem de planos por status
+$app->get('/plan/status/count/{project}[/{user}]', function (Request $request, Response $response, $args){     //Variaveis
+    $data['project'] = $request->getAttribute('project');
+    $data['user']   = $request->getAttribute('user');
+    return $response->withJson($this->plan->countPlansByStatus( $this->user, $data ));
+})->setName('Count Plans By Status');
+
+//Retorna contagem de planos aprovados por status
+$app->get('/plan/approved/count/{project}', function (Request $request, Response $response, $args){     //Variaveis
+    $data['project'] = $request->getAttribute('project');
+    return $response->withJson($this->plan->countApprovedPlansByStatus( $this->user, $data ));
+})->setName('Count Approved Plans By Status');
 
 
 /*########## ATIVIDADE ###############*/

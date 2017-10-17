@@ -51,6 +51,7 @@ $app.controller('projects', ['$http', '$scope', '$httpParamSerializerJQLike', '$
 
             //Definições de datas e parametros
             $scope.id = $routeParams.id;
+            $scope.user = user.id;
             $scope.users = Array();
             $scope.manager = Array();
 
@@ -98,6 +99,7 @@ $app.controller('projects', ['$http', '$scope', '$httpParamSerializerJQLike', '$
 
         //Definições de datas e parametros
         $scope.id = $routeParams.id;
+        $scope.user = user.id;
         $scope.users = Array();
         $scope.manager = Array();
 

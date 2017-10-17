@@ -1,3 +1,7 @@
+
+<!-- Motrar gráficos dos usuários -->
+<charts-app></charts-app>
+
 <!-- Template de Aprovação -->
 <div ng-controller="approverPlans">  
     <div ng-include="approverPlansTemplate" ng-if="isApprover"></div>

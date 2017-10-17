@@ -1,7 +1,8 @@
-$app.controller('humanResources', ['$http', '$scope', '$httpParamSerializerJQLike', '$location', '$route',
-        function humanResourcesController($http, $scope, $httpParamSerializerJQLike, $location, $route) {
+$app.controller('showComponents', ['$http', '$scope', '$httpParamSerializerJQLike', '$location', '$route',
+        function showComponentsController($http, $scope, $httpParamSerializerJQLike, $location, $route) {
             //Setando default 'false'
             $scope.isResponsible = false;
+            $scope.isHome = true;
             //Requisição para atribuir visão de RH ao usuário
             $responsible = getData($http,
                 'projects/users/responsible/' + user.project + '/' + user.id,
@@ -10,6 +11,7 @@ $app.controller('humanResources', ['$http', '$scope', '$httpParamSerializerJQLik
                         $scope.isResponsible = true;
                     }
                 });
+
 
         }
     ]).controller('approverPlans', ['$http', '$scope', '$httpParamSerializerJQLike', '$location', '$route',

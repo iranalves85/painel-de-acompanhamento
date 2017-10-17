@@ -2,8 +2,8 @@
 
     <section class="content">
 
-        <div ng-controller="humanResources">
-            
+        <div ng-controller="showComponents">
+
             <human-resources-app ng-if="isResponsible"></human-resources-app>
 
             <div class="container">

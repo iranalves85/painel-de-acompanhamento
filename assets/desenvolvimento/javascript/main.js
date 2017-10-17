@@ -38,7 +38,9 @@ function postData($obj, $url, $aditional, $data, $returnFunction) {
         },
         data: $data
     }).then(function(response) {
-        $dataReturn = $returnFunction(response);
+        loading(function() {
+            $dataReturn = $returnFunction(response);
+        }); //Tela de loading
     });
 
     return $dataReturn;
@@ -52,6 +54,7 @@ function updateData($obj, $url, $aditional, $data, $returnFunction) {
         $aditional = "";
     }
 
+
     $obj.http({
         url: $url + $aditional,
         method: 'PUT',
@@ -62,7 +65,9 @@ function updateData($obj, $url, $aditional, $data, $returnFunction) {
         },
         data: $data
     }).then(function(response) {
-        $dataReturn = $returnFunction(response);
+        loading(function() {
+            $dataReturn = $returnFunction(response);
+        }); //Tela de loading
     });
 
     return $dataReturn;
@@ -77,43 +82,111 @@ function deleteData($http, $url, $returnFunction) {
         url: $url,
         method: 'DELETE'
     }).then(function(response) {
-        $dataReturn = $returnFunction(response);
+        loading(function() {
+            $dataReturn = $returnFunction(response);
+        }); //Tela de loading        
     });
 
     return $dataReturn;
 }
 
-function generateCharts($id) {
+//Carrega loading antes de requisições POST, PUT ou DELETE
+function loading($fn) {
+    jQuery('body').append("<div class='loading'><img src='assets/images/loading.gif' /></div>");
+    setTimeout(function() {
+        $fn();
+    }, 680);
+}
 
-    var randomScalingFactor = function() {
-        return Math.round(Math.random() * 100);
-    };
+//Gerar gráficos
+function generateProjectChart($id, $data) {
+
+    //Valores
+    $values = [
+        $data.default.value,
+        $data.warning.value,
+        $data.danger.value
+    ];
+
+    //Labels
+    $label = [
+        $data.default.badge,
+        $data.warning.badge,
+        $data.danger.badge
+    ];
 
     var ctx = document.getElementById($id).getContext("2d");
     var myChart = new Chart(ctx, {
         type: 'pie',
         data: {
             datasets: [{
-                data: [
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor()
-                ],
+                data: $values,
                 backgroundColor: [
-                    'blue',
-                    'red',
-                    'green'
+                    '#007bff', //Azul
+                    '#ffc107', //Amarelo
+                    '#dc3545' //Vermelho
                 ],
                 label: 'Dataset 1'
             }],
-            labels: [
-                "Em Progresso",
-                "Em Atraso",
-                "Finaliza"
-            ]
+            labels: $label
         },
         options: {
-            responsive: true
+            responsive: true,
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                    boxWidth: 5,
+                    fontSize: 10
+                }
+            }
+        }
+    });
+
+}
+
+//Gerar gráficos planos aprovados
+function generateApprovedChart($id, $data) {
+
+    //Valores
+    $values = [
+        $data.default.value,
+        //$data.finished.value,
+        $data.approved.value
+    ];
+
+    //Labels
+    $label = [
+        $data.default.badge,
+        //$data.finished.badge,
+        $data.approved.badge
+    ];
+
+    var ctx = document.getElementById($id).getContext("2d");
+    var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            datasets: [{
+                data: $values,
+                backgroundColor: [
+                    '#306fb3', //Azul
+                    //'#771f60', //Roxo
+                    '#28a745' //Verde
+                ],
+                label: 'Dataset 1'
+            }],
+            labels: $label
+        },
+        options: {
+            responsive: true,
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                    boxWidth: 5,
+                    fontSize: 10
+                }
+            }
         }
     });
 

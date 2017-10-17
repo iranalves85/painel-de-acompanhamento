@@ -87,7 +87,7 @@
                             <li class="list-inline-item">
                                 <a class="btn btn-sm" href="painel#!/projects/manager/edit/{{gestor.id}}">Editar</a>
                             </li>
-                            <li class="list-inline-item">
+                            <li class="list-inline-item" ng-if="gestor.id != user">
                                 <button type="button" class="btn btn-sm btn-danger" ng-click="deleteUser(gestor.id)">Excluir</a>
                             </li>
                         </ul>

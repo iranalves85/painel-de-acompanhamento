@@ -41,8 +41,8 @@ $email      = $_SESSION['user']['email'];
 <?php else: ?>
 <script src="app/panel-app/human-resources/human-resources.component.js"></script>
 <script src="app/panel-app/manager/manager.component.js"></script>
-<?php endif; ?>
 <script src="app/panel-app/charts.component.js"></script>
+<?php endif; ?>
 <script src="http://momentjs.com/downloads/moment.js" /></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js" ></script>
 <script src="assets/js/main.js" type="text/javascript"></script>
