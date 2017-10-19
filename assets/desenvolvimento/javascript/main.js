@@ -38,8 +38,12 @@ function postData($obj, $url, $aditional, $data, $returnFunction) {
         },
         data: $data
     }).then(function(response) {
+
         loading(function() {
             $dataReturn = $returnFunction(response);
+            if ($obj.scope != undefined) {
+                $obj.scope.$apply();
+            }
         }); //Tela de loading
     });
 
@@ -54,7 +58,6 @@ function updateData($obj, $url, $aditional, $data, $returnFunction) {
         $aditional = "";
     }
 
-
     $obj.http({
         url: $url + $aditional,
         method: 'PUT',
@@ -67,6 +70,9 @@ function updateData($obj, $url, $aditional, $data, $returnFunction) {
     }).then(function(response) {
         loading(function() {
             $dataReturn = $returnFunction(response);
+            if ($obj.scope != undefined) {
+                $obj.scope.$apply();
+            }
         }); //Tela de loading
     });
 

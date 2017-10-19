@@ -311,26 +311,26 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
             $scope.addProject = function(step) {
 
                 $url = steps[step]['url'];
+
                 $method = {
+                    scope: $scope,
                     http: $http,
                     serializer: $httpParamSerializerJQLike,
-                };
-
-                //Definindo função de retorno
-                $addProjectReturn = function(response) {
-                    //Se resposta for true redireciona ao painel
-                    if (response.data > 0) {
-                        //Atribuindo resultado a objeto projectData
-                        $scope.page.projectData[$url] = response.data;
-                        $scope.page.currentPage = steps[step + 1].number;
-                        $scope.page.templateUrl = steps[step + 1].templateUrl;
-                    }
                 };
 
                 //Submete o formulário para add novo projeto
                 $data = postData($method, 'projects/fields/', $url, {
                     [$url]: $scope.page.dataSend
-                }, $addProjectReturn);
+                }, function(response) {
+                    //Se resposta for true redireciona ao painel
+                    if (response.data != undefined && response.data != 0) {
+                        //Atribuindo resultado a objeto projectData
+                        $scope.page.projectData[$url] = response.data;
+                        $scope.page.currentPage = steps[step + 1].number;
+                        $scope.page.templateUrl = steps[step + 1].templateUrl;
+                        jQuery('.loading').remove();
+                    }
+                });
 
             };
 
@@ -440,8 +440,13 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                     serializer: $httpParamSerializerJQLike,
                 };
 
-                //Definindo função de retorno
-                $addProjectReturn = function(response) {
+                //Submete o formulário para add novo projeto
+                $data = postData($method, 'projects/fields/', $url, {
+                    model: $model,
+                    approver: $approver,
+                    responsibles: $responsibles,
+                    project: $project
+                }, function(response) {
                     //Se resposta for true redireciona ao painel
                     if (response.data.type == 'success') {
                         //Atribuindo resultado a objeto projectData
@@ -450,15 +455,7 @@ $app.controller('project', ['$http', '$scope', '$httpParamSerializerJQLike', '$u
                     } else {
                         alert(response.data.msg);
                     }
-                };
-
-                //Submete o formulário para add novo projeto
-                $data = postData($method, 'projects/fields/', $url, {
-                    model: $model,
-                    approver: $approver,
-                    responsibles: $responsibles,
-                    project: $project
-                }, $addProjectReturn);
+                });
 
             };
 
